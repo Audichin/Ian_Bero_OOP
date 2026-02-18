@@ -1,3 +1,4 @@
+![Tests](https://github.com/Audichin/Ian_Bero_OOP/actions/workflows/ci-test.yml/badge.svg)
 # Ian_Bero_OOP
 Ian and Heriberto OOP project
 
