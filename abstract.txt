@@ -1,0 +1,14 @@
+Dungeon-Crawler  
+
+This project describes the development of a top-down dungeon crawler game designed using an object-oriented programming (OOP) architecture. 
+The player progresses through a series of rooms containing enemies and simple puzzles with the objective of reaching the final area without losing all health; 
+failure resets progress unless a final checkpoint has been unlocked. 
+
+Core gameplay elements—including the player, enemies, and collectible items—are modeled as interacting objects that share common functionality through inheritance and polymorphism. 
+Base classes encapsulate shared behaviors such as movement, collision detection, and health management, while specialized subclasses implement unique enemy behaviors and item effects, supporting modularity and extensibility. 
+
+A structured testing methodology accompanies the design to ensure correctness and maintainability. 
+Unit tests validate individual mechanics such as damage calculation, movement logic, and inventory handling, while integration tests verify interactions between systems, including combat, puzzle completion, and checkpoint persistence. 
+Pygame is used strictly as a rendering and input layer, separating presentation from game logic, and simple 8-bit graphics and audio are intentionally employed to constrain scope and emphasize software architecture quality and verifiable behavior.
+
+Credit - Basnet, Ram
