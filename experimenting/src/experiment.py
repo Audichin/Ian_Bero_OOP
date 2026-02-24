@@ -8,6 +8,7 @@ import sys
 from typing_extensions import Self
 
 import pygame
+import pygame.locals as locals
 
 
 class Game:
@@ -33,22 +34,31 @@ class Game:
         self._running : bool = False
 
     def game_init(self) -> None:
+        """fixme"""
         pygame.init()
         self._screen : pygame.Surface = pygame.display.set_mode(self._resolution)
         self._running = True
+
+    def event_handler(self) -> None:
+        """fixme"""
+        for event in pygame.event.get():
+            if event.type == locals.QUIT:
+                self._running = False
+            # sys.exit()
+
+    def gui_render(self) -> None:
+        """fixme"""
+        self._screen.fill("black")
+        pygame.display.flip()
 
     def run_game(self) -> None:
         """fixme"""
         # run the game
 
         while self._running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self._running = False
+            self.event_handler()
 
-            self._screen.fill("purple")
-
-            pygame.display.flip()
+            self.gui_render()
 
         pygame.quit()
 
