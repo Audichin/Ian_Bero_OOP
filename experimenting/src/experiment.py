@@ -59,6 +59,10 @@ class Game:
         game.game_init()
         game.run_game()
 
+    def dog(self) -> None:
+        dog = 20
+        print(dog)
+
 
 if __name__ == "__main__":
     Game.main()

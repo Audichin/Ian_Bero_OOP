@@ -51,4 +51,6 @@ These errors are a result of ALSA being unable to find sound hardware in the con
 > [!NOTE] 
 > If you have Xming installed on your windows machine, running the game in the docker should work. The display provided is created by xhost. Ensure before running the program that Xming is running.
 
-### <ins>It is recommended you run the program natively on your machine with pygame version 2.6.1 installed.</ins>
+For unit-testing, program-testing, github actions, and ensuring the project adheres to pep8 best practices, utilize the docker. For play-testing, run the game natively on your machine.
+
+### <ins>If you intend to play the game, it is recommended you run the program natively on your machine with pygame version 2.6.1 installed.</ins>
