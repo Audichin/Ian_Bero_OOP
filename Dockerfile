@@ -29,6 +29,15 @@ USER user
 WORKDIR ${HOME}
 
 RUN pip install --upgrade pip
+RUN sudo apt-get update
+
+# install dependencies for Pygame
+RUN sudo apt-get install -y \
+  libsdl2-2.0-0 \
+  libsdl2-image-2.0-0 \
+  libsdl2-mixer-2.0-0 \
+  libsdl2-ttf-2.0-0 \
+  python3-pygame
 
 # install python packages from requirements.txt
 COPY requirements.txt ./
@@ -43,4 +52,5 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -p https://github.com/zsh-users/zsh-completions
 
 ENV PATH="${HOME}/.local/bin:$PATH"
+ENV DISPLAY=host.docker.internal:0.0
 CMD zsh
