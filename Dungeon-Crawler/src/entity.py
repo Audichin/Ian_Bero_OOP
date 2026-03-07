@@ -16,6 +16,7 @@ at the end of each overridden method.
 import typing_extensions
 import pygame
 from pygame import Vector2
+import pygame.mixer as mixer
 from pygame import locals
 
 
@@ -27,7 +28,8 @@ class Entity:
                  , "_velocity"
                  , "_speed"
                  , "_max_speed"
-                 , "_hitpoints"]
+                 , "_hitpoints"
+                 , "_curr_sound"]  # sound currently playing
 
     def __init__(self, position : Vector2 = Vector2(0, 0)
                  , velocity : Vector2 = Vector2(0, 0)
@@ -48,6 +50,9 @@ class Entity:
         self._speed : float = speed
         self._max_speed : float = max_speed
         self._hitpoints : int = hitpoints
+
+        #  temp
+        self._curr_sound : mixer.Sound = mixer.Sound("")
 
     def loop(self) -> None:
         self.move()
@@ -77,3 +82,7 @@ class Entity:
 
         self._position.x += self._velocity.x
         self._position.y += self._velocity.y
+
+    @property
+    def curr_sound(self) -> mixer.Sound:
+        return self._curr_sound

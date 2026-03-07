@@ -17,20 +17,38 @@ import typing_extensions
 import pygame
 from pygame import locals
 
-from structures import Dungeon
-from structures import Room
 from entity import Entity
+
 
 class World:
     """
     Object that handles the game world itself. Recieves calls and sends back data to entities.
     Singleton?
     """
-    __slots__ = ["_player"]
+
+    __slots__ = ["_entities"  # list[Entity]
+                 , "_music"
+                 , "_sounds"]
 
     def __init__(self) -> None:
-        # self._player : Player = Player()
-        pass
+        """Init World"""
+        self._music : str = str()
+        self._sounds : list[pygame.mixer.Sound] = []  # empty
+        self._entities : list[Entity] = list[Entity]()
 
     def loop(self) -> None:
-        self._player.loop()
+        # self._player.loop()
+        pass
+
+    def retrieve_sounds(self) -> None:
+        """fixme"""
+        for entity in self._entities:
+            self._sounds.append(entity.curr_sound)
+
+    @property
+    def music(self) -> str:
+        return self._music
+
+    @property 
+    def sounds(self) -> list[pygame.mixer.Sound]:
+        return self._sounds
