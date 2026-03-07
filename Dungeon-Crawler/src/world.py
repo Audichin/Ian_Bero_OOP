@@ -48,6 +48,6 @@ class World:
     def music(self) -> str:
         return self._music
 
-    @property 
+    @property
     def sounds(self) -> list[pygame.mixer.Sound]:
         return self._sounds
