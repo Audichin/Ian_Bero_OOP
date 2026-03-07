@@ -29,8 +29,8 @@ class Game:
     _instance = None
 
     # --- constants ---
-    _FPS : int = 60
-    _VOLUME : float = 0.5
+    _FPS: int = 60
+    _VOLUME: float = 0.5
 
     __slots__ = ["_resolution"  # tuple[int, int]: manage screen resolution
                  , "_screen"  # Screen: Manage display
@@ -39,7 +39,7 @@ class Game:
                  , "_curr_music"  # str: playing currently
                  , "_world"]  # World: Object
 
-    def __new__(cls, *args) -> Self:
+    def __new__(cls, *args: tuple[int, int]) -> Self:
         """Simple singleton implementation"""
         if not cls._instance:
             cls._instance = super().__new__(cls)  # *args assumed added.
@@ -47,7 +47,7 @@ class Game:
             raise Exception("Cannot instantiate new singleton.")
         return cls._instance
 
-    def __init__(self, resolution : tuple[int, int] | None = None) -> None:
+    def __init__(self, resolution: tuple[int, int] | None = None) -> None:
         """
         Class Game Initializer.
         > Initializes variables belonging to Game.
@@ -60,13 +60,13 @@ class Game:
 
         _running = false.
         """
-        self._resolution : tuple[int, int] = (0, 0)
+        self._resolution: tuple[int, int] = (0, 0)
         if resolution is None:
             self._resolution = (1280, 720)
         else:
             self._resolution = resolution
-        self._running : bool = False
-        self._framerate : pygame.time.Clock = pygame.time.Clock()
+        self._running: bool = False
+        self._framerate: pygame.time.Clock = pygame.time.Clock()
 
         pygame.mixer.pre_init()  # No changes
 
@@ -88,13 +88,12 @@ class Game:
         * game state
         """
         pygame.init()
-        self._screen : pygame.Surface = pygame.display.set_mode(
-            self._resolution
-            , pygame.HWSURFACE)
+        self._screen: pygame.Surface = pygame.display.set_mode(
+            self._resolution, pygame.HWSURFACE)
         pygame.mixer.init()
         self._running = True
-        self._world : World = World()
-        self._curr_music : str = str()
+        self._world: World = World()
+        self._curr_music: str = str()
 
     # --- event handler ---
 
@@ -163,7 +162,7 @@ class Game:
         # set volumes
         music.set_volume(self._VOLUME)
 
-        world_music : str = self._world.music
+        world_music: str = self._world.music
 
         if world_music != self._curr_music:  # Fade out music.
             music.queue(world_music, loops=1)
@@ -173,7 +172,7 @@ class Game:
         # NOTE: I dont know if the above code works, I have no music to actually test
 
         # Get sounds
-        world_sounds : list[pygame.mixer.Sound] = self._world.sounds
+        world_sounds: list[pygame.mixer.Sound] = self._world.sounds
 
         for sound in world_sounds:
             sound.set_volume(self._VOLUME)
@@ -256,7 +255,7 @@ class Game:
         """
         Build the game here!
         """
-        game : Game = Game()
+        game: Game = Game()
         game.run_game()
 
 

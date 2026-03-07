@@ -26,14 +26,13 @@ class World:
     """
 
     __slots__ = ["_entities"  # list[Entity]
-                 , "_music"
-                 , "_sounds"]
+                 , "_music", "_sounds"]
 
     def __init__(self) -> None:
         """Init World"""
-        self._music : str = str()
-        self._sounds : list[pygame.mixer.Sound] = []  # empty
-        self._entities : list[Entity] = list[Entity]()
+        self._music: str = str()
+        self._sounds: list[pygame.mixer.Sound] = []  # empty
+        self._entities: list[Entity] = list[Entity]()
 
     def loop(self) -> None:
         # self._player.loop()
