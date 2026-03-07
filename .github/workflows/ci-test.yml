@@ -27,15 +27,18 @@ jobs:
           pip install flake8
           # can install packages from a requirements file
           if [ -f ci-cd-requirements.txt ]; then pip install -r ci-cd-requirements.txt; fi
+
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           # flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-          # FIXME
+          flake8 --count --show-source --statistics ./Dungeon-Crawler
+
       - name: Check types with mypy
         run: |
-          # FIXME
+          mypy --disallow-untyped-defs --strict ./Dungeon-Crawler
+
       - name: Test with pytest
         run: |
           # FIXME
