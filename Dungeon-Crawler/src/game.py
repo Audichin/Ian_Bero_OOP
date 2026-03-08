@@ -1,36 +1,24 @@
 """
-Wrapper module for my simple pygame experiment
+Game Module
 
-This project is intended to help us learn more about pygame, how to work
-in with its modules and make developer-friendly, modular, OOD friendly code.
+> Contains the Game singleton manager for everything within the game.
 
 As per the tutorial online, a game loop should look like this:
 
-while True:
-    event()
-    loop()
-    render()
+>>> while True:
+>>>     event()
+>>>     loop()
+>>>     render()
+>>>     sound()
 
 We handle events first, then run the next game loop (next frame)
 and then render the game to the screen last.
-
-In the render we want to do three things:
-
-def render(self) -> None:
-    # clear previous screen
-    clear()
-
-    # draw new screen
-    draw()
-
-    # play all sounds
-    play_sounds()
-
 """
 import sys
 from typing_extensions import Self
 
 import pygame
+import pygame.mixer_music as music
 from pygame import locals
 
 from world import World
@@ -40,79 +28,234 @@ class Game:
     """singleton obj"""
     _instance = None
 
-    __slots__ = ["_resolution"
-                 , "_screen"
-                 , "_running"
-                 , "_world"]
+    # --- constants ---
+    _FPS: int = 60
+    _VOLUME: float = 0.5
 
-    def __new__(cls) -> Self:
-        """simple singleton implementation"""
+    __slots__ = ["_resolution"  # tuple[int, int]: manage screen resolution
+                 , "_screen"  # Screen: Manage display
+                 , "_framerate"  # Clock: Manage framerate
+                 , "_running"  # boolean: game status
+                 , "_curr_music"  # str: playing currently
+                 , "_world"]  # World: Object
+
+    def __new__(cls, *args: tuple[int, int]) -> Self:
+        """Simple singleton implementation"""
         if not cls._instance:
-            cls._instance = super().__new__(cls)
+            cls._instance = super().__new__(cls)  # *args assumed added.
         else:
             raise Exception("Cannot instantiate new singleton.")
         return cls._instance
 
-    def __init__(self, resolution : tuple[int, int] | None = None) -> None:
-        """init fix me"""
+    def __init__(self, resolution: tuple[int, int] | None = None) -> None:
+        """
+        Class Game Initializer.
+        > Initializes variables belonging to Game.
 
-        self._resolution : tuple[int, int] = tuple[int, int]()
+        > Sets mixer values before initialization
+
+        Args:
+            resolution (tuple[int, int] | None, optional): Game resolution.
+            Defaults to (1280, 720)
+
+        _running = false.
+        """
+        self._resolution: tuple[int, int] = (0, 0)
         if resolution is None:
             self._resolution = (1280, 720)
         else:
             self._resolution = resolution
-        self._running : bool = False
+        self._running: bool = False
+        self._framerate: pygame.time.Clock = pygame.time.Clock()
+
+        pygame.mixer.pre_init()  # No changes
+
+    # --- game initialization ---
 
     def game_init(self) -> None:
-        """fixme"""
+        """
+        Game initializer
+        > Initializes the game objects when they are wanted.
+
+        > Opposed to __init__, this method should be called to initialize pygame objects.
+
+        > Should also initialize world.
+
+        Things to be initialized:
+        * pygame
+        * screen
+        * world
+        * game state
+        """
         pygame.init()
-        self._screen : pygame.Surface = pygame.display.set_mode(self._resolution, pygame.HWSURFACE)
+        self._screen: pygame.Surface = pygame.display.set_mode(
+            self._resolution, pygame.HWSURFACE)
+        pygame.mixer.init()
         self._running = True
-        self._world : World = World()
+        self._world: World = World()
+        self._curr_music: str = str()
+
+    # --- event handler ---
 
     def event_handler(self) -> None:
-        """fixme"""
+        """
+        Event Handler
+        > Handles all PyGame events.
+
+        Main events to handle:
+        * Quit
+            * Should close out of the game.
+        * etc. (May need other events)
+        """
         for event in pygame.event.get():
             if event.type == locals.QUIT:
                 self._running = False
-            # sys.exit()
 
-    def on_loop(self, x) -> None:
-        """do something"""
-        pygame.time.delay(1000)
-        if x % 2 == 0:
-            self._screen.fill("black")
-        else:
-            self._screen.fill("blue")
-        self._world.loop()
+    # --- render module ---
 
     def on_render(self) -> None:
-        """fixme"""
+        """
+        Rendering method
+        > Draws all objects to the screen by calling all draw() methods.
+
+        > Should probably only need to call _world.draw()
+
+        Objects to be drawn:
+        * World
+            * Entity
+                * Player
+                * Enemy
+                * etc.
+            * Item
+            * etc.
+        * etc.
+
+        Also calls sound handler.
+        """
         pygame.display.flip()
 
+        self.sound_handler()
+
+    # --- sound module ---
+
+    def sound_handler(self) -> None:
+        """
+        Sound Handler method.
+
+        May not be needed, but if it is:
+        > Handles all object sounds in a queue
+
+        Sound includes:
+        * Music
+        * Sound effects
+
+        STEPS:
+            1. Retrieve sound data from WORLD
+                * includes both sounds and music
+            2. Play music.
+                * If the music changed from the last, fade them.
+            3. Play sounds.
+                1. In a for loop, play all sounds that have been returned.
+
+        All of the above should be done at the _VOLUME constant.
+        """
+        # set volumes
+        music.set_volume(self._VOLUME)
+
+        world_music: str = self._world.music
+
+        if world_music != self._curr_music:  # Fade out music.
+            music.queue(world_music, loops=1)
+            if pygame.mixer.music.get_busy():
+                music.fadeout(100)
+
+        # NOTE: I dont know if the above code works, I have no music to actually test
+
+        # Get sounds
+        world_sounds: list[pygame.mixer.Sound] = self._world.sounds
+
+        for sound in world_sounds:
+            sound.set_volume(self._VOLUME)
+            sound.play()
+
+    # --- cleanup module ---
+
     def cleanup(self) -> None:
-        """clean the game"""
+        """
+        Cleanup method.
+
+        > Utilize this method every time the game closes down.
+
+        Things that should be cleaned up upon a game close:
+        * Audio handler
+        * Visual screen
+        * Anything else that needs to be safely shut down.
+        """
         pygame.display.quit()
         pygame.quit()
+        sys.exit()
+
+    # --- loop module ---
+
+    def on_loop(self) -> None:
+        """
+        Loop method.
+        > Calls the loop method of all in game objects with a loop method.
+
+        Those with loop methods should include:
+        * World
+            * Entity
+                * Player
+                * Enemy
+                * etc.
+            * Items
+            * etc.
+        * etc.
+        """
+        self._world.loop()
+        print(self._framerate.get_fps())
+
+    # --- run game module ---
 
     def run_game(self) -> None:
-        """fixme"""
+        """
+        Run Game method.
+        > Starts and continues to run the game in a while loop.
+
+        > Everything that the game does should be within the while-loop.
+
+        Game actions during run-time includes:
+        * Handling events
+        * Main game loop
+            * Player actions and movement
+            * Enemy actions and movement
+            * Dungeon room logic
+            * Puzzle logic
+            * Inventory handling
+            * etc.
+        * Render handler
+            * Dungeon rendering
+            * Player rendering
+            * Enemy rendering
+            * etc.
+            * also handles sounds!
+        """
         self.game_init()
-        x = 0
         while self._running:
             self.event_handler()
-
-            self.on_loop(x)
-            x += 1
-
+            self.on_loop()
             self.on_render()
-
+            self._framerate.tick(self._FPS)  # Game runs at 60fps
         self.cleanup()
+
+    # --- static methods ---
 
     @staticmethod
     def main() -> None:
-        """do something"""
-        game : Game = Game()
+        """
+        Build the game here!
+        """
+        game: Game = Game()
         game.run_game()
 
 
