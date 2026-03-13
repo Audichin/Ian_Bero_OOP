@@ -27,7 +27,7 @@ class SoundManager:
     def Setsounds(self, new_sounds: list[pygame.mixer.Sound]) -> None:
         self._sounds = new_sounds
     
-    def pause_music(self) -> None:
+    def pause_audio(self) -> None:
         """Pauses the music."""
         pygame.mixer.music.pause()
 
