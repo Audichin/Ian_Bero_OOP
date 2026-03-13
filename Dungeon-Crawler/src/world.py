@@ -13,10 +13,13 @@ Manages all items in the game world (rooms, entities, items, etc.)
 Ideally I believe there should only be one world at a time, managing levels, a single player, etc.
 (makes sense, let me know)
 """
+from random import random
+
 import pygame
 # from pygame import locals
 
 from entity import Entity
+from structures_orig import Dungeon
 
 
 class World:
@@ -26,13 +29,15 @@ class World:
     """
 
     __slots__ = ["_entities"  # list[Entity]
-                 , "_music", "_sounds"]
+                 , "_music", "_sounds", "_Dungeon"]
 
     def __init__(self) -> None:
         """Init World"""
         self._music: str = str()
         self._sounds: list[pygame.mixer.Sound] = []  # empty
         self._entities: list[Entity] = list[Entity]()
+        self._Dungeon: Dungeon = Dungeon(seed=random.randint(0, 1000000))
+        self._Dungeon.generate()
 
     def loop(self) -> None:
         # self._player.loop()

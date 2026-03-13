@@ -103,8 +103,11 @@ def main():
     Main function to run the game.
     > Initializes the game and starts the main game loop.
     """
-    Dungeon: Dungeon = Dungeon(seed=random.randint(0, 1000000))
+    dungeon: Dungeon = Dungeon(seed=random.randint(0, 1000000))
     print("Generated Dungeon:")
-    for room in Dungeon.rooms.values():
+    for room in dungeon.rooms.values():
         print(room)
+
+if __name__ == "__main__":
+    main()
     

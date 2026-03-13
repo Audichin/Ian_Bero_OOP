@@ -97,8 +97,7 @@ class Game:
         self._running = True
         self._world: World = World()
         self._curr_music: str = str()
-        self.Dungeon: Dungeon = Dungeon(seed=random.randint(0, 1000000))
-        self.Dungeon.generate()
+
 
 
     # --- event handler ---
