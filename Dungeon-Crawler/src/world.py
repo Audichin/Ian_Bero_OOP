@@ -17,7 +17,7 @@ import pygame
 # from pygame import locals
 
 from entity import Entity
-
+from sound import SoundManager
 
 class World:
     """
@@ -25,8 +25,15 @@ class World:
     Singleton?
     """
 
-    __slots__ = ["_entities"  # list[Entity]
-                 , "_music", "_sounds"]
+    __slots__ = ["_sound_manager"  # : SoundManager
+                 , "_sounds"  # : list[int] // int representation of sound
+                 , "_entities"
+                 , "_player"
+                 , "_item_slot"
+                 , "_inventory"
+                 , "_ui"
+                 , "_dungeon"
+                 , "_curr_room"]
 
     def __init__(self) -> None:
         """Init World"""
