@@ -1,0 +1,13 @@
+@startuml Music Diagram 
+Title: Basic Sequence 
+SoundManager -> __init__: Init functions and call loaders
+ __init__ -> add_music: Add the music inbedded in function
+ __init__ -> add_sound_effect: Add the sound effectes inbedded in function 
+add_music -> Load_audio: Finds file if it can and \nadds it to pygame.mixer.sound add_
+sound_effect -> Load_audio: Finds file if it can and \nadds it to pygame.mixer.sound
+ add_music -> _sounds: Append music onto list (9-12)
+ add_sound_effect -> _sounds: Append sound effects onto list (0-8)
+ _sounds -> play_audio: Given number (0-12) \nplays channel given in __init__ 
+_sounds -> stop_audio: Given number (0-12) \nstops channel given in __init__ 
+pause_audio -> pause_audio: Does a general pause \nof any ongoing audio
+@enduml

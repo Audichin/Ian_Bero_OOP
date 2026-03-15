@@ -1,0 +1,31 @@
+@startuml UI Diagram
+
+Title UI Class Diagram
+
+class UI
+{
+    attributes
+    ----
+    -_gen_assets: dict 
+    -_item_assets: dict
+    ....
+    -_health: int
+    -_bombs: int
+    -_keys: int
+    -_item_slot: str
+    ....
+    +health: int
+    +bombs: int
+    +keys: int
+    +item: str
+    ----
+    methods
+    ----
+    -__init__(): None
+    ....
+    +render(): None
+    ....
+    +update(): None
+}
+
+@enduml

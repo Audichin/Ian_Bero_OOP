@@ -1,0 +1,37 @@
+@startuml Entity class diagram
+
+Title Entity Diagram
+
+class Entity {
+attributes
+----
+-_assets: dict
+....
+-_position: Vector2
+-_velocity: Vector2
+-_speed: float
+-_max_speed: float
+....
+-_sounds: list[int]
+....
+-_HP: int
+....
+-_hit_box: Rect
+-_sprite: image
+....
++HP: int
++speed: int
+----
+methods
+----
+-__init__(): None
+....
++loop(): None
++render(): None
+....
++move(dir: Vector2): None
++collide(): None
++play_sound(idnx: int): None
+}
+
+@enduml

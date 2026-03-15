@@ -74,7 +74,7 @@ class Game:
 
     # --- game initialization ---
 
-    def game_init(self) -> None:
+    def _game_init(self) -> None:
         """
         Game initializer
         > Initializes the game objects when they are wanted.
@@ -232,7 +232,7 @@ class Game:
             * etc.
             * also handles sounds!
         """
-        self.game_init()
+        self._game_init()
         while self._running:
             self.event_handler()
             self.on_loop()

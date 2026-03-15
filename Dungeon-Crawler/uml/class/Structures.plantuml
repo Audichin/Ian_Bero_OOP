@@ -1,0 +1,29 @@
+@startuml Structures Diagram
+
+Title Implement and Relationship of Room and Dungeon
+Class Room {
+..attributes..
+-x: int
+-y: int
+-room_type: str
+-connections: list
+..methods..
++connect(other_room: Room): None
+}
+
+Class Dungeon {
+..attributes..
+-seed: Any
+-total_rooms: int
+-min_puzzle_rooms: int
+-rooms: dict
+-rng: random
+..methods..
++generate(): None
+-_generate_layout(): None
+-_find_farthest_room(start: dict): Room
+-_assign_room_types(): None
+}
+
+Dungeon "1" --* "many" Room:Contains
+@enduml

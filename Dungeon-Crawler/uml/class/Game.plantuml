@@ -1,0 +1,34 @@
+@startuml Game class DiagramBorderColor
+
+Title Game Diagram
+
+class Game {
+    attributes
+    ----
+    -_FPS: int
+    -_VOLUME: float
+    ....
+    -_resolution: tuple[int, int]
+    -_screen: Surface
+    -_framerate: Clock
+    -_running: bool
+    -_curr_music: str
+    -_world: World
+    -_seed: Any
+    ----
+    methods
+    ----
+    -__new__(*args, **kwargs): Self
+    -__init__(seed: Any, resolution: tuple[int, int] | None = None): None
+    ....
+    -_game_init(): None
+    ....
+    +event_handler(): None
+    +on_render(): None
+    +sound_handler(): None
+    +cleanup(): None
+    +on_loop(): None
+    +run_game(): None
+}
+
+@enduml

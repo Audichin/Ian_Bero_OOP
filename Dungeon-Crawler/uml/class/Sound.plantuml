@@ -1,0 +1,30 @@
+@startuml diagram music 
+
+title Implementation of Sound 
+
+class SoundManager{ 
+    attributes 
+    ----
+    -_music: str 
+    -_sounds: list[pygame.mixer.Sound] 
+    -pygame.mixer.set_num_channels(16)
+    ----
+    methods
+    ----
+    - __init__(self): None
+    ....
+    + Getmusic(self): str 
+    + Getsounds(self): list[pygame.mixer.Sound] 
+    ....
+    + Setmusic(self, new_music: str): None 
+    + Setsounds(self, new_sounds: list[pygame.mixer.Sound]): None 
+    ....
+    + pause_audio(self): None 
+    + stop_audio(self, sound_index: int): None 
+    ....
+    + play_audio(self, sound_index: int): None 
+    + add_music(self): None 
+    + add_sound_effect(self): None 
+    + load_audio(self, file_path): pygame.mixer.Sound
+} 
+@enduml

@@ -1,0 +1,20 @@
+@startuml Item sequence diagram
+
+Title Item sequence
+
+World -> Item: initialize **Item**
+Item -> Item: set **type** and **assets**\n(some items animate)\nif **item** exists in the Room,\nset **position**
+==loop==
+World -> Item: call //loop()//
+Item -> func_loop: update **item**\n(if item is in an action, this\nis where the action continues)
+==render==
+World -> Item: call //render()//
+Item -> func_render: render **item**
+func_render <-> Item: pull **assets**
+func_render -> Item: animate (if there is an animation)\nand display to screen
+==action==
+World -> Item: call //action()//
+Item -> func_action: perform **item** action
+func_action -> func_action: depending on the item,\nthis action is a **pickup**, an\n**attack**, or something else.
+
+@enduml

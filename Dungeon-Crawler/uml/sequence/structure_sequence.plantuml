@@ -1,0 +1,26 @@
+@startuml Dungeon sequence
+
+title Dungeon Sequence
+
+actor User
+User -> Dungeon: -Gets call from game.py \n-When user desides to start the game \n-Creates Dungeon class
+Dungeon -> Dungeon_init: -Creates variables and follows Dungeon creation \n-Calls generate() 
+Dungeon_init -> Generate: Calls _generate_layout() and _assign_room_types()
+==Generate Layout==
+Generate -> _generate_layout: -Calls function to make general layout
+_generate_layout <-> Room: -Creates Room class
+Room <-> Room_init: -Creates variables, connect() & string print function
+loop while we need more rooms
+    _generate_layout -> _generate_layout: -Based on the seed, choose a \nrandom direction to go based on the current room selection
+    _generate_layout <-> Room: -Creates Room class and uses connect to make connections 
+    _generate_layout -> _generate_layout: -Appends the new room to active_rooms (made in init)
+end
+==Generate room styles==
+Generate -> _assign_room_types: -Calls function to assign rooms based on general layout
+_assign_room_types <-> _find_farthest_room: -Calls function to set boss room, \nthis is to make sure our boss room is \nas far away as possible \n-Make sure none of the other rooms are boss rooms \n-Set at least 4 rooms to puzzle rooms \n-Sets the rest of the rooms as enemy rooms
+==Finding farthest room==
+loop while queue isn't 0
+    _find_farthest_room -> _find_farthest_room: -If distance is farthar than the current farthest, update \n-Find the next neighbor still in the list
+end
+_find_farthest_room -> _find_farthest_room: -Farthest will be eventually set to the farthest point from (0,0)
+@enduml
