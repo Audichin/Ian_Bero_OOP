@@ -1,0 +1,53 @@
+@startuml Relationships
+
+Title =Dungeon Crawler Module Implementation
+
+class Game <<singleton>>
+class World
+class SoundManager
+class Entity
+class Item
+class UI <<singleton>>
+class Dungeon
+class Room
+interface pygame
+
+' Pygame connections
+Entity --> pygame: //inherits **Sprite**//
+Game ..|> pygame: //utilizes//
+World ..|> pygame: //utilizes//
+UI --> pygame: //inherits **WeakSprite**//
+Item --> pygame: //inherits **Sprite**//
+
+'Game connections
+Game "1" --|> "1" World: //implements//
+
+'World connections
+World --|> "many" Entity: //contains//
+World --|> "many" Item: //contains//
+World --|> "1" SoundManager: //calls to//
+World --|> "1" UI: //manages//
+World --|> "1" Dungeon: //manages//
+
+'Dungeon connections
+Dungeon "1" --|> "many" Room: //contains//
+
+note as N1
+=== OOD Design:
+This project was created under Object Oriented Design
+constraints. Games are inherently designed using
+OOD, and this game is no different.
+
+The **Game** class handles **pygame** display, loops,
+checks if the game is running or closes, executes
+clean up, and framerate.
+
+The ** World** class handles everything within the 
+constraints of the game world itself. All **objects** 
+within the world are handled by **World**, and 
+communicate back and forth each frame.
+
+__//Notes//__
+* Classes inheriting **Entity** and **Item** not shown.
+end note
+@enduml

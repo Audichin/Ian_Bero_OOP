@@ -1,0 +1,29 @@
+@startuml Game class sequence
+
+Title Game Sequence
+
+actor User
+User -> Game: initialize **Game**
+Game -> Game: Set-up **pygame** display,\nsound, **FPS**, **Volume**
+Game -> World: Initialize **World**
+
+==Running Game==
+    group while running
+    User -> Game: //run// **game**
+    Game -> Game: Handle **events**\n(close game, etc.)
+    Game -> func_loop: call **looping** methods
+    func_loop -> World: call //loop()//
+    
+    ==Render Game==
+    Game -> func_render: render **display** and **sounds**
+    func_render -> World: call **world** //render()//
+    func_render -> func_render: //flip// screen
+    func_render -> Game: set **Volume** and **music**\n(loop music. Fade music during a switch)
+end
+
+==Quit Game==
+User -> Game: send **QUIT** event\n(click X, alt+F4)
+Game -> func_cleanup: call //cleanup()// to close all.
+func_cleanup -> Game: quit **pygame** objects.
+
+@enduml

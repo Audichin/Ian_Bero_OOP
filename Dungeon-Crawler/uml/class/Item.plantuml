@@ -1,0 +1,24 @@
+@startuml Item class diagram
+
+Title Item Diagram
+
+class Item {
+    attributes
+    ----
+    -_assets: dict
+    -_type: str
+    -_position: Vector2
+    ....
+    +type: str
+    ----
+    methods
+    ----
+    -__init__(): None
+    ....
+    +loop(): None
+    +render(): None
+    ....
+    +action(): None
+}
+
+@enduml

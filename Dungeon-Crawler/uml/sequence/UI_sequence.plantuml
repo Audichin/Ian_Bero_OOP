@@ -1,0 +1,19 @@
+@startuml UI Sequence Diagram
+
+Title UI sequence
+
+World -> UI: initialize **UI**
+UI <-> World: request and receive **data**\n(player data, item data)
+UI -> UI: set **image assets** and\nset values
+==update==
+World -> UI: call //ui_update()//
+UI -> func_update: update all **UI** elements
+func_update <-> World: request and recieve **data**
+func_update -> UI: set values for **health**,\n**items**, **bombs**, **keys**
+==render==
+World -> UI: call //render()//
+UI -> func_render: render **images** to screen
+func_render <-> UI: pull **values** and **assets**
+func_render -> UI: display **UI** elements to screen.
+
+@enduml

@@ -1,0 +1,33 @@
+@startuml World Sequence Diagram
+Title World Sequence
+
+actor User
+User -> Game: Run Game
+Game -> World: Initialize **World**
+World -> World: Call initializers
+==World init==
+World <-> soundManager: Initialize **SoundManager**
+World -> World: Initialize **_entities** list
+World <-> Player: Initialize **Player**
+World -> World: Initialize **_item_slot**\nand **_inventory** for\nfuture handling
+World <-> UI: Initialize **UI**
+World <-> Dungeon: Initialize **Dungeon**\nand **_curr_room**
+==loop World==
+Game -> World: run frame\nexecute //loop()//
+World -> World: Execute **Entity** loops\nand **recieve actions**
+World -> Player: Execute **Player** loop
+Player -> World: Pass **player actions**
+World -> Dungeon: call //update_room()//
+World -> UI: call //update_ui()//
+==render World==
+Game -> World: call world //render()//
+group recieve renders
+    World -> World: call **entity** renders
+    World -> Player: call **Player** render
+    World -> UI: call **UI** render
+    World -> Dungeon: call **Room** render
+    World -> World: render **items**
+end
+World -> Game: end render
+Game -> Game: end frame
+@enduml

@@ -1,0 +1,43 @@
+@startuml World Class Diagram
+
+Title World Diagram
+
+class World
+{
+----
+attributes
+----
+-_sound_manager: SoundManager​
+-_sounds: list[int]​
+....
+-_entities: list[Entity]​
+-_player: Player​
+-_item_slot: Item​
+-_inventory: list[Item]​
+....
+-_ui: UI​
+....
+-_dungeon: Dungeon​
+_curr_room: Room
+----
+methods
+----
++__init__(): None
+-_sound_init():  None​
+-_dungeon_init(): None​
+-_entity_init(): None​
+-_ui_init(): None​
+....
++loop(): None
++render(): None
+....
++set_world_music(): None
++update_room(): None
++update_ui():
+....
++get_collide(entity: Entity): boolean
++player_action(action): None
++enemy_action(action): None
+}
+
+@enduml

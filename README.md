@@ -9,25 +9,25 @@ Ian and Heriberto OOP project
 | **Course**          | CSCI375 - OOP and Design Patterns              |
 | **Section**         | 1                                              |
 | **Semester**        | Spring 20256                                   |
-| **Students**        | Ian Mooney & Heriberto Dominguez                |
+| **Students**        | Ian Mooney & Heriberto Dominguez               |
 | **Mav Usernames**   | Imooney & bdominguez                           |
-| **GitHub Username** | Audichin                                       |
+| **GitHub Username** | Audichin & PerroBetto                          |
 | **Repository**      | https://github.com/Audichin/Ian_Bero_OOP.git   |
 
 ## Assignments
 
 ### Project
 
-| Name        | Value                                                                                                                            |
-| :---------- | :------------------------------------------------------------------------------------------------------------------------------- |
-| Name        |                                                                                                                                  |
-| Description |                                                                                                                                  |
-| Due Date    | --/--/----                                                                                                                       |
-| Status      |                                                                                                                                  |
-| Location    |                                                                                                                                  |
-|Code Location|                                                                                                                                  |
-| Self Grade  | ---/---                                                                                                                          |
-| Notes       |                                                                                                                                  |
+| Name        | Value                                                                        |
+| :---------- | :--------------------------------------------------------------------------- |
+| Name        | Dungeon Cralwer (Name not final)                                             |
+| Description | A simple 2D top-down dungeon crawler inspired by The Legend of Zelda         |
+| Due Date    | 12/05/2026                                                                   |
+| Status      | on-track                                                                     |
+| Location    | https://github.com/PerroBetto/Ian_Betto_OOP/tree/main/Dungeon-Crawler        |
+|Code Location| https://github.com/PerroBetto/Ian_Betto_OOP/tree/main/Dungeon-Crawler/src    |
+| UML Location| https://github.com/PerroBetto/Ian_Betto_OOP/tree/main/Dungeon-Crawler/uml    |
+| Assets      | https://github.com/PerroBetto/Ian_Betto_OOP/tree/main/Dungeon-Crawler/assets |
 
 # Difficulties with Docker
 > [!NOTE]

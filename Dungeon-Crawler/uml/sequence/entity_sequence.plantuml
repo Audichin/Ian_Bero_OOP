@@ -1,0 +1,20 @@
+@startuml Entity class Sequence Diagram
+
+Title Entity Sequence Diagram
+
+World <-> Entity: initialize **entity**\nin current room
+==run Loop==
+World -> Entity: execute //loop()//
+Entity -> func_move: call //move()//
+func_move -> func_move: If **velocity** has values,\nchange position\nand reduce **velocity**
+Entity -> func_collide: call //collide()//
+func_collide <-> World: get **collision data**
+func_collide -> func_collide: Check type of **collision**.\nIf **collision **is __solid__, revert\nand clamp movement.
+==render==
+World -> Entity: call //render()//
+Entity -> func_render: render the entity to the screen.
+Entity -> func_play_sound: In the case where a sound is played,\n**entity**executes this function.
+func_play_sound -> Entity: store sound to be played.
+World <- Entity: Play sound
+
+@enduml

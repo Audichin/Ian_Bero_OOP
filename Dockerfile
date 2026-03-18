@@ -52,5 +52,5 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -p https://github.com/zsh-users/zsh-completions
 
 ENV PATH="${HOME}/.local/bin:$PATH"
-ENV DISPLAY=host.docker.internal:0.0
+# ENV DISPLAY=host.docker.internal:0.0
 CMD zsh
