@@ -1,0 +1,34 @@
+@startuml Deployment
+
+title =Dungeon Crawler Deployment Diagram
+
+node "User controls" {
+component "Mouse"
+component "Keyboard"
+component "Monitor"
+component "Speakers"
+}
+node "entity.py"{
+component "Move()"
+}
+node "game.py"{
+component "Run_game()"
+component "main()"
+}
+node "world.py"{
+component "__init__"
+}
+node "sound.py"{
+component "Play_audio()"
+}
+' Define connections
+actor user 
+user --> "User controls": User can interact with the mouse, keyboard, and \nview through the monitor
+"Mouse" --> "main()": User clicks the .exe \nfile to boot the game
+"Keyboard" --> "Move()": User uses {W,S,A & D} to move \nmoves player depending on how long \nthe keyboard is pressed
+"Mouse" --> "Play_audio()": User clicks mouse to interact \nwith the item or deal damage
+"Play_audio()" --> "Speakers": Needed audio plays through \nuser's specified audio output
+"main()" --> "Run_game()": game functions are loaded \nand game loop starts
+"Run_game()" --> "__init__": Loads all functions for user to use
+"Run_game()" --> "Monitor": Once all functions have had their \nchance to perform, the screen is updated
+@enduml

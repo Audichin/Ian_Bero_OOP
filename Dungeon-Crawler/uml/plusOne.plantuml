@@ -1,0 +1,28 @@
+@startuml plusOne
+
+Title =Dungeon Crawler Context View
+
+actor User
+rectangle "Game system"{
+}
+rectangle "Sound system"{
+}
+rectangle "Room system"{
+}
+rectangle "Movement system"{
+}
+rectangle "Menu system"{
+}
+rectangle "Render system"{
+}
+
+User --> "Game system": Keyboard inputs \nMouse inputs
+User <-- "Game system": Audio outputs \nMonitor outputs
+
+"Game system" --> "Sound system": Play audio given \naction/interaction
+"Game system" --> "Room system": Change room and \ngive room data
+"Game system" --> "Movement system": Move character and enemies
+"Game system" --> "Menu system": Handle user quit and other options
+"Game system" --> "Render system": Render game to display
+
+@enduml
