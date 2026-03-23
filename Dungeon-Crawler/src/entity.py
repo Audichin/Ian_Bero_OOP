@@ -13,74 +13,121 @@ Good examples:
 Objects that inherit entity should override entity methods and call super()
 at the end of each overridden method.
 """
-# import typing_extensions
-# import pygame
-from pygame import Vector2
-import pygame.mixer as mixer
+import pygame
+from pygame import Vector2, sprite, Surface, Rect
+
+from world import World
 # from pygame import locals
 
 
-class Entity:
+class Entity(sprite.Sprite):
     """
     Base class for all entity types.
     """
-    __slots__ = ["_position", "_velocity", "_speed", "_max_speed",
-                 "_hitpoints", "_curr_sound"]  # sound currently playing
+    __slots__: list[str] = ["_world"  # World
+                            "_assets",  # dict[Surface]
+                            "_position",  # Vector2
+                            "_velocity",  # Vector2
+                            "_speed",  # float
+                            "_max_speed",  # float
+                            "_sounds",  # list[int]
+                            "_HP",  # int
+                            "_rect",  # Rect
+                            "_image"]  # Surface
 
-    def __init__(
-            self,
-            position: Vector2 = Vector2(0, 0),
-            velocity: Vector2 = Vector2(0, 0),
-            speed: float = 5.0,
-            max_speed: float = 10.0,
-            hitpoints: int = 100) -> None:
-        """Entity Init.
-
-        Args:
-            position (tuple[float, float], optional): Entity Position
-            velocity (tuple[float, float], optional): Entity Velocity
-            speed (float, optional): Entity speed.
-            max_speed (float, optional): Maximum possible speed.
-            hitpoints (int, optional): Entity health.
+    def __init__(self, world: World,
+                 position: Vector2 = Vector2(0, 0),
+                 speed: float | None = None,
+                 max_speed: float | None = None,
+                 HP: int | None = None,
+                 img: Surface | None = None,
+                 rct: Rect | None = None) -> None:
         """
-        self._position: Vector2 = position  # x, y
-        self._velocity: Vector2 = velocity  # x, y
-        self._speed: float = speed
-        self._max_speed: float = max_speed
-        self._hitpoints: int = hitpoints
-
-        #  temp
-        self._curr_sound: mixer.Sound = mixer.Sound("")
-
-    def loop(self) -> None:
-        self.move()
-        print(f"pos: {self._position}\nvel: {self._velocity}")
-
-    def move(self, x_dir: int = 0, y_dir: int = 0) -> None:
-        """Check if there is a direction. If so, increase velocity in that position. Otherwise,
-        bring it to zero.
-
-        Args:
-            direction (tuple[int, int] | None, optional): Direction of movement. Defaults to None.
+        Initialize Entity
         """
+        super().__init__()
+        self._world = world
 
-        if x_dir != 0:
-            self._velocity.x += (self._speed * x_dir)
-        elif self._velocity.x != 0.0:
-            self._velocity.x += ((-(self._velocity.x) / abs(self._velocity.x)) * self._speed)
+        self._position: Vector2 = position
 
-            self._velocity.x = 0.0 if abs(self._velocity.x) < 0.5 else self._velocity.x
+        self.speed = speed if speed else 0.0
+        self._max_speed: float = max_speed if max_speed else 0.0
+        self.HP = HP if HP else 100
 
-        if y_dir != 0:
-            self._velocity.y += (self._speed * y_dir)
-        elif self._velocity.y != 0.0:
-            self._velocity.y += ((-(self._velocity.y) / abs(self._velocity.y)) * self._speed)
+        self._velocity: Vector2 = Vector2()
+        self._sounds: list[int] = list[int]()
 
-            self._velocity.y = 0.0 if abs(self._velocity.y) < 0.5 else self._velocity.y
+        self._assets: dict[str, Surface] = dict[str, Surface]()
 
-        self._position.x += self._velocity.x
-        self._position.y += self._velocity.y
+        self.image = img if img else Surface([0, 0])
+        self.rect = rct if rct else Rect(0.0, 0.0, 0.0, 0.0)
+
+# ----- properties -----
 
     @property
-    def curr_sound(self) -> mixer.Sound:
-        return self._curr_sound
+    def image(self) -> Surface:
+        """FIXME"""
+        return self._image
+
+    @image.setter
+    def image(self, other: Surface) -> None:
+        """FIXME"""
+        self._image: Surface = other
+
+    @property
+    def rect(self) -> Rect:
+        """FIXME"""
+        return self._rect
+
+    @rect.setter
+    def rect(self, other: Rect) -> None:
+        """FIXME"""
+        self._rect: Rect = other
+
+    @property
+    def HP(self) -> int:
+        """FIXME"""
+        return self._HP
+
+    @HP.setter
+    def HP(self, other: int) -> None:
+        """FIXME"""
+        self._HP: int = other
+
+    @property
+    def speed(self) -> float:
+        """FIXME"""
+        return self._speed
+
+    @speed.setter
+    def speed(self, other: float) -> None:
+        """FIXME"""
+        self._speed: float = other
+
+# ----- base methods -----
+
+    def update(self) -> None:  # type: ignore
+        """FIXME"""
+        self.loop()
+
+    def loop(self) -> None:
+        """FIXME"""
+        pass
+
+    def render(self) -> None:
+        """FIXME"""
+        pass
+
+# ----- entity methods -----
+
+    def move(self, dir: Vector2) -> None:
+        """FIXME"""
+        pass
+
+    def collide(self) -> None:
+        """FIXME"""
+        pass
+
+    def play_sound(self, indx: int) -> None:
+        """FIXME"""
+        pass
