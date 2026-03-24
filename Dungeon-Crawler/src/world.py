@@ -17,7 +17,7 @@ NOTE: MUUUCHH of the functionality is commented to allow the program to remain
 functional. Please be sure to un-comment lines of code you are able to use.
 """
 from typing import Any
-# import pygame
+import pygame
 # from pygame import locals
 
 # from sound import SoundManager
@@ -96,6 +96,10 @@ class World:
         > the starting room. All regular values should be set.
         """
         self._entities: list[Entity] = list[Entity]()
+        img = pygame.image.load("../assets/visual/sprites/test.png").convert_alpha()
+        img = pygame.transform.scale(img, [img.get_width() * 4, img.get_height() * 4])  # scale up
+        self._entities.append(Entity(self, img=img, speed=10, max_speed=10, friction=.05))
+        self._entities[0].move(pygame.Vector2(1, 1))
         # self._player : Player = Player()
 
     def _ui_init(self) -> None:  # FIXME
@@ -126,16 +130,17 @@ class World:
         """
         # self._player.loop()  # FIXME
 
-        for indx, entity in enumerate(self._entities):
+        for indx, _entity in enumerate(self._entities):
             self._entities[indx].loop()
+            print(_entity.move_speed)
 
         self.update_room
         self.update_ui
-        print("world-loop")
+        # print("world-loop")
 
 # --- render method ---
 
-    def render(self) -> None:  # FIXME
+    def render(self) -> list[tuple[pygame.surface.Surface, pygame.rect.Rect]]:  # FIXME
         """
         World Render method.
         > Called once at the end of each frame by game, **AFTER** loop.
@@ -162,7 +167,12 @@ class World:
 
         # self._ui.render()
         # self._curr_room.render()
-        print("world-render")
+
+        temp = []
+        for indx, _entity in enumerate(self._entities):
+            temp.append(self._entities[indx].render())
+
+        return temp
 
 # --- sound methods ---
 
@@ -235,7 +245,7 @@ class World:
         Args:
             action (str): Action ID passed by player.
         """
-        pass
+        print(action)
 
     def entity_action(self, entity: Entity, action: str) -> None:  # FIXME
         """
@@ -244,12 +254,17 @@ class World:
 
         > this function is to be called by that entity.
 
+        Actions:
+        * collision
+        * attack
+
         Args:
             entity (Entity): Entity calling the function.
 
             action (str): Action ID passed by the entity.
         """
-        pass
+        print(action)
+        entity.move(pygame.Vector2(1, 1))
 
 # --- properties ---
 

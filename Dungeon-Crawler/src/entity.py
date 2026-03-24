@@ -13,10 +13,10 @@ Good examples:
 Objects that inherit entity should override entity methods and call super()
 at the end of each overridden method.
 """
+from typing import Any
 import pygame
 from pygame import Vector2, sprite, Surface, Rect
 
-from world import World
 # from pygame import locals
 
 
@@ -24,43 +24,48 @@ class Entity(sprite.Sprite):
     """
     Base class for all entity types.
     """
-    __slots__: list[str] = ["_world"  # World
+    __slots__: list[str] = ["_world"  # Any (World this entity belongs to)
                             "_assets",  # dict[Surface]
                             "_position",  # Vector2
                             "_velocity",  # Vector2
                             "_speed",  # float
                             "_max_speed",  # float
+                            "_friction",  # float
                             "_sounds",  # list[int]
                             "_HP",  # int
                             "_rect",  # Rect
                             "_image"]  # Surface
 
-    def __init__(self, world: World,
+    def __init__(self, world: Any,
                  position: Vector2 = Vector2(0, 0),
-                 speed: float | None = None,
-                 max_speed: float | None = None,
+                 speed: float = 5.0,
+                 max_speed: float = 5.0,
+                 friction: float = .75,
                  HP: int | None = None,
-                 img: Surface | None = None,
-                 rct: Rect | None = None) -> None:
-        """
-        Initialize Entity
-        """
+                 img: Surface | None = None) -> None:
+        """FIXME"""
         super().__init__()
         self._world = world
 
         self._position: Vector2 = position
 
-        self.speed = speed if speed else 0.0
-        self._max_speed: float = max_speed if max_speed else 0.0
+        self.speed = speed
+        self._max_speed: float = max_speed
         self.HP = HP if HP else 100
 
         self._velocity: Vector2 = Vector2()
+        self._friction: float = friction
         self._sounds: list[int] = list[int]()
 
         self._assets: dict[str, Surface] = dict[str, Surface]()
 
         self.image = img if img else Surface([0, 0])
-        self.rect = rct if rct else Rect(0.0, 0.0, 0.0, 0.0)
+        self._rect: Rect = self.image.get_rect()
+        self.set_rect()
+
+    def assets_init(self, width: int, height: int, sheet: Surface) -> None:
+        """FIXME"""
+        pass
 
 # ----- properties -----
 
@@ -71,7 +76,6 @@ class Entity(sprite.Sprite):
 
     @image.setter
     def image(self, other: Surface) -> None:
-        """FIXME"""
         self._image: Surface = other
 
     @property
@@ -79,10 +83,9 @@ class Entity(sprite.Sprite):
         """FIXME"""
         return self._rect
 
-    @rect.setter
-    def rect(self, other: Rect) -> None:
+    def set_rect(self) -> None:
         """FIXME"""
-        self._rect: Rect = other
+        self._rect.center = (int(self._position.x), int(self._position.y))
 
     @property
     def HP(self) -> int:
@@ -91,7 +94,6 @@ class Entity(sprite.Sprite):
 
     @HP.setter
     def HP(self, other: int) -> None:
-        """FIXME"""
         self._HP: int = other
 
     @property
@@ -101,8 +103,11 @@ class Entity(sprite.Sprite):
 
     @speed.setter
     def speed(self, other: float) -> None:
-        """FIXME"""
         self._speed: float = other
+
+    @property
+    def move_speed(self) -> float:
+        return self._velocity.magnitude()
 
 # ----- base methods -----
 
@@ -112,21 +117,61 @@ class Entity(sprite.Sprite):
 
     def loop(self) -> None:
         """FIXME"""
-        pass
+        self.move()
+        self.collide()
 
-    def render(self) -> None:
+    def render(self) -> tuple[Surface, Rect]:
         """FIXME"""
-        pass
+        return (self.image, self.rect)
 
 # ----- entity methods -----
 
-    def move(self, dir: Vector2) -> None:
-        """FIXME"""
-        pass
+    def move(self, dir: Vector2 | None = None) -> None:
+        """
+        Movement for an Entity object.
+
+        Entities move in accordance to direction
+
+        Args:
+            dir (Vector2 | None, optional): Direction of acceleration. Defaults to None.
+        """
+        # add direction
+        if not dir:
+            dir = Vector2()
+
+        self._velocity += Vector2(dir.x * self.speed, dir.y * self.speed)
+
+        # handle x
+        try:
+            self._velocity.x += -(self._velocity.x / abs(self._velocity.x)) * self._friction
+            if abs(self._velocity.x) < self._friction:
+                self._velocity.x = 0
+        except ZeroDivisionError:
+            pass
+
+        try:
+            self._velocity.y += -(self._velocity.y / abs(self._velocity.y)) * self._friction
+            if abs(self._velocity.y) < self._friction:
+                self._velocity.y = 0
+        except ZeroDivisionError:
+            pass
+
+        # velocity clamping (check x and y of velocity)
+        try:
+            norm = self._velocity.normalize()
+            xclamp = abs(norm.x) * self._max_speed if norm.x else self._max_speed
+            yclamp = abs(norm.y) * self._max_speed if norm.y else self._max_speed
+            self._velocity.x = pygame.math.clamp(self._velocity.x, -xclamp, xclamp)
+            self._velocity.y = pygame.math.clamp(self._velocity.y, -yclamp, yclamp)
+        except ValueError:
+            pass
+
+        self._position += self._velocity
+        self.rect.center = (int(self._position.x), int(self._position.y))
 
     def collide(self) -> None:
         """FIXME"""
-        pass
+        self._world.entity_action(self, "collision")
 
     def play_sound(self, indx: int) -> None:
         """FIXME"""
