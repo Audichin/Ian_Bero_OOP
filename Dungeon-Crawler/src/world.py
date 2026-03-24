@@ -86,8 +86,8 @@ class World:
             seed (Any): Dungeon seed
         """
         self._dungeon_seed: Any = seed
-        # self._dungeon: Dungeon = Dungeon(self._dungeon_seed)
-        # self._curr_room: Room = Room(0, 0)
+        self._Dungeon: Dungeon = Dungeon(seed=random.randint(0, 1000000))
+        self._Dungeon.generate()
 
     def _entity_init(self) -> None:
         """
