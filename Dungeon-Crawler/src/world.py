@@ -17,7 +17,7 @@ NOTE: MUUUCHH of the functionality is commented to allow the program to remain
 functional. Please be sure to un-comment lines of code you are able to use.
 """
 from typing import Any
-from random import random
+import random
 
 import pygame
 # from pygame import locals
@@ -85,9 +85,9 @@ class World:
         Args:
             seed (Any): Dungeon seed
         """
-        self._dungeon_seed: Any = seed
-        self._Dungeon: Dungeon = Dungeon(seed=random.randint(0, 1000000))
-        self._Dungeon.generate()
+        self._dungeon_seed: Any = random.randint(0, 1000000)
+        self._dungeon: Dungeon = Dungeon(seed= self._dungeon_seed)
+        self._dungeon.generate()
 
     def _entity_init(self) -> None:
         """
