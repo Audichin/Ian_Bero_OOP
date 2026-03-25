@@ -38,6 +38,7 @@ class World:
     """
 
     __slots__ = ["_sound_manager"  # : SoundManager
+                 , "_time"  # : float
                  , "_sounds"  # : list[int] // int representation of sound
                  , "_entities"  # : list[Entity]
                  , "_player"  # : Player
@@ -74,6 +75,8 @@ class World:
         # initialize dungeon
         self._dungeon_init(seed)
 
+        self._time: float = float()
+
     def _dungeon_init(self, seed: Any) -> None:
         """
         Dungeon structure initializer.
@@ -96,10 +99,7 @@ class World:
         > the starting room. All regular values should be set.
         """
         self._entities: list[Entity] = list[Entity]()
-        img = pygame.image.load("../assets/visual/sprites/test.png").convert_alpha()
-        img = pygame.transform.scale(img, [img.get_width() * 4, img.get_height() * 4])  # scale up
-        self._entities.append(Entity(self, img=img, speed=10, max_speed=10, friction=.05))
-        self._entities[0].move(pygame.Vector2(1, 1))
+        self._entities.append(Entity(self, speed=100, max_speed=300, friction=25))
         # self._player : Player = Player()
 
     def _ui_init(self) -> None:  # FIXME
@@ -116,7 +116,7 @@ class World:
 
 # --- loop method ---
 
-    def loop(self) -> None:
+    def loop(self, delta: float) -> None:
         """
         World Loop method.
         > Once per frame, loop() should be called. In a game loop, all logic is processed.
@@ -129,10 +129,12 @@ class World:
         - etc
         """
         # self._player.loop()  # FIXME
+        self._time += delta
+        # print(self._time)
 
         for indx, _entity in enumerate(self._entities):
-            self._entities[indx].loop()
-            print(_entity.move_speed)
+            self._entities[indx].loop(delta)
+            print(f"{_entity}: {_entity.move_speed}")
 
         self.update_room
         self.update_ui
@@ -263,8 +265,8 @@ class World:
 
             action (str): Action ID passed by the entity.
         """
-        print(action)
-        entity.move(pygame.Vector2(1, 1))
+        # print(action)
+        # entity.move(pygame.Vector2(1, 1))
 
 # --- properties ---
 

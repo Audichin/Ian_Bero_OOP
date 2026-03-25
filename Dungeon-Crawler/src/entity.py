@@ -14,6 +14,8 @@ Objects that inherit entity should override entity methods and call super()
 at the end of each overridden method.
 """
 from typing import Any
+from pathlib import Path
+
 import pygame
 from pygame import Vector2, sprite, Surface, Rect
 
@@ -25,6 +27,7 @@ class Entity(sprite.Sprite):
     Base class for all entity types.
     """
     __slots__: list[str] = ["_world"  # Any (World this entity belongs to)
+                            "_sheet",  # Surface
                             "_assets",  # dict[Surface]
                             "_position",  # Vector2
                             "_velocity",  # Vector2
@@ -43,9 +46,22 @@ class Entity(sprite.Sprite):
                  friction: float = .75,
                  HP: int | None = None,
                  img: Surface | None = None) -> None:
-        """FIXME"""
+        """
+        Entities are game objects with some "living" attributes.
+        Entities collide, can die and disappear, and can perform actions.
+
+        Args:
+            world (Any): World containing this entity
+            position (Vector2, optional): World position. Defaults to Vector2(0, 0).
+            speed (float, optional): entity speed. Defaults to 5.0.
+            max_speed (float, optional): clamp speed. Defaults to 5.0.
+            friction (float, optional): rate of slowdown. Defaults to .75.
+            HP (int | None, optional): Hit points. Defaults to None.
+            img (Surface | None, optional): base Surface. Defaults to None.
+        """
         super().__init__()
-        self._world = world
+        from world import World
+        self._world: World = world
 
         self._position: Vector2 = position
 
@@ -57,21 +73,36 @@ class Entity(sprite.Sprite):
         self._friction: float = friction
         self._sounds: list[int] = list[int]()
 
+        sheet_path = Path(__file__).parent / "../assets/visual/sprites/test.png"
+        self._sheet: Surface = pygame.image.load(sheet_path)
+        self.assets_init(1, 1)
+
+    def assets_init(self, width: int, height: int, sheet: Surface | None = None) -> None:
+        """
+        Create assets from a sprite sheet.
+
+        Each individual sprite is as wide as width, and as long as height.
+
+        Args:
+            width (int): sprite width
+            height (int): sprite length
+            sheet (Surface | None, optional): Sprite sheet. Defaults to None.
+        """
         self._assets: dict[str, Surface] = dict[str, Surface]()
 
-        self.image = img if img else Surface([0, 0])
+        self.image = Surface([0, 0])
+        img = self._sheet.convert_alpha()
+        img = pygame.transform.scale(img, [img.get_width() * 4, img.get_height() * 4])  # scale up
+        self.image = img
+
         self._rect: Rect = self.image.get_rect()
         self.set_rect()
-
-    def assets_init(self, width: int, height: int, sheet: Surface) -> None:
-        """FIXME"""
-        pass
 
 # ----- properties -----
 
     @property
     def image(self) -> Surface:
-        """FIXME"""
+        """current image display"""
         return self._image
 
     @image.setter
@@ -80,16 +111,16 @@ class Entity(sprite.Sprite):
 
     @property
     def rect(self) -> Rect:
-        """FIXME"""
+        """entity rect for collision and blitting"""
         return self._rect
 
     def set_rect(self) -> None:
-        """FIXME"""
+        """Set rect value to position"""
         self._rect.center = (int(self._position.x), int(self._position.y))
 
     @property
     def HP(self) -> int:
-        """FIXME"""
+        """Entity hit points"""
         return self._HP
 
     @HP.setter
@@ -98,7 +129,7 @@ class Entity(sprite.Sprite):
 
     @property
     def speed(self) -> float:
-        """FIXME"""
+        """the speed to increment velocity"""
         return self._speed
 
     @speed.setter
@@ -107,33 +138,51 @@ class Entity(sprite.Sprite):
 
     @property
     def move_speed(self) -> float:
+        """Speed entity is moving at. Measured pixles/second"""
         return self._velocity.magnitude()
 
 # ----- base methods -----
 
-    def update(self) -> None:  # type: ignore
-        """FIXME"""
-        self.loop()
+    def loop(self, delta: float) -> None:
+        """
+        Entity loop. Run once every frame per entity.
 
-    def loop(self) -> None:
-        """FIXME"""
-        self.move()
+        The base method will call move() and collide() for updating position.
+        """
+        direction: Vector2 = Vector2()
+
+        key: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
+
+        if key[pygame.K_a]:
+            direction.x += -1
+        if key[pygame.K_d]:
+            direction.x += 1
+
+        if key[pygame.K_w]:
+            direction.y += -1
+        if key[pygame.K_s]:
+            direction.y += 1
+
+        self.move(delta, direction)
         self.collide()
+        key = pygame.key.get_pressed()
 
     def render(self) -> tuple[Surface, Rect]:
-        """FIXME"""
+        """
+        Returns the current image and rect of an entity.
+        """
         return (self.image, self.rect)
 
 # ----- entity methods -----
 
-    def move(self, dir: Vector2 | None = None) -> None:
+    def move(self,  delta: float, dir: Vector2 | None = None) -> None:
         """
         Movement for an Entity object.
 
         Entities move in accordance to direction
 
         Args:
-            dir (Vector2 | None, optional): Direction of acceleration. Defaults to None.
+            dir (Vector2 | None, optional): Direction of acceleration.
         """
         # add direction
         if not dir:
@@ -144,14 +193,14 @@ class Entity(sprite.Sprite):
         # handle x
         try:
             self._velocity.x += -(self._velocity.x / abs(self._velocity.x)) * self._friction
-            if abs(self._velocity.x) < self._friction:
+            if abs(self._velocity.x) <= self._friction/2:
                 self._velocity.x = 0
         except ZeroDivisionError:
             pass
 
         try:
             self._velocity.y += -(self._velocity.y / abs(self._velocity.y)) * self._friction
-            if abs(self._velocity.y) < self._friction:
+            if abs(self._velocity.y) <= self._friction/2:
                 self._velocity.y = 0
         except ZeroDivisionError:
             pass
@@ -166,8 +215,9 @@ class Entity(sprite.Sprite):
         except ValueError:
             pass
 
-        self._position += self._velocity
-        self.rect.center = (int(self._position.x), int(self._position.y))
+        self._position += (self._velocity * delta)
+        # print(self._position)
+        self.set_rect()
 
     def collide(self) -> None:
         """FIXME"""
