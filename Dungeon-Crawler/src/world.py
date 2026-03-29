@@ -22,6 +22,7 @@ import pygame
 
 # from sound import SoundManager
 from entity import Entity
+from entity import Bubble
 # from player import Player
 # from item import Item
 # from ui import UI
@@ -99,7 +100,8 @@ class World:
         > the starting room. All regular values should be set.
         """
         self._entities: list[Entity] = list[Entity]()
-        self._entities.append(Entity(self, speed=100, max_speed=300, friction=25))
+        self._entities.append(Bubble(self))
+        self._entities.append(Entity(self))
         # self._player : Player = Player()
 
     def _ui_init(self) -> None:  # FIXME
@@ -134,6 +136,9 @@ class World:
 
         for indx, _entity in enumerate(self._entities):
             self._entities[indx].loop(delta)
+            key = pygame.key.get_pressed()
+            if key[pygame.K_a]:
+                self._entities[indx].move(delta, pygame.Vector2(1, 1))
             # print(f"{_entity}: {_entity.move_speed}")
 
         self.update_room

@@ -137,7 +137,7 @@ class Game:
         self._screen.fill("black")
         items = self._world.render()
         for i, n in enumerate(items):
-            self._screen.blit(items[0][0], items[0][1])
+            self._screen.blit(items[i][0], items[i][1])
         pygame.display.flip()
 
         self.sound_handler()

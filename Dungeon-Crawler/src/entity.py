@@ -30,25 +30,24 @@ class Entity(sprite.Sprite):
     _SCALE: int = 4
 
     __slots__: list[str] = ["_world"  # Any (World this entity belongs to)
-                            "_sheet",  # Surface
-                            "_assets",  # dict[Surface]
+                            "_assets",  # dict[str, int]
                             "_position",  # Vector2
                             "_velocity",  # Vector2
                             "_speed",  # float
-                            "_max_speed",  # float
+                            "_clamp_speed",  # float
                             "_friction",  # float
-                            "_sounds",  # list[int]
+                            "_sounds",  # dict[str, int]
                             "_HP",  # int
                             "_rect",  # Rect
                             "_image"]  # Surface
 
     def __init__(self, world: Any,
                  position: Vector2 = Vector2(0, 0),
-                 speed: float = 5.0,
-                 max_speed: float = 5.0,
-                 friction: float = .75,
+                 speed: float = 100.0,
+                 clamp_speed: float = 300,
+                 friction: float = 25,
                  HP: int | None = None,
-                 img: Surface | None = None) -> None:
+                 image_path: Path | None = None) -> None:
         """
         Entities are game objects with some "living" attributes.
         Entities collide, can die and disappear, and can perform actions.
@@ -57,7 +56,7 @@ class Entity(sprite.Sprite):
             world (Any): World containing this entity
             position (Vector2, optional): World position. Defaults to Vector2(0, 0).
             speed (float, optional): entity speed. Defaults to 5.0.
-            max_speed (float, optional): clamp speed. Defaults to 5.0.
+            clamp_speed (float, optional): clamp speed. Defaults to 5.0.
             friction (float, optional): rate of slowdown. Defaults to .75.
             HP (int | None, optional): Hit points. Defaults to None.
             img (Surface | None, optional): base Surface. Defaults to None.
@@ -69,57 +68,34 @@ class Entity(sprite.Sprite):
         self._position: Vector2 = position
 
         self.speed = speed
-        self._max_speed: float = max_speed
+        self._clamp_speed: float = clamp_speed
         self.HP = HP if HP else 100
 
         self._velocity: Vector2 = Vector2()
         self._friction: float = friction
-        self._sounds: list[int] = list[int]()
+        self._sounds: dict[str, int] = dict[str, int]()
 
         self._assets: dict[str, Surface] = dict[str, Surface]()
-        sheet_path = Path(__file__).parent / "../assets/visual/sprites/player/Fish-Sheet.png"
-        self._sheet: Surface = pygame.image.load(sheet_path)
-        self.assets_init(16, 16, 3, "ESN", "move", self._sheet)
+        self.__image_init(image_path)
 
-    def assets_init(self, width: int,
-                    height: int,
-                    group_size: int,
-                    pattern: str,
-                    name: str,
-                    sheet: Surface,
-                    func: Callable[..., Any] | None = None,
-                    *args) -> None:
-        """
-        Create assets from a sprite sheet.
-
-        Each individual sprite is as wide as width, and as long as height.
-        """
-        def get_img(sheet_pos: list[int]) -> Surface:
-            new_img: Surface = Surface((width, height)).convert_alpha()
-            new_img.blit(sheet, (0, 0), (sheet_pos[0], sheet_pos[1], width, height))
-            new_img = pygame.transform.scale(new_img,
-                                             (width * self._SCALE, height * self._SCALE))
-            return new_img
-
-        def regular() -> None:
-            """regular function for creating scripts"""
-            sheet_pos: list[int] = [0, 0]
-            for p_i in range(len(pattern)):
-                for i in range(group_size):
-                    img_name: str = f"{pattern[p_i]}{name}{i}"
-                    self._assets[img_name] = get_img(sheet_pos)
-
-                    sheet_pos[0] += width
-                    if sheet_pos[0] >= sheet.get_width():
-                        sheet_pos[0] = 0
-                        sheet_pos[1] += height
-
-        if not func:
-            regular()
+    def __image_init(self, image_path: Path | None) -> None:
+        """FIXME"""
+        if image_path:
+            self.image = pygame.image.load(image_path.as_posix()).convert_alpha()
+            self.image = pygame.transform.scale(self.image,
+                                                (self.image.get_width() * self._SCALE,
+                                                 self.image.get_height() * self._SCALE))
         else:
-            func(*args)
+            self.image = Surface((16*self._SCALE, 16*self._SCALE))
+            self.image.fill((255, 255, 255))
 
-        self._rect: Rect = Rect(0, 0, width * self._SCALE, height * self._SCALE)
+        self.rect = self.image.get_rect()
+
+    def _sound_init(self) -> None:
+        """
+        The base of this does nothing, it just serves as
+        a blueprint for other entity classes that add sounds
+        """
 
 # ----- properties -----
 
@@ -136,6 +112,10 @@ class Entity(sprite.Sprite):
     def rect(self) -> Rect:
         """entity rect for collision and blitting"""
         return self._rect
+
+    @rect.setter
+    def rect(self, other: Rect) -> None:
+        self._rect: Rect = other
 
     def set_rect(self) -> None:
         """Set rect value to position"""
@@ -166,35 +146,15 @@ class Entity(sprite.Sprite):
 
 # ----- base methods -----
 
-    def loop(self, delta: float) -> None:
+    def loop(self, delta: float,
+             **kwargs: dict[str, Any]) -> None:
         """
         Entity loop. Run once every frame per entity.
 
         The base method will call move() and collide() for updating position.
         """
-        direction: Vector2 = Vector2()
-
-        key: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
-        value = "Emove0"
-        if key[pygame.K_a]:
-            direction.x += -1
-            value = "Emove2"
-        if key[pygame.K_d]:
-            direction.x += 1
-            value = "Smove0"
-
-        if key[pygame.K_w]:
-            direction.y += -1
-            value = "Smove1"
-        if key[pygame.K_s]:
-            direction.y += 1
-            value = "Nmove0"
-        
-        self.image = self._assets.get(value)
-
-        self.move(delta, direction)
+        self.move(delta)
         self.collide()
-        key = pygame.key.get_pressed()
 
     def render(self) -> tuple[Surface, Rect]:
         """
@@ -237,8 +197,8 @@ class Entity(sprite.Sprite):
         # velocity clamping (check x and y of velocity)
         try:
             norm = self._velocity.normalize()
-            xclamp = abs(norm.x) * self._max_speed if norm.x else self._max_speed
-            yclamp = abs(norm.y) * self._max_speed if norm.y else self._max_speed
+            xclamp = abs(norm.x) * self._clamp_speed if norm.x else self._clamp_speed
+            yclamp = abs(norm.y) * self._clamp_speed if norm.y else self._clamp_speed
             self._velocity.x = pygame.math.clamp(self._velocity.x, -xclamp, xclamp)
             self._velocity.y = pygame.math.clamp(self._velocity.y, -yclamp, yclamp)
         except ValueError:
@@ -252,6 +212,75 @@ class Entity(sprite.Sprite):
         """FIXME"""
         self._world.entity_action(self, "collision")
 
-    def play_sound(self, indx: int) -> None:
+    def play_sound(self, sound_key: str) -> None:
         """FIXME"""
-        pass
+        self._world.queue_sound(self._sounds[sound_key])
+
+# ---- Asset Creation ----
+
+    def _all_frames_from_sheet(self, sheet: Surface,
+                               dimension: tuple[int, int],
+                               group_size: int,
+                               pattern: str,
+                               type: str,
+                               func: Callable[..., Any] | None = None,
+                               *args) -> None:
+        """
+        Create assets from a sprite sheet.
+
+        Each individual sprite is as wide as width, and as long as height.
+
+        Requires that _assets been created first.
+        """
+
+        def standard() -> None:
+            """standard sprite sheet append"""
+            pos: list[int] = [0, 0]
+
+            # create and append individual images to _assets
+            # each asset uses the naming pattern given
+            for p_indx in range(len(pattern)):  # Char in pattern
+                for i in range(group_size):  # size of a group
+                    name: str = f"{pattern[p_indx]}_{type}_{i}"
+                    self._assets[name] = self._single_surface_from_sheet(sheet, pos, dimension)
+
+                    pos[0] += dimension[0]
+                    if pos[0] >= sheet.get_width():
+                        pos[0] = 0
+                        pos[1] += dimension[1]
+
+        if func:
+            try:
+                func(*args)
+            except AttributeError:
+                raise AttributeError
+        else:
+            try:
+                standard()
+            except AttributeError:
+                raise AttributeError
+
+    @staticmethod
+    def _single_surface_from_sheet(sheet: Surface,
+                                   pos: tuple[int, int] | list[int],
+                                   dimension: tuple[int, int]) -> Surface:
+        """FIXME"""
+
+        single: Surface = Surface(dimension).convert_alpha()
+        single.blit(sheet, (0, 0), (pos[0], pos[1], dimension[0], dimension[1]))
+        single = pygame.transform.scale(single, dimension * Entity._SCALE)
+        return single
+
+
+class Bubble(Entity):
+    """test class"""
+
+    def __init__(self, world: Any,
+                 position: Vector2 = Vector2(0, 0)) -> None:
+
+        bubble = Path(__file__).parent / "../assets/visual/sprites/test.png"
+        super().__init__(world, position=position, friction=1, HP=1, image_path=bubble)
+        self._sound_init()
+
+    def _sound_init(self) -> None:
+        self._sounds["dog"] = 1
