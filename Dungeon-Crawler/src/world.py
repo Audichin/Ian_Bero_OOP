@@ -24,7 +24,7 @@ import pygame
 
 # from sound import SoundManager
 from entity import Entity
-from structures import Dungeon
+from player import Player
 # from player import Player
 # from item import Item
 # from ui import UI
@@ -41,6 +41,7 @@ class World:
     """
 
     __slots__ = ["_sound_manager"  # : SoundManager
+                 , "_time"  # : float
                  , "_sounds"  # : list[int] // int representation of sound
                  , "_entities"  # : list[Entity]
                  , "_player"  # : Player
@@ -77,6 +78,8 @@ class World:
         # initialize dungeon
         self._dungeon_init(seed)
 
+        self._time: float = float()
+
     def _dungeon_init(self, seed: Any) -> None:
         """
         Dungeon structure initializer.
@@ -99,11 +102,10 @@ class World:
         > the starting room. All regular values should be set.
         """
         self._entities: list[Entity] = list[Entity]()
-        img = pygame.image.load("../assets/visual/sprites/test.png").convert_alpha()
-        img = pygame.transform.scale(img, [img.get_width() * 4, img.get_height() * 4])  # scale up
-        self._entities.append(Entity(self, img=img, speed=20, max_speed=20, friction=.5))
-        self._entities[0].move(pygame.Vector2(1, 1))
-        # self._player : Player = Player()
+        self._entities.append(Entity(self, position=pygame.Vector2(400, 100)))
+        self._entities.append(Entity(self, position=pygame.Vector2(464, 164)))
+        self._entities.append(Entity(self, position=pygame.Vector2(528, 228)))
+        self._player: Player = Player(self, position=pygame.Vector2(0, 0))
 
     def _ui_init(self) -> None:  # FIXME
         """
@@ -119,7 +121,7 @@ class World:
 
 # --- loop method ---
 
-    def loop(self) -> None:
+    def loop(self, delta: float) -> None:
         """
         World Loop method.
         > Once per frame, loop() should be called. In a game loop, all logic is processed.
@@ -131,11 +133,12 @@ class World:
         - UI changes / updates
         - etc
         """
-        # self._player.loop()  # FIXME
+        self._time += delta
+        self._player.loop(delta)
 
         for indx, _entity in enumerate(self._entities):
-            self._entities[indx].loop()
-            print(_entity.move_speed)
+            self._entities[indx].loop(delta)
+            # print(f"{_entity}: {_entity.move_speed}")
 
         self.update_room
         self.update_ui
@@ -160,7 +163,6 @@ class World:
         - UI
         - etc.
         """
-        # self._player.render()
         # for indx, entity in enumerate(self._entities):
         #     self._entities[indx].render()
 
@@ -172,6 +174,7 @@ class World:
         # self._curr_room.render()
 
         temp = []
+        temp.append(self._player.render())
         for indx, _entity in enumerate(self._entities):
             temp.append(self._entities[indx].render())
 
@@ -250,7 +253,7 @@ class World:
         """
         print(action)
 
-    def entity_action(self, entity: Entity, action: str) -> None:  # FIXME
+    def entity_action(self, entity: Entity, action: str) -> Any:  # FIXME
         """
         Get entity actons and change the world accordingly.
         > Whenever an entity makes an action (such as attacking)
@@ -266,8 +269,18 @@ class World:
 
             action (str): Action ID passed by the entity.
         """
-        print(action)
-        # entity.move(pygame.Vector2(1, 1))
+        # this collision return is temporary.
+        # s_col returns all static objects (walls, pits, etc)
+        if action == "s_col":
+            collides: list[pygame.Rect] = list[pygame.Rect]()
+            # Check collisions with every rect (including entities)
+            for e in self._entities:
+                if e is entity:
+                    continue
+                if pygame.sprite.collide_rect(entity, e):
+                    collides.append(e.rect)
+            return collides
+        return 0
 
 # --- properties ---
 

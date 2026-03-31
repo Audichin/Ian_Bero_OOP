@@ -13,7 +13,9 @@ Good examples:
 Objects that inherit entity should override entity methods and call super()
 at the end of each overridden method.
 """
-from typing import Any
+from typing import Any, Callable
+from pathlib import Path
+
 import pygame
 from pygame import Vector2, sprite, Surface, Rect
 
@@ -24,54 +26,84 @@ class Entity(sprite.Sprite):
     """
     Base class for all entity types.
     """
+
+    _SCALE: int = 4
+
     __slots__: list[str] = ["_world"  # Any (World this entity belongs to)
-                            "_assets",  # dict[Surface]
+                            "_assets",  # dict[str, int]
                             "_position",  # Vector2
+                            "_prev_position",  # Vector2
                             "_velocity",  # Vector2
                             "_speed",  # float
-                            "_max_speed",  # float
+                            "_clamp_speed",  # float
                             "_friction",  # float
-                            "_sounds",  # list[int]
+                            "_sounds",  # dict[str, int]
                             "_HP",  # int
                             "_rect",  # Rect
                             "_image"]  # Surface
 
     def __init__(self, world: Any,
                  position: Vector2 = Vector2(0, 0),
-                 speed: float = 5.0,
-                 max_speed: float = 5.0,
-                 friction: float = .75,
+                 speed: float = 100.0,
+                 clamp_speed: float = 300,
+                 friction: float = 25,
                  HP: int | None = None,
-                 img: Surface | None = None) -> None:
-        """FIXME"""
+                 image_path: Path | None = None) -> None:
+        """
+        Entities are game objects with some "living" attributes.
+        Entities collide, can die and disappear, and can perform actions.
+
+        Args:
+            world (Any): World containing this entity
+            position (Vector2, optional): World position. Defaults to Vector2(0, 0).
+            speed (float, optional): entity speed. Defaults to 5.0.
+            clamp_speed (float, optional): clamp speed. Defaults to 5.0.
+            friction (float, optional): rate of slowdown. Defaults to .75.
+            HP (int | None, optional): Hit points. Defaults to None.
+            img (Surface | None, optional): base Surface. Defaults to None.
+        """
         super().__init__()
-        self._world = world
+        from world import World
+        self._world: World = world
 
         self._position: Vector2 = position
+        self._prev_position: Vector2 = Vector2(position.x, position.y)
 
         self.speed = speed
-        self._max_speed: float = max_speed
+        self._clamp_speed: float = clamp_speed
         self.HP = HP if HP else 100
 
         self._velocity: Vector2 = Vector2()
         self._friction: float = friction
-        self._sounds: list[int] = list[int]()
+        self._sounds: dict[str, int] = dict[str, int]()
 
         self._assets: dict[str, Surface] = dict[str, Surface]()
+        self.__image_init(image_path)
 
-        self.image = img if img else Surface([0, 0])
-        self._rect: Rect = self.image.get_rect()
-        self.set_rect()
-
-    def assets_init(self, width: int, height: int, sheet: Surface) -> None:
+    def __image_init(self, image_path: Path | None) -> None:
         """FIXME"""
-        pass
+        if image_path:
+            self.image = pygame.image.load(image_path.as_posix()).convert_alpha()
+            self.image = pygame.transform.scale(self.image,
+                                                (self.image.get_width() * self._SCALE,
+                                                 self.image.get_height() * self._SCALE))
+        else:
+            self.image = Surface((16 * self._SCALE, 16 * self._SCALE))
+            self.image.fill((255, 255, 255))
+
+        self.rect = self.image.get_rect()
+
+    def _sound_init(self) -> None:
+        """
+        The base of this does nothing, it just serves as
+        a blueprint for other entity classes that add sounds
+        """
 
 # ----- properties -----
 
     @property
     def image(self) -> Surface:
-        """FIXME"""
+        """current image display"""
         return self._image
 
     @image.setter
@@ -80,16 +112,20 @@ class Entity(sprite.Sprite):
 
     @property
     def rect(self) -> Rect:
-        """FIXME"""
+        """entity rect for collision and blitting"""
         return self._rect
 
+    @rect.setter
+    def rect(self, other: Rect) -> None:
+        self._rect: Rect = other
+
     def set_rect(self) -> None:
-        """FIXME"""
+        """Set rect value to position"""
         self._rect.center = (int(self._position.x), int(self._position.y))
 
     @property
     def HP(self) -> int:
-        """FIXME"""
+        """Entity hit points"""
         return self._HP
 
     @HP.setter
@@ -98,7 +134,7 @@ class Entity(sprite.Sprite):
 
     @property
     def speed(self) -> float:
-        """FIXME"""
+        """the speed to increment velocity"""
         return self._speed
 
     @speed.setter
@@ -107,33 +143,42 @@ class Entity(sprite.Sprite):
 
     @property
     def move_speed(self) -> float:
+        """Speed entity is moving at. Measured pixles/second"""
         return self._velocity.magnitude()
 
 # ----- base methods -----
 
-    def update(self) -> None:  # type: ignore
-        """FIXME"""
-        self.loop()
+    def loop(self, delta: float,
+             move: Vector2 | None = None) -> None:
+        """
+        Entity loop. Run once every frame per entity.
 
-    def loop(self) -> None:
-        """FIXME"""
-        self.move()
-        self.collide()
+        The base method will call move() and collide() for updating position.
+        """
+        self._prev_position = Vector2(self._position.x, self._position.y)
+        if move:
+            self.move(delta, move)
+        else:
+            self.move(delta)
+
+        self.static_collide()
 
     def render(self) -> tuple[Surface, Rect]:
-        """FIXME"""
+        """
+        Returns the current image and rect of an entity.
+        """
         return (self.image, self.rect)
 
 # ----- entity methods -----
 
-    def move(self, dir: Vector2 | None = None) -> None:
+    def move(self, delta: float, dir: Vector2 | None = None) -> None:
         """
         Movement for an Entity object.
 
         Entities move in accordance to direction
 
         Args:
-            dir (Vector2 | None, optional): Direction of acceleration. Defaults to None.
+            dir (Vector2 | None, optional): Direction of acceleration.
         """
         # add direction
         if not dir:
@@ -144,14 +189,14 @@ class Entity(sprite.Sprite):
         # handle x
         try:
             self._velocity.x += -(self._velocity.x / abs(self._velocity.x)) * self._friction
-            if abs(self._velocity.x) < self._friction:
+            if abs(self._velocity.x) <= self._friction / 2:
                 self._velocity.x = 0
         except ZeroDivisionError:
             pass
 
         try:
             self._velocity.y += -(self._velocity.y / abs(self._velocity.y)) * self._friction
-            if abs(self._velocity.y) < self._friction:
+            if abs(self._velocity.y) <= self._friction / 2:
                 self._velocity.y = 0
         except ZeroDivisionError:
             pass
@@ -159,20 +204,123 @@ class Entity(sprite.Sprite):
         # velocity clamping (check x and y of velocity)
         try:
             norm = self._velocity.normalize()
-            xclamp = abs(norm.x) * self._max_speed if norm.x else self._max_speed
-            yclamp = abs(norm.y) * self._max_speed if norm.y else self._max_speed
+            xclamp = abs(norm.x) * self._clamp_speed if norm.x else self._clamp_speed
+            yclamp = abs(norm.y) * self._clamp_speed if norm.y else self._clamp_speed
             self._velocity.x = pygame.math.clamp(self._velocity.x, -xclamp, xclamp)
             self._velocity.y = pygame.math.clamp(self._velocity.y, -yclamp, yclamp)
         except ValueError:
             pass
 
-        self._position += self._velocity
-        self.rect.center = (int(self._position.x), int(self._position.y))
+        self._position += (self._velocity * delta)
+        # print(self._position)
+        self.set_rect()
 
-    def collide(self) -> None:
+    def move_to(self, new_pos: Vector2) -> None:
         """FIXME"""
-        self._world.entity_action(self, "collision")
+        self._position = new_pos
+        self.set_rect()
 
-    def play_sound(self, indx: int) -> None:
+    def static_collide(self) -> None:
         """FIXME"""
-        pass
+        data: list[Rect] = self._world.entity_action(self, "s_col")
+
+        if len(data) > 0:
+            # check every rect
+            for rect in data:
+                # above rect
+                self.static_rect_collide(rect)
+
+    def static_rect_collide(self, rect: Rect) -> None:
+        """FIXME"""
+        # above rect
+        relative_x: int = 0
+        relative_y: int = 0
+
+        diff_x: float = self._prev_position.x // 1 - (rect.left + (0.5 * rect.width))
+        if diff_x >= (rect.width / 2) + (self.rect.width / 2):
+            relative_x = 1
+        elif diff_x <= (-rect.width / 2) + (-self.rect.width / 2):
+            relative_x = -1
+
+        diff_y: float = self._prev_position.y // 1 - (rect.top + (0.5 * rect.height))
+        if diff_y >= (rect.height / 2) + (self.rect.height / 2):
+            relative_y = 1
+        elif diff_y <= (-rect.height / 2) + (-self.rect.height / 2):
+            relative_y = -1
+
+        if abs(relative_x) == 1:
+            self._velocity.x = 0
+            if relative_x < 0:
+                self._position.x = rect.left - (self.rect.width / 2)
+            else:
+                self._position.x = rect.left + rect.width + (self.rect.width / 2)
+        if abs(relative_y) == 1:
+            self._velocity.y = 0
+            if relative_y < 0:
+                self._position.y = rect.top - (self.rect.height / 2)
+            else:
+                self._position.y = rect.top + rect.height + (self.rect.height / 2)
+
+    def play_sound(self, sound_key: str) -> None:
+        """FIXME"""
+        self._world.queue_sound(self._sounds[sound_key])
+
+# ---- Asset Creation ----
+
+    def _all_frames_from_sheet(self, sheet: Surface,
+                               dimension: tuple[int, int],
+                               group_size: int,
+                               pattern: str,
+                               type: str,
+                               func: Callable[..., Any] | None = None,
+                               *args: list[Any]) -> None:
+        """
+        Create assets from a sprite sheet.
+
+        Each individual sprite is as wide as width, and as long as height.
+
+        Requires that _assets been created first.
+        """
+
+        def standard() -> None:
+            """standard sprite sheet append"""
+            pos: list[int] = [0, 0]
+
+            # create and append individual images to _assets
+            # each asset uses the naming pattern given
+            for p_indx in range(len(pattern)):  # Char in pattern
+                for i in range(group_size):  # size of a group
+                    name: str = f"{pattern[p_indx]}_{type}_{i}"
+                    self._assets[name] = self._single_surface_from_sheet(sheet, pos, dimension)
+
+                    pos[0] += dimension[0]
+                    if pos[0] >= sheet.get_width():
+                        pos[0] = 0
+                        pos[1] += dimension[1]
+
+        if func:
+            try:
+                func(*args)
+            except AttributeError:
+                raise AttributeError
+        else:
+            try:
+                standard()
+            except AttributeError:
+                raise AttributeError
+
+    @staticmethod
+    def _single_surface_from_sheet(sheet: Surface,
+                                   pos: tuple[int, int] | list[int],
+                                   dimension: tuple[int, int]) -> Surface:
+        """FIXME"""
+
+        single: Surface = Surface(dimension).convert_alpha()
+        single.blit(sheet, (0, 0), (pos[0], pos[1], dimension[0], dimension[1]))
+        single = pygame.transform.scale(single, dimension * Entity._SCALE)
+        return single
+
+# ---- overloads ----
+
+    def __str__(self) -> str:
+        return "Entity"

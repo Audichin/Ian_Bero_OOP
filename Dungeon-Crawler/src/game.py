@@ -212,7 +212,8 @@ class Game:
             * etc.
         * etc.
         """
-        self._world.loop()
+        delta: float = self._framerate.tick(self._FPS) / 1000.0  # Game runs at 60fps
+        self._world.loop(delta)
         # print(self._framerate.get_fps())
 
     # --- run game module ---
@@ -245,7 +246,6 @@ class Game:
             self.event_handler()
             self.on_loop()
             self.on_render()
-            self._framerate.tick(self._FPS)  # Game runs at 60fps
         self.cleanup()
 
     # --- static methods ---

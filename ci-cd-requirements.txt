@@ -4,3 +4,5 @@ flake8
 hypothesis
 pytest-cov
 codecov
+pygame==2.6.1
+
