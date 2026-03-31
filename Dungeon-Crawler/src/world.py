@@ -22,7 +22,7 @@ import pygame
 
 # from sound import SoundManager
 from entity import Entity
-from entity import Bubble
+from player import Player
 # from player import Player
 # from item import Item
 # from ui import UI
@@ -100,9 +100,10 @@ class World:
         > the starting room. All regular values should be set.
         """
         self._entities: list[Entity] = list[Entity]()
-        self._entities.append(Bubble(self, position=pygame.Vector2(150, 270)))
         self._entities.append(Entity(self, position=pygame.Vector2(400, 100)))
-        # self._player : Player = Player()
+        self._entities.append(Entity(self, position=pygame.Vector2(464, 164)))
+        self._entities.append(Entity(self, position=pygame.Vector2(528, 228)))
+        self._player: Player = Player(self, position=pygame.Vector2(0, 0))
 
     def _ui_init(self) -> None:  # FIXME
         """
@@ -130,16 +131,11 @@ class World:
         - UI changes / updates
         - etc
         """
-        # self._player.loop()  # FIXME
         self._time += delta
-        # print(self._time)
-        self._entities[0].loop(delta, pygame.Vector2(1, -1))
+        self._player.loop(delta)
 
         for indx, _entity in enumerate(self._entities):
             self._entities[indx].loop(delta)
-            key = pygame.key.get_pressed()
-            if key[pygame.K_a]:
-                self._entities[indx].move(delta, pygame.Vector2(1, 1))
             # print(f"{_entity}: {_entity.move_speed}")
 
         self.update_room
@@ -165,7 +161,6 @@ class World:
         - UI
         - etc.
         """
-        # self._player.render()
         # for indx, entity in enumerate(self._entities):
         #     self._entities[indx].render()
 
@@ -177,6 +172,7 @@ class World:
         # self._curr_room.render()
 
         temp = []
+        temp.append(self._player.render())
         for indx, _entity in enumerate(self._entities):
             temp.append(self._entities[indx].render())
 
@@ -279,7 +275,7 @@ class World:
             for e in self._entities:
                 if e is entity:
                     continue
-                if pygame.sprite.collide_rect(entity, e):  # type: ignore
+                if pygame.sprite.collide_rect(entity, e):
                     collides.append(e.rect)
             return collides
         return 0

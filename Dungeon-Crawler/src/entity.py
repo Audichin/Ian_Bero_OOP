@@ -88,7 +88,7 @@ class Entity(sprite.Sprite):
                                                 (self.image.get_width() * self._SCALE,
                                                  self.image.get_height() * self._SCALE))
         else:
-            self.image = Surface((16*self._SCALE, 16*self._SCALE))
+            self.image = Surface((16 * self._SCALE, 16 * self._SCALE))
             self.image.fill((255, 255, 255))
 
         self.rect = self.image.get_rect()
@@ -171,7 +171,7 @@ class Entity(sprite.Sprite):
 
 # ----- entity methods -----
 
-    def move(self,  delta: float, dir: Vector2 | None = None) -> None:
+    def move(self, delta: float, dir: Vector2 | None = None) -> None:
         """
         Movement for an Entity object.
 
@@ -189,14 +189,14 @@ class Entity(sprite.Sprite):
         # handle x
         try:
             self._velocity.x += -(self._velocity.x / abs(self._velocity.x)) * self._friction
-            if abs(self._velocity.x) <= self._friction/2:
+            if abs(self._velocity.x) <= self._friction / 2:
                 self._velocity.x = 0
         except ZeroDivisionError:
             pass
 
         try:
             self._velocity.y += -(self._velocity.y / abs(self._velocity.y)) * self._friction
-            if abs(self._velocity.y) <= self._friction/2:
+            if abs(self._velocity.y) <= self._friction / 2:
                 self._velocity.y = 0
         except ZeroDivisionError:
             pass
@@ -236,13 +236,13 @@ class Entity(sprite.Sprite):
         relative_x: int = 0
         relative_y: int = 0
 
-        diff_x: float = self._prev_position.x//1 - (rect.left + (0.5 * rect.width))
+        diff_x: float = self._prev_position.x // 1 - (rect.left + (0.5 * rect.width))
         if diff_x >= (rect.width / 2) + (self.rect.width / 2):
             relative_x = 1
         elif diff_x <= (-rect.width / 2) + (-self.rect.width / 2):
             relative_x = -1
 
-        diff_y: float = self._prev_position.y//1 - (rect.top + (0.5 * rect.height))
+        diff_y: float = self._prev_position.y // 1 - (rect.top + (0.5 * rect.height))
         if diff_y >= (rect.height / 2) + (self.rect.height / 2):
             relative_y = 1
         elif diff_y <= (-rect.height / 2) + (-self.rect.height / 2):
@@ -273,7 +273,7 @@ class Entity(sprite.Sprite):
                                pattern: str,
                                type: str,
                                func: Callable[..., Any] | None = None,
-                               *args) -> None:
+                               *args: list[Any]) -> None:
         """
         Create assets from a sprite sheet.
 
@@ -324,20 +324,3 @@ class Entity(sprite.Sprite):
 
     def __str__(self) -> str:
         return "Entity"
-
-
-class Bubble(Entity):
-    """test class"""
-
-    def __init__(self, world: Any,
-                 position: Vector2 = Vector2(0, 0)) -> None:
-
-        bubble = Path(__file__).parent / "../assets/visual/sprites/test.png"
-        super().__init__(world, position=position, speed=100, clamp_speed=100, friction=.5, HP=1)
-        self._sound_init()
-
-    def _sound_init(self) -> None:
-        self._sounds["dog"] = 1
-
-    def __str__(self) -> str:
-        return "Bubble"
