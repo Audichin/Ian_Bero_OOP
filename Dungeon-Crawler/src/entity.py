@@ -249,10 +249,16 @@ class Entity(sprite.Sprite):
 
         if abs(relative_x) == 1:
             self._velocity.x = 0
-            self._position.x = self._prev_position.x
+            if relative_x < 0:
+                self._position.x = rect.left - (self.rect.width / 2)
+            else:
+                self._position.x = rect.left + rect.width + (self.rect.width / 2)
         if abs(relative_y) == 1:
             self._velocity.y = 0
-            self._position.y = self._prev_position.y
+            if relative_y < 0:
+                self._position.y = rect.top - (self.rect.height / 2)
+            else:
+                self._position.y = rect.top + rect.height + (self.rect.height / 2)
 
     def play_sound(self, sound_key: str) -> None:
         """FIXME"""
@@ -326,12 +332,9 @@ class Bubble(Entity):
                  position: Vector2 = Vector2(0, 0)) -> None:
 
         bubble = Path(__file__).parent / "../assets/visual/sprites/test.png"
-        super().__init__(world, position=position, speed=200, clamp_speed=200, friction=0, HP=1)
+        super().__init__(world, position=position, speed=200, clamp_speed=200, friction=.5, HP=1)
         self._sound_init()
-        self.move(0, Vector2(1, 1))
-
-    def loop(self, delta: float, move: Vector2 | None = None) -> None:
-        return super().loop(delta, Vector2(-1, -1))
+        self.move(0, Vector2(-1, -1))
 
     def _sound_init(self) -> None:
         self._sounds["dog"] = 1
