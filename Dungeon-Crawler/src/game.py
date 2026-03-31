@@ -139,7 +139,10 @@ class Game:
 
         Also calls sound handler.
         """
-        self._world.render()
+        self._screen.fill("black")
+        items = self._world.render()
+        for i, n in enumerate(items):
+            self._screen.blit(items[0][0], items[0][1])
         pygame.display.flip()
 
         self.sound_handler()
@@ -210,7 +213,7 @@ class Game:
         * etc.
         """
         self._world.loop()
-        print(self._framerate.get_fps())
+        # print(self._framerate.get_fps())
 
     # --- run game module ---
 
