@@ -160,7 +160,8 @@ class Entity(sprite.Sprite):
             self.move(delta, move)
         else:
             self.move(delta)
-        self.collide()
+
+        self.static_collide()
 
     def render(self) -> tuple[Surface, Rect]:
         """
@@ -219,32 +220,32 @@ class Entity(sprite.Sprite):
         self._position = new_pos
         self.set_rect()
 
-    def collide(self) -> None:
+    def static_collide(self) -> None:
         """FIXME"""
-        data: list[Rect] = self._world.entity_action(self, "collision")
+        data: list[Rect] = self._world.entity_action(self, "s_col")
 
         if len(data) > 0:
             # check every rect
             for rect in data:
                 # above rect
-                self.rect_collide(rect)
+                self.static_rect_collide(rect)
 
-    def rect_collide(self, rect: Rect) -> None:
+    def static_rect_collide(self, rect: Rect) -> None:
         """FIXME"""
         # above rect
         relative_x: int = 0
         relative_y: int = 0
 
         diff_x: float = self._prev_position.x//1 - (rect.left + (0.5 * rect.width))
-        if diff_x >= rect.width:
+        if diff_x >= (rect.width / 2) + (self.rect.width / 2):
             relative_x = 1
-        elif diff_x <= -rect.width:
+        elif diff_x <= (-rect.width / 2) + (-self.rect.width / 2):
             relative_x = -1
 
         diff_y: float = self._prev_position.y//1 - (rect.top + (0.5 * rect.height))
-        if diff_y >= rect.height:
+        if diff_y >= (rect.height / 2) + (self.rect.height / 2):
             relative_y = 1
-        elif diff_y <= -rect.height:
+        elif diff_y <= (-rect.height / 2) + (-self.rect.height / 2):
             relative_y = -1
 
         if abs(relative_x) == 1:
@@ -332,9 +333,8 @@ class Bubble(Entity):
                  position: Vector2 = Vector2(0, 0)) -> None:
 
         bubble = Path(__file__).parent / "../assets/visual/sprites/test.png"
-        super().__init__(world, position=position, speed=200, clamp_speed=200, friction=.5, HP=1)
+        super().__init__(world, position=position, speed=100, clamp_speed=100, friction=.5, HP=1)
         self._sound_init()
-        self.move(0, Vector2(-1, -1))
 
     def _sound_init(self) -> None:
         self._sounds["dog"] = 1

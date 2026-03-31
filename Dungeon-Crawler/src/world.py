@@ -100,8 +100,8 @@ class World:
         > the starting room. All regular values should be set.
         """
         self._entities: list[Entity] = list[Entity]()
-        self._entities.append(Bubble(self, position=pygame.Vector2(400, 270)))
-        self._entities.append(Entity(self, position=pygame.Vector2(241, 100)))
+        self._entities.append(Bubble(self, position=pygame.Vector2(150, 270)))
+        self._entities.append(Entity(self, position=pygame.Vector2(400, 100)))
         # self._player : Player = Player()
 
     def _ui_init(self) -> None:  # FIXME
@@ -133,6 +133,7 @@ class World:
         # self._player.loop()  # FIXME
         self._time += delta
         # print(self._time)
+        self._entities[0].loop(delta, pygame.Vector2(1, -1))
 
         for indx, _entity in enumerate(self._entities):
             self._entities[indx].loop(delta)
@@ -270,7 +271,9 @@ class World:
 
             action (str): Action ID passed by the entity.
         """
-        if action == "collision":
+        # this collision return is temporary.
+        # s_col returns all static objects (walls, pits, etc)
+        if action == "s_col":
             collides: list[pygame.Rect] = list[pygame.Rect]()
             # Check collisions with every rect (including entities)
             for e in self._entities:
