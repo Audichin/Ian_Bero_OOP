@@ -14,7 +14,6 @@ Objects that inherit entity should override entity methods and call super()
 at the end of each overridden method.
 """
 from typing import Any, Callable
-from pathlib import Path
 
 import pygame
 from pygame import Vector2, sprite, Surface, Rect
@@ -40,7 +39,11 @@ class Entity(sprite.Sprite):
                             "_sounds",  # dict[str, int]
                             "_HP",  # int
                             "_rect",  # Rect
-                            "_image"]  # Surface
+                            "_image",  # Surface
+                            "_orientation",  # bool
+                            "_curr_orient",  # bool
+                            "_anim_timer_top",  # float
+                            "_anim_timer"]  # float
 
     def __init__(self, world: Any,
                  position: Vector2 = Vector2(0, 0),
@@ -48,7 +51,9 @@ class Entity(sprite.Sprite):
                  clamp_speed: float = 300,
                  friction: float = 25,
                  HP: int | None = None,
-                 image_path: Path | None = None) -> None:
+                 assets: dict[str, Surface] | None = None,
+                 image: Surface | None = None,
+                 anim_timer: float = 100.0) -> None:
         """
         Entities are game objects with some "living" attributes.
         Entities collide, can die and disappear, and can perform actions.
@@ -77,16 +82,21 @@ class Entity(sprite.Sprite):
         self._friction: float = friction
         self._sounds: dict[str, int] = dict[str, int]()
 
-        self._assets: dict[str, Surface] = dict[str, Surface]()
-        self.__image_init(image_path)
+        if assets:
+            self._assets: dict[str, Surface] = assets
+        else:
+            self._assets: dict[str, Surface] = dict[str, Surface]()
 
-    def __image_init(self, image_path: Path | None) -> None:
+        self._orientation: bool = True
+        self._curr_orient: bool = True
+        self._anim_timer_top: float = anim_timer
+        self._anim_timer: float = self._anim_timer_top
+        self.__image_init(image)
+
+    def __image_init(self, img_in: Surface | None) -> None:
         """FIXME"""
-        if image_path:
-            self.image = pygame.image.load(image_path.as_posix()).convert_alpha()
-            self.image = pygame.transform.scale(self.image,
-                                                (self.image.get_width() * self._SCALE,
-                                                 self.image.get_height() * self._SCALE))
+        if img_in:
+            self.image = img_in.convert_alpha()
         else:
             self.image = Surface((16 * self._SCALE, 16 * self._SCALE))
             self.image.fill((255, 255, 255))
@@ -167,6 +177,7 @@ class Entity(sprite.Sprite):
         """
         Returns the current image and rect of an entity.
         """
+        self.animate()
         return (self.image, self.rect)
 
 # ----- entity methods -----
@@ -290,7 +301,7 @@ class Entity(sprite.Sprite):
             # each asset uses the naming pattern given
             for p_indx in range(len(pattern)):  # Char in pattern
                 for i in range(group_size):  # size of a group
-                    name: str = f"{pattern[p_indx]}_{type}_{i}"
+                    name: str = f"{pattern[p_indx]}{type}{i}"
                     self._assets[name] = self._single_surface_from_sheet(sheet, pos, dimension)
 
                     pos[0] += dimension[0]
@@ -302,23 +313,32 @@ class Entity(sprite.Sprite):
             try:
                 func(*args)
             except AttributeError:
-                raise AttributeError
+                raise AttributeError("func fail")
         else:
             try:
                 standard()
             except AttributeError:
-                raise AttributeError
+                raise AttributeError("standard failure")
 
     @staticmethod
     def _single_surface_from_sheet(sheet: Surface,
                                    pos: tuple[int, int] | list[int],
                                    dimension: tuple[int, int]) -> Surface:
         """FIXME"""
-
         single: Surface = Surface(dimension).convert_alpha()
         single.blit(sheet, (0, 0), (pos[0], pos[1], dimension[0], dimension[1]))
-        single = pygame.transform.scale(single, dimension * Entity._SCALE)
+        single = pygame.transform.scale(single, (dimension[0] * Entity._SCALE,
+                                                 dimension[1] * Entity._SCALE))
         return single
+
+# ---- Animation and Sound ----
+
+    def animate(self) -> None:
+        """
+        Animations rely on _assets and changing the current image.
+
+        > Every inherited entity should implement their own animate.
+        """
 
 # ---- overloads ----
 
