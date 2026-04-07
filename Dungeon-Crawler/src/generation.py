@@ -25,14 +25,20 @@ class Generation:
         for cur_room in self.dungeon.rooms.values():
             if cur_room.room_type == "enemy" or cur_room.room_type == "puzzle" or cur_room.room_type == "start":
                 for direction_check, (x, y) in directions:
+                    if direction_check == "S":
+                        self.sel_img += "/door/S_"
+                        if (cur_room.x + x, cur_room.y + y) in self.dungeon.rooms:
+                            self.sel_img += "o.png"
+                            self._store_wall(cur_room.x, cur_room.y, direction_check, True, True, self.sel_img)
+                        else:
+                            self.sel_img += "x.png"
+                            self._store_wall(cur_room.x, cur_room.y, direction_check, False, False, self.sel_img)
+                        self.sel_img = "../assets/visual/textures/walls" # reset sel_img for next wall
+                        continue
+
                     if (cur_room.x + x, cur_room.y + y) in self.dungeon.rooms:
                         self.sel_img += "/door/"
                         self.Sel_ori(direction_check)
-                        if direction_check == "S":
-                            self.sel_img += "o.png"
-                            self._store_wall(cur_room.x, cur_room.y, direction_check, True, True, self.sel_img)
-                            self.sel_img = "../assets/visual/textures/walls" # reset sel_img for next room
-                            continue
                         self.sel_img += "o_"
                         self.Ran_wall()
                         self._store_wall(cur_room.x, cur_room.y, direction_check, True, True, self.sel_img)
@@ -65,18 +71,13 @@ class Generation:
 
 
     def Sel_ori(self, wall_ori: int):
-            print(f"Selecting orientation {wall_ori} for wall texture.")
             if wall_ori == 'W':
-                print("Selected West orientation.")
                 self.sel_img += "/W_"
             if wall_ori == 'N':
-                print("Selected North orientation.")
                 self.sel_img += "/N_"
             if wall_ori == 'E':
-                print("Selected East orientation.")
                 self.sel_img += "/E_"
             if wall_ori == 'S':
-                print("Selected South orientation.")
                 self.sel_img += "/S_"
 
     def Ran_wall(self):
