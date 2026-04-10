@@ -13,13 +13,18 @@ class Generation:
         # room_walls information:
         # x: X cordinate on map
         # y: y cordinate on map
-        # ori: orientation (West, North, East, or South) to know which rectangle to apply the texture to, may not need this!
+        # ori: orientation (West, North, East, or South) to know which rectangle to apply
+        # the texture to, may not need this!
         # hasdoor: know if we have a wall or door
-        # isopen, if hasdoor is true, then isopen will state if our texture should use the open or closed state
-        # sel_img, our path to get to the right texture (no need to specify boss texture or not, should be fine either way)
+        # isopen, if hasdoor is true, then isopen will state if our texture should use
+        # the open or closed state
+        # sel_img, our path to get to the right texture (no need to specify boss texture
+        # or not, should be fine either way)
 
     def Apply_textures(self):
-        directions = [("W", (-1, 0)),("N", (0, 1)),("E", (1, 0)),("S", (0, -1)),] # First is checking Left (W), Second is checking Up (N), Thrird is checking Right (E), Fourth is Down (S)
+        # First is checking Left (W), Second is checking Up (N),
+        # Thrird is checking Right (E), Fourth is Down (S)
+        directions = [("W", (-1, 0)), ("N", (0, 1)), ("E", (1, 0)), ("S", (0, -1)),]
         self.room_walls.clear()
 
         for cur_room in self.dungeon.rooms.values():
