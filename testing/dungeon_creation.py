@@ -1,6 +1,5 @@
 import pygame
 
-
 import random
 from collections import deque
 import sys
@@ -8,6 +7,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1] / "Dungeon-Crawler" / "src"))
 from generation import Generation # type: ignore
+from entity import Entity # type: ignore
 
 class Room:
     def __init__(self, x, y, room_type="empty"):
@@ -32,20 +32,17 @@ class Dungeon:
         self.seed = seed
         self.total_rooms = total_rooms
         self.min_puzzle_rooms = min_puzzle_rooms
-        self.screen_size = (1920, 1080)
         self.room_native_size = (256, 256)
         self.floor_native_size = (256, 160)
         self.wall_thickness_EW = 32
         self.wall_thickness_NS = 32
         self.door_size = 32
+        self.render_scale = Entity._SCALE
         self.rooms = {}  # {(x, y): Room}
         self.rng = random.Random(seed)  # Independent RNG
         self.generate()
         self.generation = Generation(self)
         self.generation.Apply_textures()
-
-    def set_screen_size(self, width: int, height: int) -> None:
-        self.screen_size = (width, height)
 
     def generate(self):  # Call this function to generate dungeon
         self._generate_layout()
@@ -148,51 +145,46 @@ class Dungeon:
         hasdoor = wall_data["hasdoor"]
         isopen = wall_data["isopen"]
 
-        x, y = self.L_cords(orientation)
-
-        # Native room-space dimensions (before any render scaling).
-        room_w, room_h = self.room_native_size
-        wall_thickness = self.wall_thickness_NS if orientation in ("N", "S") else self.wall_thickness_EW
-        door_len = self.door_size
-        side_len = (room_w - door_len) // 2
-# Will need to chang to allow both N and S to have different walls
-        if orientation in ("N", "S"):
+        # Fixed-anchor hitboxes for single-resolution testing.
+        # Room bounds: left=80, top=5, right=1200, bottom=725.
+        # Door opening center band: x=[592..688], y=[405..485].
+        if orientation == "N":
             if hasdoor and isopen:
                 return [
-                    [x, y, side_len, wall_thickness, 0],                        # Left wall segment
-                    [x + side_len, y, door_len, wall_thickness, 0],             # Door opening band
-                    [x + side_len + door_len, y, side_len, wall_thickness, 0],  # Right wall segment
+                    [80, 5, 512, 80, 0],   # left segment
+                    [592, 5, 96, 80, 0],   # door band
+                    [688, 5, 512, 80, 0],  # right segment
                 ]
-            return [[x, y, room_w, wall_thickness, 0]]  # Solid horizontal wall
+            return [[80, 5, 1120, 80, 0]]
 
-# For E/W walls, the logic is the same but dimensions are swapped.
-        if hasdoor and isopen:
-            return [
-                [x, y, wall_thickness, side_len, 0],                        # Top wall segment
-                [x, y + side_len, wall_thickness, door_len, 0],             # Door opening band
-                [x, y + side_len + door_len, wall_thickness, side_len, 0],  # Bottom wall segment
-            ]
-        return [[x, y, wall_thickness, room_h, 0]]  # Solid vertical wall
+        if orientation == "S":
+            if hasdoor and isopen:
+                return [
+                    [80, 725, 512, 80, 0],   # left segment
+                    [592, 725, 96, 80, 0],   # narrow door band
+                    [688, 725, 512, 80, 0],  # right segment
+                ]
+            return [[80, 725, 1120, 80, 0]]
 
-    def L_cords(self, orientation: str) -> tuple[int, int]:
-        """
-        Returns the location of the wall based on orientation.
+        if orientation == "E":
+            if hasdoor and isopen:
+                return [
+                    [1200, 5, 80, 400, 0],    # top segment
+                    [1200, 405, 80, 80, 0],   # door band
+                    [1200, 485, 80, 320, 0],  # bottom segment
+                ]
+            return [[1200, 5, 80, 800, 0]]
 
-        args:
-            orientation (str): the wall orientation we are checking (W, N, E, S)
-        returns:
-            Tuple[int(X-cord), int(Y-cord)]
-        """
         if orientation == "W":
-            return (0, 0)
-        elif orientation == "N":
-            return (0, 0)
-        elif orientation == "E":
-            return (self.room_native_size[0] - self.wall_thickness_EW, 0)
-        elif orientation == "S":
-            return (0, self.room_native_size[1] - self.wall_thickness_NS)
-        else:
-            raise ValueError(f"Invalid orientation: {orientation}")
+            if hasdoor and isopen:
+                return [
+                    [80, 5, 80, 400, 0],    # top segment
+                    [80, 405, 80, 80, 0],   # door band
+                    [80, 485, 80, 320, 0],  # bottom segment
+                ]
+            return [[80, 5, 80, 800, 0]]
+
+        raise ValueError(f"Invalid orientation for wall hitbox: {orientation}")
 
 def main():
     seed = int(sys.argv[1]) if len(sys.argv) > 1 else random.randint(0, 1000000)
@@ -277,10 +269,9 @@ def main():
 def test_image_displayment():
 # --- Variables ---
     pygame.init()
-    screen_size = (1920, 1080)
+    window_size = (1920, 1080)
     D: Dungeon = Dungeon(seed=random.randint(0, 1000000))
-    D.set_screen_size(*screen_size)
-    screen = pygame.display.set_mode(screen_size)
+    screen = pygame.display.set_mode(window_size)
     clock = pygame.time.Clock()
     debug_font = pygame.font.SysFont("consolas", 18)
     show_debug = True
@@ -290,7 +281,7 @@ def test_image_displayment():
 
     G: Generation = D.generation
 
-    room_center = (D.screen_size[0] // 2, D.screen_size[1] // 2)
+    room_center = (window_size[0] // 2, window_size[1] // 2)
     floor_native_size = D.floor_native_size
     floor_image_raw: pygame.Surface = pygame.Surface(floor_native_size, pygame.SRCALPHA)
     floor_path = (Path(__file__).resolve().parents[1] / "Dungeon-Crawler" / "assets" / "visual" / "textures" / "rooms" / "enemy" / "floor.png")
@@ -343,17 +334,9 @@ def test_image_displayment():
     if wall_surfaces:
         sample_wall = next(iter(wall_surfaces.values()))
         base_wall_w, base_wall_h = sample_wall.get_size()
-        target_fill_ratio = 0.85
-        scale_factor = min(
-            (D.screen_size[0] * target_fill_ratio) / base_wall_w,
-            (D.screen_size[1] * target_fill_ratio) / base_wall_h,
-        )
-        scale_factor = max(scale_factor, 1.0)
+        scale_factor = D.render_scale
 
-        wall_target_size = (
-            int(base_wall_w * scale_factor),
-            int(base_wall_h * scale_factor),
-        )
+        wall_target_size = ( int(base_wall_w * scale_factor), int(base_wall_h * scale_factor))
         wall_surfaces = {
             orientation: pygame.transform.smoothscale(wall_image, wall_target_size)
             for orientation, wall_image in wall_surfaces.items()
@@ -392,18 +375,11 @@ def test_image_displayment():
         for orientation, wall_image in wall_surfaces.items(): 
             screen.blit(wall_image, wall_rects[orientation].topleft)
 
-        # Build/draw hitboxes in room-native coords (256x256), transformed to scaled/centered room.
-        x_scale = room_rect.width / D.room_native_size[0]
-        y_scale = room_rect.height / D.room_native_size[1]
+        # Build/draw hitboxes directly in fixed screen-space anchor coordinates.
         for wall_hitbox in wall_hitboxes:
             for segment_index, hitbox in enumerate(wall_hitbox):
                 x, y, width, height, rotation = hitbox
-                hitbox_rect = pygame.Rect(
-                    room_rect.left + int(x * x_scale),
-                    room_rect.top + int(y * y_scale),
-                    max(1, int(width * x_scale)),
-                    max(1, int(height * y_scale)),
-                )
+                hitbox_rect = pygame.Rect(x, y, width, height)
                 hitbox_colliding = hitbox_rect.collidepoint(mouse_pos)
                 if hitbox_colliding:
                     any_hitbox_collision = True
@@ -420,9 +396,10 @@ def test_image_displayment():
         if show_debug:
             debug_lines = [
                 f"Room: ({random_room.x}, {random_room.y}) type={random_room.room_type}",
-                f"Screen: {D.screen_size[0]}x{D.screen_size[1]}",
+                f"Window: {window_size[0]}x{window_size[1]}",
                 f"RoomRect: x={room_rect.left}, y={room_rect.top}, w={room_rect.width}, h={room_rect.height}",
-                f"Scale: x={x_scale:.3f}, y={y_scale:.3f}",
+                "Hitbox Space: fixed screen anchors",
+                f"Entity._SCALE: {D.render_scale}",
                 f"Collision: {'True' if any_hitbox_collision else 'False'}",
                 f"Toggles: [D]ebug={'ON' if show_debug else 'OFF'} [H]itboxes={'ON' if show_hitboxes else 'OFF'}",
             ]
@@ -437,4 +414,5 @@ def test_image_displayment():
     pygame.quit()
 
 if __name__ == "__main__":
+    main()
     test_image_displayment()

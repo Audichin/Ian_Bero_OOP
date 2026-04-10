@@ -1,4 +1,5 @@
 from structures import Dungeon
+from game import Game
 from pathlib import Path
 import random
 
