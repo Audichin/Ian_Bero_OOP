@@ -26,7 +26,7 @@ class Entity(sprite.Sprite):
     Base class for all entity types.
     """
 
-    _SCALE: int = 4
+    _SCALE: int = 5
 
     __slots__: list[str] = ["_world"  # Any (World this entity belongs to)
                             "_assets",  # dict[str, int]

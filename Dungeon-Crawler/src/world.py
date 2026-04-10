@@ -24,7 +24,6 @@ import pygame
 from entity import Entity
 from jelly import Jelly
 from player import Player
-# from player import Player
 # from item import Item
 # from ui import UI
 # from structures import Dungeon, Room
@@ -101,11 +100,8 @@ class World:
         > the starting room. All regular values should be set.
         """
         self._entities: list[Entity] = list[Entity]()
-        self._entities.append(Entity(self, position=pygame.Vector2(400, 100)))
-        self._entities.append(Entity(self, position=pygame.Vector2(464, 164)))
-        self._entities.append(Entity(self, position=pygame.Vector2(528, 228)))
-        self._entities.append(Jelly(self))
-        self._player: Player = Player(self, position=pygame.Vector2(0, 0))
+        self._entities.append(Jelly(self, position=pygame.Vector2(600, 255)))
+        self._player: Player = Player(self, position=pygame.Vector2(400, 255))
 
     def _ui_init(self) -> None:  # FIXME
         """
@@ -253,6 +249,10 @@ class World:
         """
         print(action)
 
+    def quit_controller(self) -> None:
+        """FIXME"""
+        self._player.quit_controller()
+
     def entity_action(self, entity: Entity, action: str) -> Any:  # FIXME
         """
         Get entity actons and change the world accordingly.
@@ -273,12 +273,13 @@ class World:
         # s_col returns all static objects (walls, pits, etc)
         if action == "s_col":
             collides: list[pygame.Rect] = list[pygame.Rect]()
-            # Check collisions with every rect (including entities)
-            for e in self._entities:
-                if e is entity:
-                    continue
-                if pygame.sprite.collide_rect(entity, e):  # type: ignore
-                    collides.append(e.rect)
+            # Check collisions with all walls in a room.
+            """
+            
+            FIXME
+            
+            """
+
             return collides
         elif action == "player_pos":
             return self._player.position
@@ -287,7 +288,6 @@ class World:
                 return self._player.rect
         elif action == "player_dmg_10":
             self._player.damage(10)
-            print(self._player.HP)
 
         return 0
 

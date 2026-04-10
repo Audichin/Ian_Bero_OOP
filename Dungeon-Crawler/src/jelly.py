@@ -39,7 +39,7 @@ class Jelly(Entity):
         self._all_frames_from_sheet(sheet, (16, 16), 2, "M", "")
 
         super().__init__(world, speed=speed, clamp_speed=clamp_speed, friction=friction,
-                         assets=self._assets, image=self._assets["M1"])
+                         position=position, assets=self._assets, image=self._assets["M1"])
 
 # ---- base ----
 
