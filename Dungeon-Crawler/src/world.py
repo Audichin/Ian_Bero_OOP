@@ -275,16 +275,13 @@ class World:
             collides: list[pygame.Rect] = list[pygame.Rect]()
             # Check collisions with all walls in a room.
             """
-            
             FIXME
-            
             """
-
             return collides
         elif action == "player_pos":
             return self._player.position
         elif action == "player_col":
-            if pygame.sprite.collide_rect(entity, self._player):  # type: ignore
+            if pygame.sprite.collide_rect(entity, self._player):
                 return self._player.rect
         elif action == "player_dmg_10":
             self._player.damage(10)

@@ -84,10 +84,9 @@ class Entity(sprite.Sprite):
         self._friction: float = friction
         self._sounds: dict[str, int] = dict[str, int]()
 
+        self._assets: dict[str, Surface] = dict[str, Surface]()
         if assets:
-            self._assets: dict[str, Surface] = assets
-        else:
-            self._assets: dict[str, Surface] = dict[str, Surface]()
+            self._assets = assets
 
         self._orientation: bool = True
         self._curr_orient: bool = True
@@ -97,13 +96,13 @@ class Entity(sprite.Sprite):
 
     def __image_init(self, img_in: Surface | None) -> None:
         """FIXME"""
+        temp_img: Surface = Surface((16 * self._SCALE, 16 * self._SCALE))
+        temp_img.fill((255, 255, 255))
         if img_in:
-            self.image = img_in.convert_alpha()
-        else:
-            self.image = Surface((16 * self._SCALE, 16 * self._SCALE))
-            self.image.fill((255, 255, 255))
+            temp_img = img_in.convert_alpha()
 
-        self.rect = self.image.get_rect()
+        self.image: Surface = temp_img
+        self.rect: Rect = self.image.get_rect()
 
     def _sound_init(self) -> None:
         """
@@ -113,27 +112,9 @@ class Entity(sprite.Sprite):
 
 # ----- properties -----
 
-    @property
-    def image(self) -> Surface:
-        """current image display"""
-        return self._image
-
-    @image.setter
-    def image(self, other: Surface) -> None:
-        self._image: Surface = other
-
-    @property
-    def rect(self) -> Rect:
-        """entity rect for collision and blitting"""
-        return self._rect
-
-    @rect.setter
-    def rect(self, other: Rect) -> None:
-        self._rect: Rect = other
-
     def set_rect(self) -> None:
         """Set rect value to position"""
-        self._rect.center = (int(self._position.x), int(self._position.y))
+        self.rect.center = (int(self._position.x), int(self._position.y))
 
     @property
     def position(self) -> Vector2:
@@ -188,7 +169,13 @@ class Entity(sprite.Sprite):
         Returns the current image and rect of an entity.
         """
         self.animate(time)
-        self.image.set_colorkey((0, 0, 0))
+        try:
+            if self.image and isinstance(self.rect, Rect):
+                self.image.set_colorkey((0, 0, 0))
+            else:
+                raise AttributeError()
+        except AttributeError:
+            raise
         return (self.image, self.rect)
 
 # ----- entity methods -----
@@ -254,6 +241,9 @@ class Entity(sprite.Sprite):
 
     def static_rect_collide(self, rect: Rect) -> None:
         """FIXME"""
+
+        if not isinstance(self.rect, Rect):
+            raise AttributeError("rect must be of type Rect")
         # above rect
         relative_x: int = 0
         relative_y: int = 0
