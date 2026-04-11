@@ -21,9 +21,9 @@ import pygame
 # from pygame import locals
 
 # from sound import SoundManager
-from entity import Entity
-from jelly import Jelly
-from player import Player
+from entities.entity import Entity
+from entities.jelly import Jelly
+from entities.player import Player
 # from item import Item
 # from ui import UI
 # from structures import Dungeon, Room
