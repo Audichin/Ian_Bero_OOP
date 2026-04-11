@@ -244,6 +244,10 @@ class World:
 
         > this function is called by the player.
 
+        requests:
+        * action_a // use currently equipped item
+        * action_b
+
         Args:
             action (str): Action ID passed by player.
         """
