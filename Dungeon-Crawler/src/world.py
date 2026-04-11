@@ -21,7 +21,7 @@ import pygame
 # from pygame import locals
 
 # from sound import SoundManager
-from entities.entity import Entity
+from entities.entity_mod import Entity
 from entities.jelly import Jelly
 from entities.player import Player
 # from item import Item
