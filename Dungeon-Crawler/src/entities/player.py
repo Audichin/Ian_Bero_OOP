@@ -16,7 +16,7 @@ import pygame
 from pygame import Vector2, Surface, Rect, key
 from pygame.joystick import Joystick, JoystickType
 
-from entity import Entity
+from entities.entity import Entity
 
 
 class Player(Entity):
@@ -47,7 +47,7 @@ class Player(Entity):
         # get player sprite sheet
         self._assets: dict[str, Surface] = dict[str, Surface]()
         player_sprite_sheet = Path(__file__).parent / \
-            "../assets/visual/sprites/player/Fish-Sheet.png"
+            "../../assets/visual/sprites/player/Fish-Sheet.png"
         sheet: Surface = pygame.image.load(player_sprite_sheet)
         self._all_frames_from_sheet(sheet, (16, 16), 3, "ESNW", "move")
 

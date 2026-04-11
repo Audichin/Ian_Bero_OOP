@@ -5,7 +5,7 @@ from typing import Any
 import pygame
 from pygame import Vector2, Surface
 
-from entity import Entity
+from entities.entity import Entity
 
 
 class Jelly(Entity):
@@ -34,7 +34,7 @@ class Jelly(Entity):
 
         self._assets: dict[str, Surface] = dict[str, Surface]()
         jelly_sprite_sheet = Path(__file__).parent / \
-            "../assets/visual/sprites/player/Jelly-Sheet.png"
+            "../../assets/visual/sprites/player/Jelly-Sheet.png"
         sheet: Surface = pygame.image.load(jelly_sprite_sheet)
         self._all_frames_from_sheet(sheet, (16, 16), 2, "M", "")
 
