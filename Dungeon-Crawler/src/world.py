@@ -185,8 +185,7 @@ class World:
 
         if len(self._items):
             for indx, _item in enumerate(self._items):
-                if self._items[indx].state == Item.GROUNDED:
-                    temp.append(self._items[indx].render())
+                temp.append(self._items[indx].render())
 
         return temp
 

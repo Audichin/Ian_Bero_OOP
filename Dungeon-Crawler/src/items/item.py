@@ -10,7 +10,7 @@ a stepping stone for other items to be created.
 """
 from typing import Any
 
-import pygame
+# import pygame
 from pygame import Vector2, sprite, Surface, Rect
 
 
@@ -123,11 +123,9 @@ class Item(sprite.Sprite):
         if self.state == self.GROUNDED:
             self.check_player_touched()
 
-    def render(self) -> tuple[Surface, Rect] | None:
+    def render(self) -> tuple[Surface, Rect]:
         """FIXME"""
-        if self.state == self.GROUNDED:
-            return (self.image, self.rect)
-        return None
+        return (self.image, self.rect)
 
 # ---- item methods ----
 
