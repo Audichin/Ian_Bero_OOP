@@ -14,11 +14,18 @@ Objects that inherit entity should override entity methods and call super()
 at the end of each overridden method.
 """
 from typing import Any, Callable
+from typing import TYPE_CHECKING
 
 import pygame
 from pygame import Vector2, sprite, Surface, Rect
 
 # from pygame import locals
+
+if TYPE_CHECKING:
+    try:
+        from ..world import World
+    except ImportError:
+        from world import World
 
 
 class Entity(sprite.Sprite):
@@ -69,7 +76,6 @@ class Entity(sprite.Sprite):
             img (Surface | None, optional): base Surface. Defaults to None.
         """
         super().__init__()
-        from world import World
         self._world: World = world
 
         self._position: Vector2 = position

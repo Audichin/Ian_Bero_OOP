@@ -23,12 +23,19 @@ import pygame
 # from pygame import locals
 
 # from sound import SoundManager
-from entities.entity_mod import Entity
-from entities.jelly import Jelly
-from entities.player import Player
+try:
+    from .entities.entity_mod import Entity
+    from .entities.jelly import Jelly
+    from .entities.player import Player
+    from .structures import Dungeon
+except ImportError:
+    from entities.entity_mod import Entity
+    from entities.jelly import Jelly
+    from entities.player import Player
+    from structures import Dungeon
 # from item import Item
 # from ui import UI
-# from structures import Dungeon, Room
+# from structures import Room
 
 
 class World:
@@ -88,9 +95,8 @@ class World:
         Args:
             seed (Any): Dungeon seed
         """
-        self._dungeon_seed: Any = random.randint(0, 1000000)
-        self._dungeon: Dungeon = Dungeon(seed= self._dungeon_seed)
-        self._dungeon.generate()
+        self._dungeon_seed = seed if seed is not None else random.randint(0, 1000000)
+        self._dungeon = Dungeon(seed=self._dungeon_seed)
 
     def _entity_init(self) -> None:
         """

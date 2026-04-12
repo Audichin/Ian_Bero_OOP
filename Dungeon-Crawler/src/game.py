@@ -20,14 +20,23 @@ RULES:
 """
 import random
 import sys
-from typing import Self, Any
+from typing import Any
+
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 import pygame
 import pygame.mixer_music as music
 from pygame import locals
 
-from world import World
-from structures import Dungeon
+try:
+    from .world import World
+    from .structures import Dungeon
+except ImportError:
+    from world import World
+    from structures import Dungeon
 
 class Game:
     """singleton obj"""
@@ -78,6 +87,11 @@ class Game:
         pygame.mixer.pre_init()  # No changes
 
     # --- game initialization ---
+
+    @property
+    def resolution(self) -> tuple[int, int]:
+        """Resolution getter."""
+        return self._resolution
 
     def _game_init(self) -> None:
         """

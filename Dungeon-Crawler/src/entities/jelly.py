@@ -5,7 +5,10 @@ from typing import Any
 import pygame
 from pygame import Vector2, Surface
 
-from entities.entity_mod import Entity
+try:
+    from .entity_mod import Entity
+except ImportError:
+    from entities.entity_mod import Entity
 
 
 class Jelly(Entity):

@@ -5,9 +5,18 @@ from collections import deque
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parents[1] / "Dungeon-Crawler" / "src"))
-from generation import Generation # type: ignore
-from entity import Entity # type: ignore
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SRC_ROOT = PROJECT_ROOT / "Dungeon-Crawler" / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+try:
+    from generation import Generation # type: ignore
+    from game import Game # type: ignore
+except ImportError:
+    from .generation import Generation # type: ignore
+    from .game import Game # type: ignore
+
+from entities.entity_mod import Entity # type: ignore
 
 class Room:
     def __init__(self, x, y, room_type="empty"):
@@ -32,8 +41,7 @@ class Dungeon:
         self.seed = seed
         self.total_rooms = total_rooms
         self.min_puzzle_rooms = min_puzzle_rooms
-        self.room_native_size = (256, 256)
-        self.floor_native_size = (256, 160)
+        self.native_size = (256, 160)
         self.wall_thickness_EW = 32
         self.wall_thickness_NS = 32
         self.door_size = 32
@@ -43,6 +51,35 @@ class Dungeon:
         self.generate()
         self.generation = Generation(self)
         self.generation.Apply_textures()
+        self.base_resolution: tuple[int, int] = (1440, 810)
+        self.res: tuple[int, int] = self._resolve_game_resolution()
+
+    def _resolve_game_resolution(self) -> tuple[int, int]:
+        """
+        Resolve active game resolution from Game singleton when possible.
+        Falls back to the project's default game resolution.
+        """
+        default_res = self.base_resolution
+        game_obj = getattr(Game, "_instance", None)
+
+        # If singleton isn't alive yet, try creating a lightweight instance.
+        if game_obj is None:
+            try:
+                game_obj = Game(seed=self.seed)
+            except Exception:
+                return default_res
+
+        try:
+            res = game_obj.resolution
+            if (
+                isinstance(res, tuple)
+                and len(res) == 2
+                and all(isinstance(v, int) for v in res)
+            ):
+                return res
+        except Exception:
+            pass
+        return default_res
 
     def generate(self):  # Call this function to generate dungeon
         self._generate_layout()
@@ -114,7 +151,7 @@ class Dungeon:
             if room.room_type == "empty":
                 room.room_type = "enemy"
     
-    def wall_hitbox(self, room: Room, orientation: str) -> list[list[int, int, int, int, int]]:
+    def wall_hitbox(self, room: Room, orientation: str) -> list[pygame.Rect]:
         """
         Checks if the wall selected (depending on orientation) 
         has a door and is open, returning two types of hitboxes for that wall for 3 different scenarios:
@@ -127,12 +164,7 @@ class Dungeon:
             room (Room): the room we are checking
             orientation (str): the wall orientation we are checking (W, N, E, S)
         returns:
-            List[list[
-                    int(X-cord)
-                    int (Y-cord)
-                    int (Width)
-                    int (Height)
-                    int(rotation)]]
+            list[pygame.Rect]
         """
         wall_data = self.generation.room_walls.get((room.x, room.y, orientation))
         if wall_data is None:
@@ -145,44 +177,41 @@ class Dungeon:
         hasdoor = wall_data["hasdoor"]
         isopen = wall_data["isopen"]
 
-        # Fixed-anchor hitboxes for single-resolution testing.
-        # Room bounds: left=80, top=5, right=1200, bottom=725.
-        # Door opening center band: x=[592..688], y=[405..485].
         if orientation == "N":
             if hasdoor and isopen:
                 return [
-                    [80, 5, 512, 80, 0],   # left segment
-                    [592, 5, 96, 80, 0],   # door band
-                    [688, 5, 512, 80, 0],  # right segment
+                    pygame.Rect(80, 5, 585, 160),   # left segment
+                    pygame.Rect(665, 5, 115, 160),   # door band
+                    pygame.Rect(780, 5, 590, 160),  # right segment
                 ]
-            return [[80, 5, 1120, 80, 0]]
+            return [pygame.Rect(80, 5, 1290, 160)]
 
         if orientation == "S":
             if hasdoor and isopen:
                 return [
-                    [80, 725, 512, 80, 0],   # left segment
-                    [592, 725, 96, 80, 0],   # narrow door band
-                    [688, 725, 512, 80, 0],  # right segment
+                    pygame.Rect(80, 725, 555, 80),   # left segment
+                    pygame.Rect(633, 725, 173, 80),   # narrow door band
+                    pygame.Rect(804, 725, 570, 80),  # right segment
                 ]
-            return [[80, 725, 1120, 80, 0]]
+            return [pygame.Rect(80, 725, 1290, 80)]
 
         if orientation == "E":
             if hasdoor and isopen:
                 return [
-                    [1200, 5, 80, 400, 0],    # top segment
-                    [1200, 405, 80, 80, 0],   # door band
-                    [1200, 485, 80, 320, 0],  # bottom segment
+                    pygame.Rect(1200, 5, 170, 370),    # top segment
+                    pygame.Rect(1200, 375, 170, 110),   # door band
+                    pygame.Rect(1200, 485, 170, 320),  # bottom segment
                 ]
-            return [[1200, 5, 80, 800, 0]]
+            return [pygame.Rect(1200, 5, 170, 800)]
 
         if orientation == "W":
             if hasdoor and isopen:
                 return [
-                    [80, 5, 80, 400, 0],    # top segment
-                    [80, 405, 80, 80, 0],   # door band
-                    [80, 485, 80, 320, 0],  # bottom segment
+                    pygame.Rect(80, 5, 164, 375),    # top segment
+                    pygame.Rect(80, 380, 165, 110),   # door band
+                    pygame.Rect(80, 490, 164, 315),  # bottom segment
                 ]
-            return [[80, 5, 80, 800, 0]]
+            return [pygame.Rect(80, 5, 164, 800)]
 
         raise ValueError(f"Invalid orientation for wall hitbox: {orientation}")
 
@@ -191,14 +220,14 @@ def main():
     dungeon: Dungeon = Dungeon(seed=seed)
     generation = dungeon.generation
     floor_texture = (
-        Path(__file__).resolve().parents[1]
-        / "Dungeon-Crawler"
+        PROJECT_ROOT
+        / "Dungeon_Crawler"
         / "assets"
         / "visual"
         / "textures"
         / "rooms"
         / "enemy"
-        / "1.png"
+        / "floor.png"
     )
     room_floors: dict[tuple[int, int], Path] = {
         (room.x, room.y): floor_texture for room in dungeon.rooms.values()
@@ -269,7 +298,7 @@ def main():
 def test_image_displayment():
 # --- Variables ---
     pygame.init()
-    window_size = (1920, 1080)
+    window_size = (1440, 810)
     D: Dungeon = Dungeon(seed=random.randint(0, 1000000))
     screen = pygame.display.set_mode(window_size)
     clock = pygame.time.Clock()
@@ -277,14 +306,14 @@ def test_image_displayment():
     show_debug = True
     show_hitboxes = True
     directions = ["W", "N", "E", "S"]
-    wall_hitboxes = []
+    wall_hitboxes: list[list[pygame.Rect]] = []
 
     G: Generation = D.generation
 
     room_center = (window_size[0] // 2, window_size[1] // 2)
-    floor_native_size = D.floor_native_size
-    floor_image_raw: pygame.Surface = pygame.Surface(floor_native_size, pygame.SRCALPHA)
-    floor_path = (Path(__file__).resolve().parents[1] / "Dungeon-Crawler" / "assets" / "visual" / "textures" / "rooms" / "enemy" / "floor.png")
+    native_size = D.native_size
+    floor_image_raw: pygame.Surface = pygame.Surface(native_size, pygame.SRCALPHA)
+    floor_path = (PROJECT_ROOT / "Dungeon-Crawler" / "assets" / "visual" / "textures" / "rooms" / "enemy" / "floor.png")
 
 # --- Loading floor ---
     try:
@@ -329,7 +358,7 @@ def test_image_displayment():
 
 # --- main method ---
     wall_rects: dict[str, pygame.Rect] = {}
-    room_rect = pygame.Rect(0, 0, D.room_native_size[0], D.room_native_size[1])
+    room_rect = pygame.Rect(0, 0, D.native_size[0], D.native_size[1])
     room_rect.center = room_center
     if wall_surfaces:
         sample_wall = next(iter(wall_surfaces.values()))
@@ -343,8 +372,8 @@ def test_image_displayment():
         }
 
         floor_target_size = (
-            int(floor_native_size[0] * scale_factor),
-            int(floor_native_size[1] * scale_factor),
+            int(native_size[0] * scale_factor),
+            int(native_size[1] * scale_factor),
         )
         floor = pygame.transform.smoothscale(floor_image_raw, floor_target_size)
         floor_rect = floor.get_rect(center=room_center)
@@ -377,9 +406,7 @@ def test_image_displayment():
 
         # Build/draw hitboxes directly in fixed screen-space anchor coordinates.
         for wall_hitbox in wall_hitboxes:
-            for segment_index, hitbox in enumerate(wall_hitbox):
-                x, y, width, height, rotation = hitbox
-                hitbox_rect = pygame.Rect(x, y, width, height)
+            for segment_index, hitbox_rect in enumerate(wall_hitbox):
                 hitbox_colliding = hitbox_rect.collidepoint(mouse_pos)
                 if hitbox_colliding:
                     any_hitbox_collision = True
