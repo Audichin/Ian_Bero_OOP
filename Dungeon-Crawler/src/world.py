@@ -17,12 +17,13 @@ NOTE: MUUUCHH of the functionality is commented to allow the program to remain
 functional. Please be sure to un-comment lines of code you are able to use.
 """
 from typing import Any
-# import pygame
+import pygame
 # from pygame import locals
 
 # from sound import SoundManager
-from entity import Entity
-# from player import Player
+from entities.entity_mod import Entity
+from entities.jelly import Jelly
+from entities.player import Player
 # from item import Item
 # from ui import UI
 # from structures import Dungeon, Room
@@ -38,6 +39,7 @@ class World:
     """
 
     __slots__ = ["_sound_manager"  # : SoundManager
+                 , "_time"  # : float
                  , "_sounds"  # : list[int] // int representation of sound
                  , "_entities"  # : list[Entity]
                  , "_player"  # : Player
@@ -74,6 +76,8 @@ class World:
         # initialize dungeon
         self._dungeon_init(seed)
 
+        self._time: float = float()
+
     def _dungeon_init(self, seed: Any) -> None:
         """
         Dungeon structure initializer.
@@ -96,7 +100,8 @@ class World:
         > the starting room. All regular values should be set.
         """
         self._entities: list[Entity] = list[Entity]()
-        # self._player : Player = Player()
+        self._entities.append(Jelly(self, position=pygame.Vector2(600, 255)))
+        self._player: Player = Player(self, position=pygame.Vector2(400, 255))
 
     def _ui_init(self) -> None:  # FIXME
         """
@@ -112,7 +117,7 @@ class World:
 
 # --- loop method ---
 
-    def loop(self) -> None:
+    def loop(self, delta: float) -> None:
         """
         World Loop method.
         > Once per frame, loop() should be called. In a game loop, all logic is processed.
@@ -124,18 +129,20 @@ class World:
         - UI changes / updates
         - etc
         """
-        # self._player.loop()  # FIXME
+        self._time += delta
+        self._player.loop(delta)
 
-        for indx, entity in enumerate(self._entities):
-            self._entities[indx].loop()
+        for indx, _entity in enumerate(self._entities):
+            self._entities[indx].loop(delta)
+            # print(f"{_entity}: {_entity.move_speed}")
 
         self.update_room
         self.update_ui
-        print("world-loop")
+        # print("world-loop")
 
 # --- render method ---
 
-    def render(self) -> None:  # FIXME
+    def render(self) -> list[tuple[pygame.surface.Surface, pygame.rect.Rect]]:  # FIXME
         """
         World Render method.
         > Called once at the end of each frame by game, **AFTER** loop.
@@ -152,7 +159,6 @@ class World:
         - UI
         - etc.
         """
-        # self._player.render()
         # for indx, entity in enumerate(self._entities):
         #     self._entities[indx].render()
 
@@ -162,7 +168,13 @@ class World:
 
         # self._ui.render()
         # self._curr_room.render()
-        print("world-render")
+
+        temp = []
+        temp.append(self._player.render(self._time))
+        for indx, _entity in enumerate(self._entities):
+            temp.append(self._entities[indx].render(self._time))
+
+        return temp
 
 # --- sound methods ---
 
@@ -232,24 +244,53 @@ class World:
 
         > this function is called by the player.
 
+        requests:
+        * action_a // use currently equipped item
+        * action_b
+
         Args:
             action (str): Action ID passed by player.
         """
-        pass
+        print(action)
 
-    def entity_action(self, entity: Entity, action: str) -> None:  # FIXME
+    def quit_controller(self) -> None:
+        """FIXME"""
+        self._player.quit_controller()
+
+    def entity_action(self, entity: Entity, action: str) -> Any:  # FIXME
         """
         Get entity actons and change the world accordingly.
         > Whenever an entity makes an action (such as attacking)
 
         > this function is to be called by that entity.
 
+        requests:
+        * s_col: Static collision
+        * get_player: get player position
+
         Args:
             entity (Entity): Entity calling the function.
 
             action (str): Action ID passed by the entity.
         """
-        pass
+        # this collision return is temporary.
+        # s_col returns all static objects (walls, pits, etc)
+        if action == "s_col":
+            collides: list[pygame.Rect] = list[pygame.Rect]()
+            # Check collisions with all walls in a room.
+            """
+            FIXME
+            """
+            return collides
+        elif action == "player_pos":
+            return self._player.position
+        elif action == "player_col":
+            if pygame.sprite.collide_rect(entity, self._player):
+                return self._player.rect
+        elif action == "player_dmg_10":
+            self._player.damage(10)
+
+        return 0
 
 # --- properties ---
 

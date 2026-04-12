@@ -10,4 +10,4 @@ lxml
 requests
 pdoc
 # kattis-cli
-pygame==2.6.1
+pygame-ce

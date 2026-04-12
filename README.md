@@ -1,6 +1,8 @@
 # Ian_Betto_OOP
 ![Tests](https://github.com/Audichin/Ian_Bero_OOP/actions/workflows/ci-test.yml/badge.svg)
 
+> ![WARNING]
+> Make sure you have the latest version of pygame-ce installed.
 
 Ian and Heriberto OOP project
 

@@ -11,11 +11,12 @@ all: check-style check-type run-test clean
 
 .PHONY: check-type
 check-type:
-	@echo "FIXME"
+	mypy --disallow-untyped-defs --strict ./Dungeon-Crawler
 
 .PHONY: check-style
 check-style:
-	@echo "FIXME"
+	flake8 --count --show-source --statistics ./Dungeon-Crawler
+
 
 # discover and run all tests
 .PHONY: run-test

@@ -13,6 +13,10 @@ As per the tutorial online, a game loop should look like this:
 
 We handle events first, then run the next game loop (next frame)
 and then render the game to the screen last.
+
+RULES:
+    Screen is 1440 by 810
+    All images should be scaled up by a factor of 5
 """
 import sys
 from typing import Self, Any
@@ -57,14 +61,14 @@ class Game:
 
         Args:
             resolution (tuple[int, int] | None, optional): Game resolution.
-            Defaults to (1280, 720)
+            Defaults to (1440, 810)
 
         _running = false.
         """
         self._seed: Any = seed
         self._resolution: tuple[int, int] = (0, 0)
         if resolution is None:
-            self._resolution = (1280, 720)
+            self._resolution = (1440, 810)
         else:
             self._resolution = resolution
         self._running: bool = False
@@ -91,7 +95,7 @@ class Game:
         """
         pygame.init()
         self._screen: pygame.Surface = pygame.display.set_mode(
-            self._resolution, pygame.HWSURFACE)
+            self._resolution, pygame.NOFRAME)
         pygame.mixer.init()
         self._running = True
         self._world: World = World(self._seed)
@@ -111,6 +115,7 @@ class Game:
         """
         for event in pygame.event.get():
             if event.type == locals.QUIT:
+                print("Quitting...")
                 self._running = False
 
     # --- render module ---
@@ -134,7 +139,10 @@ class Game:
 
         Also calls sound handler.
         """
-        self._world.render()
+        self._screen.fill("black")
+        items = self._world.render()
+        for i, n in enumerate(items):
+            self._screen.blit(items[i][0], items[i][1])
         pygame.display.flip()
 
         self.sound_handler()
@@ -184,6 +192,8 @@ class Game:
         * Anything else that needs to be safely shut down.
         """
         pygame.display.quit()
+        self._world.quit_controller()
+        pygame.joystick.quit()
         pygame.quit()
         sys.exit()
 
@@ -204,8 +214,9 @@ class Game:
             * etc.
         * etc.
         """
-        self._world.loop()
-        print(self._framerate.get_fps())
+        delta: float = self._framerate.tick(self._FPS) / 1000.0  # Game runs at 60fps
+        self._world.loop(delta)
+        # print(self._framerate.get_fps())
 
     # --- run game module ---
 
@@ -237,7 +248,6 @@ class Game:
             self.event_handler()
             self.on_loop()
             self.on_render()
-            self._framerate.tick(self._FPS)  # Game runs at 60fps
         self.cleanup()
 
     # --- static methods ---
