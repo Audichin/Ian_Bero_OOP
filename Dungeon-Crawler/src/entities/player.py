@@ -7,14 +7,8 @@ player instance and utilize its actions.
 
 """
 from pathlib import Path
-from typing import Any
+from typing import Any, Self
 from math import sin
-
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
-
 
 import pygame
 from pygame import Vector2, Surface, Rect, key
