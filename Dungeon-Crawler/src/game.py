@@ -205,7 +205,7 @@ class Game:
         """
         self._screen.fill("black")
         items = self._world.render()
-        for i, n in enumerate(items):
+        for i, _n in enumerate(items):
             self._screen.blit(items[i][0], items[i][1])
 
         # check to display debug

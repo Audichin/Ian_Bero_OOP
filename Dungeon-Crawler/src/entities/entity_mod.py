@@ -168,7 +168,7 @@ class Entity(sprite.Sprite):
         """
         self.animate(time)
         try:
-            if self.image and isinstance(self.rect, Rect):
+            if self.image:
                 self.image.set_colorkey((0, 0, 0))
             else:
                 raise AttributeError()
@@ -240,8 +240,6 @@ class Entity(sprite.Sprite):
     def static_rect_collide(self, rect: Rect) -> None:
         """FIXME"""
 
-        if not isinstance(self.rect, Rect):
-            raise AttributeError("rect must be of type Rect")
         # above rect
         relative_x: int = 0
         relative_y: int = 0

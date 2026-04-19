@@ -118,6 +118,8 @@ class World:
         # self._ui : UI = UI()
         pass
 
+    def _item_init(self) -> None: 
+
 # --- loop method ---
 
     def loop(self, delta: float) -> None:
