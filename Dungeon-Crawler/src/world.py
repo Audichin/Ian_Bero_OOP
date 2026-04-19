@@ -70,7 +70,7 @@ class World:
         # initialize items
         self._items: list[Item] = list[Item]()
         self._items.append(Item(self, position=pygame.Vector2(800, 0)))
-        # self._item_slot : Item = Item()
+        self._item_slot : Item = Item(self, position=pygame.Vector2(-999, -999))
         self._inventory : list[Item] = list[Item]()
 
         # initialize UI
@@ -369,10 +369,13 @@ class World:
         for item in self._inventory:
             inventory_items.append(
                 {
-                    'name': item.__str__(),
-                    'position': item.position
+                    'name': item.__str__()
                 }
             )
         data['items']['inventory'] = inventory_items
+
+        data['items']['slot'] = {
+            'name': self._item_slot.__str__()
+        }
 
         return data
