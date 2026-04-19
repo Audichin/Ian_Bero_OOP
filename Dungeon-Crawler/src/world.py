@@ -25,6 +25,7 @@ from entities.entity_mod import Entity
 from entities.jelly import Jelly
 from entities.player import Player
 from items.item import Item
+from items.bubble import BubbleWeapon
 # from ui import UI
 # from structures import Dungeon, Room
 
@@ -68,10 +69,7 @@ class World:
         self._entity_init()
 
         # initialize items
-        self._items: list[Item] = list[Item]()
-        self._items.append(Item(self, position=pygame.Vector2(800, 0)))
-        self._item_slot : Item = Item(self, position=pygame.Vector2(-999, -999))
-        self._inventory : list[Item] = list[Item]()
+        self._item_init()
 
         # initialize UI
         self._ui_init()
@@ -118,7 +116,17 @@ class World:
         # self._ui : UI = UI()
         pass
 
-    def _item_init(self) -> None: 
+    def _item_init(self) -> None:
+        """
+        Item initializer.
+        > Item slot should contain the bubble weapon.
+
+        > Inventory and grounded items should be empty.
+        """
+        self._items: list[Item] = list[Item]()
+        self._items.append(Item(self, position=pygame.Vector2(800, 0)))
+        self._item_slot : Item = BubbleWeapon(self)
+        self._inventory : list[Item] = list[Item]()
 
 # --- loop method ---
 
