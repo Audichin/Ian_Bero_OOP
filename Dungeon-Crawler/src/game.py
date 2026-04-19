@@ -175,7 +175,9 @@ class Game:
         debug_log.append("Inventory Items:")
         for item in debug_data['items']['inventory']:
             debug_log.append(f" {item['name']}:")
-            debug_log.append(f"     position: {item['position']}")
+
+        debug_log.append("Item Slot:")
+        debug_log.append(f" {debug_data['items']['slot']['name']}")
 
         # Display to screen
         for i, line in enumerate(debug_log):
