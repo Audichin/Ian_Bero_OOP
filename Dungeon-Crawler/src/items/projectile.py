@@ -23,11 +23,12 @@ class Projectile(sprite.Sprite):
     def __init__(self, position: Vector2 = Vector2(),
                  speed: float = 100.0,
                  friction: float = 10.0,
+                 damage: int = 1,
                  image: Surface | None = None) -> None:
         """FIXME"""
         super().__init__()
 
-        self._dmg: int = 1
+        self._dmg: int = damage
 
         # Vector inits
         self._position: Vector2 = position

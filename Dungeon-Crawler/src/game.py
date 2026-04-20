@@ -109,7 +109,7 @@ class Game:
         """
         pygame.init()
         self._screen: pygame.Surface = pygame.display.set_mode(
-            self._resolution, pygame.NOFRAME)
+            self._resolution, pygame.FULLSCREEN)
         pygame.mixer.init()
         self._running = True
         self._world: World = World(self._seed)
