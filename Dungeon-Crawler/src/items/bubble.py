@@ -35,9 +35,7 @@ class BubbleWeapon(Item):
     def __init__(self, world: Any,
                  position: Vector2 = Vector2(-999, -999),
                  state: int = Item.COLLECTED,
-                 type: int = Item.MULTIUSE,
-                 assets: dict[str, Surface] | None = None,
-                 image: Surface | None = None) -> None:
+                 type: int = Item.MULTIUSE) -> None:
         """
         Bubble weapon object initialization.
 
@@ -47,7 +45,7 @@ class BubbleWeapon(Item):
         * type = MULTIUSE: Can be used multiple times.
         """
         self._bubbles: list[Bubble] = list[Bubble]()
-        super().__init__(world, position, state, type, assets, image)
+        super().__init__(world, position, state, type)
 
     def loop(self, delta: float) -> None:
         """Loop over all bubble projectiles"""
