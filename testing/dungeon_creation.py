@@ -417,7 +417,7 @@ def test_image_displayment():
 
         wall_target_size = ( int(base_wall_w * scale_factor), int(base_wall_h * scale_factor))
         wall_surfaces = {
-            orientation: pygame.transform.smoothscale(wall_image, wall_target_size)
+            orientation: pygame.transform.scale(wall_image, wall_target_size)
             for orientation, wall_image in wall_surfaces.items()
         }
 
@@ -425,7 +425,7 @@ def test_image_displayment():
             int(native_size[0] * scale_factor),
             int(native_size[1] * scale_factor),
         )
-        floor = pygame.transform.smoothscale(floor_image_raw, floor_target_size)
+        floor = pygame.transform.scale(floor_image_raw, floor_target_size)
         floor_rect = floor.get_rect(center=room_center)
 
         room_rect = next(iter(wall_surfaces.values())).get_rect(center=room_center)
