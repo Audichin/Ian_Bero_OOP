@@ -63,8 +63,6 @@ class World:
             seed (Any): Dungeon seed.
         """
         # initialize sounds
-        # self._sound_manager : SoundManager = SoundManager()
-        self._sounds: list[int] = list[int]()
 
         # initialize entities
         self._entity_init()
@@ -85,8 +83,7 @@ class World:
 
         # inialize sounds
         self._sound_manager: SoundManager = SoundManager()
-        self._sound_manager.add_music()
-        self._sound_manager.add_sound_effect()
+        self.prev_music: list[int] = list[int]()
 
     def _dungeon_init(self, seed: Any) -> None:
         """
@@ -198,22 +195,34 @@ class World:
 
 # --- sound methods ---
 
-    def set_world_music(self) -> None:  # FIXME
+    def play_world_music(self) -> None:  # FIXME
         """
         Sets the world music according to the room type.
         > This method should change the music once the room type changes
 
         > Example: Enemy -> Puzzle
         """
-        self._sound_manager.music.fadeout(1000)  # Fade out current music over 1 second (1000 milliseconds)
+        if len(self.prev_music) > 0:
+            self._sound_manager.stop_audio(self.prev_music[0])
+            self.prev_music.pop(0)
+
         if self._curr_room.room_type == "start":
             self._sound_manager.play_audio(9)  # Main_theme
+            self.prev_music.append(9)
         elif self._curr_room.room_type == "enemy":
             self._sound_manager.play_audio(12)  # Enemy_theme
+            self.prev_music.append(12)
         elif self._curr_room.room_type == "puzzle":
             self._sound_manager.play_audio(11)  # Puzzle_theme
+            self.prev_music.append(11)
         elif self._curr_room.room_type == "boss":
             self._sound_manager.play_audio(10)  # Boss_theme
+            self.prev_music.append(10)
+        else:
+            print(f"Error: Room type {self._curr_room.room_type} did not have its music assigned correctly.")
+        
+# Am thinking of making a function that queues all sound effects that need to play then play them
+# one by one, not sure if this is what Berto wants, unless that is the point of queue_sound()
 
     def queue_sound(self, sound: int) -> None:
         """
