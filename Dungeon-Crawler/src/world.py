@@ -25,6 +25,8 @@ from entities.entity_mod import Entity
 from entities.jelly import Jelly
 from entities.player import Player
 from items.item import Item
+from sound import SoundManager
+from structures import Dungeon
 # from ui import UI
 # from structures import Dungeon, Room
 
@@ -80,6 +82,11 @@ class World:
         self._dungeon_init(seed)
 
         self._time: float = float()
+
+        # inialize sounds
+        self._sound_manager: SoundManager = SoundManager()
+        self._sound_manager.add_music()
+        self._sound_manager.add_sound_effect()
 
     def _dungeon_init(self, seed: Any) -> None:
         """
@@ -198,7 +205,15 @@ class World:
 
         > Example: Enemy -> Puzzle
         """
-        pass
+        self._sound_manager.music.fadeout(1000)  # Fade out current music over 1 second (1000 milliseconds)
+        if self._curr_room.room_type == "start":
+            self._sound_manager.play_audio(9)  # Main_theme
+        elif self._curr_room.room_type == "enemy":
+            self._sound_manager.play_audio(12)  # Enemy_theme
+        elif self._curr_room.room_type == "puzzle":
+            self._sound_manager.play_audio(11)  # Puzzle_theme
+        elif self._curr_room.room_type == "boss":
+            self._sound_manager.play_audio(10)  # Boss_theme
 
     def queue_sound(self, sound: int) -> None:
         """

@@ -100,7 +100,7 @@ class SoundManager:
                 print(f"Error: Sound index {sound_index} is out of range.")
     
     def add_music(self) -> None:
-        """Adds music to the list of sounds.
+        """Adds music to the list of sounds. Performed duricng initialization.
 
         Args:
             new_sounds (list[pygame.mixer.Sound]): List of new sounds that got added
@@ -123,7 +123,7 @@ class SoundManager:
             self._sounds.append(sound)
     
     def add_sound_effect(self) -> None:
-        """Adds a new sound effect to the list of sounds.
+        """Adds a new sound effect to the list of sounds. Performed duricng initialization.
 
         Args:
             new_sound (pygame.mixer.Sound): The new sound effect to add.
