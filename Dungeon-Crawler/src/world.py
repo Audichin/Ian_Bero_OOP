@@ -116,7 +116,7 @@ class World:
         > display.
         """
         self._ui : UI = UI()
-        pass
+        self._ui.update_item_slot(self._item_slot.name)
 
     def _item_init(self) -> None:
         """

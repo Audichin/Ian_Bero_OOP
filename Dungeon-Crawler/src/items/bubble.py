@@ -50,6 +50,10 @@ class BubbleWeapon(Item):
         self._bubbles: list[Bubble] = list[Bubble]()
         super().__init__(world, position, state, type)
 
+    @property
+    def name(self) -> str:
+        return "bubble_weapon"
+
     def loop(self, delta: float) -> None:
         """Loop over all bubble projectiles"""
         for indx, bubble in enumerate(self._bubbles):

@@ -107,6 +107,11 @@ class Item(sprite.Sprite):
         self.rect.center = (int(self._position.x), int(self._position.y))
 
     @property
+    def name(self) -> str:
+        """Name of this item"""
+        return ""
+
+    @property
     def position(self) -> Vector2:
         """item position"""
         return self._position

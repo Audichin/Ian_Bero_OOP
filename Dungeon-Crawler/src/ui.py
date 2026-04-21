@@ -60,14 +60,20 @@ class UI:
     def render(self) -> list[tuple[Surface, Rect]]:
         """Return all displays"""
         temp: list[tuple[Surface, Rect]] = []
+
+        # append hearts to the display
+        for heart in self._hearts:
+            temp.append((heart[0], heart[1]))
+
         # append the item slot to the display
         item_slot_rect: Rect = self._assets['item_slot'].get_rect()
         item_slot_rect.topleft = (0, self._RESOLUTION[1] - 32*self._SCALE)
         temp.append((self._assets['item_slot'], item_slot_rect))
 
-        # append hearts to the display
-        for heart in self._hearts:
-            temp.append((heart[0], heart[1]))
+        # append item on top of the display
+        item_rect: Rect = self._assets['item'].get_rect()
+        item_rect.topleft = (0, self._RESOLUTION[1] - 32*self._SCALE)
+        temp.append((self._assets['item'], item_rect))
 
         return temp
 
@@ -80,6 +86,12 @@ class UI:
             if rel_hp > 2 or rel_hp < 0:
                 continue
             heart[0] = self._assets[f'hearts_{rel_hp}']
+
+    def update_item_slot(self, item_name: str) -> None:
+        """Update the item in the item slot."""
+        item_path: Path = Path(__file__).parent / \
+            f"../assets/visual/items/{item_name}/icon.png"
+        self._store_ui_element('item', pygame.image.load(item_path), (0, 0), (32, 32))
 
 # ==== get image from file ====
 
