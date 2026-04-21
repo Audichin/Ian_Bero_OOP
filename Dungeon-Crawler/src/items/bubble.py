@@ -82,6 +82,7 @@ class BubbleWeapon(Item):
         new_bubble: Bubble = Bubble(player_pos)
         new_bubble.push(Vector2(player_look[0], player_look[1]))
         self._bubbles.append(new_bubble)
+        self._world.queue_sound(2)
 
 
 class Bubble(Projectile):

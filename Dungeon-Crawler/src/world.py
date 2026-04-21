@@ -82,6 +82,7 @@ class World:
         self._time: float = float()
 
         # inialize sounds
+        self._sounds: list[int] = list[int]()
         self._sound_manager: SoundManager = SoundManager()
         self._prev_music: list[int] = [9]
         self._sound_manager.play_audio(9)
@@ -195,10 +196,6 @@ class World:
         # for indx, entity in enumerate(self._entities):
         #     self._entities[indx].render()
 
-        # while self._sounds:
-        #     self._sound_manager.play_audio(self._sounds.pop())
-        # self.set_world_music()
-
         # self._ui.render()
         # self._curr_room.render()
 
@@ -219,10 +216,20 @@ class World:
             temp.append(elem)
 
         # self.play_world_music()
-
+        self.play_sound_effects()
         return temp
 
 # --- sound methods ---
+
+    def play_sound_effects(self) -> None:
+        """
+        Plays all sound effects in the queue.
+        > Should be called in the render method, after all objects have had a chance to queue sounds.
+
+        > After playing, the sound queue should be cleared.
+        """
+        while self._sounds:
+            self._sound_manager.play_audio(self._sounds.pop())
 
     def play_world_music(self) -> None:  # FIXME
         """
@@ -255,9 +262,6 @@ class World:
         #     self.prev_music.append(10)
         # else:
         #     print(f"Error: Room type {self._curr_room.room_type} did not have its music assigned correctly.")
-        
-# Am thinking of making a function that queues all sound effects that need to play then play them
-# one by one, not sure if this is what Berto wants, unless that is the point of queue_sound()
 
     def queue_sound(self, sound: int) -> None:
         """
