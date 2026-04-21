@@ -35,6 +35,7 @@ class Game:
     # --- constants ---
     _FPS: int = 60
     _VOLUME: float = 0.5
+    _RESOLUTION: tuple[int, int] = (1440, 810)
 
     __slots__ = ["_debug_mode"   # bool
                  , "_debug_font"  # pygame.font.SysFont
@@ -78,7 +79,7 @@ class Game:
         # initialize game resolution
         self._resolution: tuple[int, int] = (0, 0)
         if resolution is None:
-            self._resolution = (1440, 810)
+            self._resolution = self._RESOLUTION
         else:
             self._resolution = resolution
 

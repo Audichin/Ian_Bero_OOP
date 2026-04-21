@@ -27,7 +27,7 @@ from entities.player import Player
 from items.item import Item
 from items.projectile import Projectile
 from items.bubble import BubbleWeapon
-# from ui import UI
+from ui import UI
 # from structures import Dungeon, Room
 
 
@@ -115,7 +115,7 @@ class World:
 
         > display.
         """
-        # self._ui : UI = UI()
+        self._ui : UI = UI()
         pass
 
     def _item_init(self) -> None:
@@ -207,6 +207,10 @@ class World:
 
         for proj in self._item_slot.render_projectiles():
             temp.append(proj)
+
+        # final one on display stack
+        for elem in self._ui.render():
+            temp.append(elem)
 
         return temp
 
