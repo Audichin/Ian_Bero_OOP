@@ -4,7 +4,6 @@ UI Module
 > Displays game data in an inuitive format for the player.
 """
 from pathlib import Path
-from typing import Any
 
 import pygame
 from pygame import Surface, Rect
@@ -16,20 +15,19 @@ class UI:
 
     Contains Surfaces to display with their rects.
     This class doesn't have access to world. Instead,
-    world will pass updates and values to update.    
+    world will pass updates and values to update.
     """
 
     _RESOLUTION: tuple[int, int] = (1440, 810)
     _SCALE: int = 5
     __slots__ = ["_assets",  # dict[str, Surface]
-                 "_asset_rects"]  # dict[str, Rect]]
+                 "_hearts"]  # list[tuple[Surface, Rect]]
 
 # ==== inits ====
 
     def __init__(self) -> None:
         """UI Init."""
         self._assets: dict[str, Surface] = {}
-        self._asset_rects: dict[str, Rect] = {}
         self.__init_item_slot()
         self.__init_hearts()
 
@@ -45,24 +43,38 @@ class UI:
             "../assets/visual/ui/Hearts-Sheet.png"
         heart_sheet: Surface = pygame.image.load(path)
         # Retrive three stages of hearts
-        self._store_ui_element('hearts_full', heart_sheet, (0, 0), (16, 16))
-        self._store_ui_element('hearts_half', heart_sheet, (16, 0), (16, 16))
-        self._store_ui_element('hearts_empty', heart_sheet, (32, 0), (16, 16))
+        self._store_ui_element('hearts_2', heart_sheet, (0, 0), (16, 16))
+        self._store_ui_element('hearts_1', heart_sheet, (16, 0), (16, 16))
+        self._store_ui_element('hearts_0', heart_sheet, (32, 0), (16, 16))
+
+        # Set hearts for display
+        self._hearts: list[tuple[Surface, Rect]] = []
+        for i in range(5):
+            heart_rect: Rect = self._assets['hearts_2'].get_rect()
+            heart_rect.topleft = (0, (i*16*self._SCALE))
+            self._hearts.append((self._assets['hearts_2'], heart_rect))
 
 # ==== base ====
 
     def render(self) -> list[tuple[Surface, Rect]]:
         """Return all displays"""
-        temp: list[tuple[Surface, Rect]] = [
-            (self._assets['item_slot'], self._asset_rects['item_slot'])
-        ]
+        temp: list[tuple[Surface, Rect]] = []
+        # append the item slot to the display
+        item_slot_rect: Rect = self._assets['item_slot'].get_rect()
+        item_slot_rect.topleft = (0, self._RESOLUTION[1] - 32*self._SCALE)
+        temp.append((self._assets['item_slot'], item_slot_rect))
+
+        # append hearts to the display
+        for heart in self._hearts:
+            temp.append(heart)
+
         return temp
 
 # ==== UI methods ====
 
 # ==== get image from file ====
 
-    def _store_ui_element(self, name: str, 
+    def _store_ui_element(self, name: str,
                           image: Surface,
                           position: tuple[int, int],
                           dimension: tuple[int, int]) -> None:
@@ -74,4 +86,3 @@ class UI:
         single.set_colorkey((0, 0, 0))
         # store into dictionaries
         self._assets[name] = single
-        self._asset_rects[name] = single.get_rect()
