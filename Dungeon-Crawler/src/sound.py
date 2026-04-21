@@ -1,6 +1,7 @@
 import sys
 import os
 from unittest import case
+from zipfile import Path
 import pygame
 from pygame import locals
 
@@ -11,7 +12,6 @@ class SoundManager:
         pygame.mixer.set_num_channels(16)
         self.load_music()
         self.load_sound_effect()
-
 
     @property
     def music(self) -> str:
@@ -128,13 +128,15 @@ class SoundManager:
         Args:
             new_sounds (list[pygame.mixer.Sound]): List of new sounds that got added
         """
-        
+        PROJECT_ROOT = Path(__file__).resolve().parents[1]
+        MUSIC_DIR = PROJECT_ROOT / "assets" / "audio" / "music"
+
         # Next few lines are for music
-        Main_theme_sound = self.load_audio("assets/audio/music/Main_Theme.mp3")
+        Main_theme_sound = self.load_audio(MUSIC_DIR / "Main_Theme.mp3")
         # Next themes to add:
-        Boss_theme_sound = self.load_audio("assets/audio/music/Boss_Theme.mp3")
-        # Puzzle_theme_sound = self.load_audio("assets/audio/music/Puzzle_Theme.mp3")
-        Enemy_theme_sound = self.load_audio("assets/audio/music/Enemy_Theme.mp3")
+        Boss_theme_sound = self.load_audio(MUSIC_DIR / "Boss_Theme.mp3")
+        # Puzzle_theme_sound = self.load_audio(MUSIC_DIR / "Puzzle_Theme.mp3")
+        Enemy_theme_sound = self.load_audio(MUSIC_DIR / "Enemy_Theme.mp3")
 
         Main_theme_channel = pygame.mixer.Channel(9)
         # Future channels needed:
