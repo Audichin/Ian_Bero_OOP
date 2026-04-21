@@ -12,6 +12,7 @@ class SoundManager:
     def __init__(self):
         self._music: str = ""
         self._sounds: list[pygame.mixer.Sound] = []
+        pygame.mixer.pre_init(buffer=4096)
         pygame.mixer.set_num_channels(16)
         self.load_sound_effect()
         self.load_music()
@@ -114,13 +115,13 @@ class SoundManager:
                 pygame.mixer.Channel(8).play(self._sounds[8])  # Swordmiss
             # Music cases
             case 9:
-                pygame.mixer.Channel(9).play(self._sounds[9], fade_ms = fade_in)  # Main_theme
+                pygame.mixer.Channel(9).play(self._sounds[9], -1, fade_ms = fade_in)  # Main_theme
             case 10:
-                pygame.mixer.Channel(10).play(self._sounds[10], fade_ms = fade_in)  # Boss_theme
+                pygame.mixer.Channel(10).play(self._sounds[10], -1, fade_ms = fade_in)  # Boss_theme
             # case 11:
-            #     pygame.mixer.Channel(11).play(self._sounds[11], fade_ms = fade_in)  # Puzzle_theme
+            #     pygame.mixer.Channel(11).play(self._sounds[11], -1, fade_ms = fade_in)  # Puzzle_theme
             case 12:
-                pygame.mixer.Channel(12).play(self._sounds[12], fade_ms = fade_in)  # Enemy_theme
+                pygame.mixer.Channel(12).play(self._sounds[12], -1, fade_ms = fade_in)  # Enemy_theme
             case _:
                 print(f"Error: Sound index {sound_index} is out of range.")
 
