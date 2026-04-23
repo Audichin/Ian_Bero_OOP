@@ -20,7 +20,7 @@ from typing import Any
 import pygame
 # from pygame import locals
 
-# from sound import SoundManager
+from sound import SoundManager
 from entities.entity_mod import Entity
 from entities.jelly import Jelly
 from entities.player import Player
@@ -30,7 +30,8 @@ from structures import Dungeon, Room
 from items.projectile import Projectile
 from items.bubble import BubbleWeapon
 from ui import UI
-# from structures import Dungeon, Room
+from structures import Dungeon, Room
+from generation import Generation
 
 
 class World:
@@ -79,7 +80,7 @@ class World:
 
         # initialize dungeon
         self._dungeon_init(seed)
-
+        self._curr_room: Room = self._dungeon.rooms[(0, 0)]
         self._time: float = float()
 
         # inialize sounds
@@ -264,28 +265,6 @@ class World:
             self._prev_music.append(self._Music_IDs["boss"])
         else:
             print(f"Error: Room type {self._curr_room.room_type} did not have its music assigned correctly. Congrats Ian, you broke the game!")
-
-        # if _curr_room.room_type == "start" && self.prev_music[0] != 9:
-            
-
-        # if self.prev_music[0] == :
-        #     self._sound_manager.stop_audio(self.prev_music[0])
-        #     self.prev_music.pop(0)
-
-        # if self._curr_room.room_type == "start":
-        #     self._sound_manager.play_audio(9)  # Main_theme
-        #     self.prev_music.append(9)
-        # elif self._curr_room.room_type == "enemy":
-        #     self._sound_manager.play_audio(12)  # Enemy_theme
-        #     self.prev_music.append(12)
-        # elif self._curr_room.room_type == "puzzle":
-        #     self._sound_manager.play_audio(11)  # Puzzle_theme
-        #     self.prev_music.append(11)
-        # elif self._curr_room.room_type == "boss":
-        #     self._sound_manager.play_audio(10)  # Boss_theme
-        #     self.prev_music.append(10)
-        # else:
-        #     print(f"Error: Room type {self._curr_room.room_type} did not have its music assigned correctly.")
 
     def queue_sound(self, sound: int) -> None:
         """

@@ -9,10 +9,10 @@ try:
 except ImportError:
     from entities.entity_mod import Entity
 
-# try:
-#     from .generation import Generation
-# except ImportError:
-#     from generation import Generation
+try:
+    from .generation import Generation
+except ImportError:
+    from generation import Generation
 
 class Room:
     """
