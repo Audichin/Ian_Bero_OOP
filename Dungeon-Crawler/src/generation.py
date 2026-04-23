@@ -27,6 +27,7 @@ class Generation:
     X -> (int) x cord in map
 
     Y -> (int) y cord in map
+    
     has_door -> (bool) if the wall needs a door
 
     is_open -> (bool) if door, is it open (default true except boss door, then false)
@@ -37,6 +38,8 @@ class Generation:
         self.dungeon = dungeon
         seed_value = self.dungeon.seed if self.dungeon is not None else None
         self.rng = random.Random(seed_value)
+        directions = [("N", (0, -1)), ("E", (1, 0)), ("S", (0, 1)), ("W", (-1, 0))] 
+        # First is checking Left (W), Second is checking Up (N), Thrird is checking Right (E), Fourth is Down (S)
         self.sel_img: str = f"{PROJECT_DIR_NAME}/assets/visual/textures/walls"
         self.room_walls: dict[tuple[int, int, str], dict[str, object]] = {}
         # room_walls information:
@@ -56,12 +59,12 @@ class Generation:
         has_door -> (bool) if the wall needs a door
         is_open -> (bool) if door, is it open (default true except boss door, then false)
         """
-        directions = [("W", (-1, 0)),("N", (0, 1)),("E", (1, 0)),("S", (0, -1)),] # First is checking Left (W), Second is checking Up (N), Thrird is checking Right (E), Fourth is Down (S)
+
         self.room_walls.clear()
 
         for cur_room in self.dungeon.rooms.values():
             if cur_room.room_type == "enemy" or cur_room.room_type == "puzzle" or cur_room.room_type == "start":
-                for direction_check, (x, y) in directions:
+                for direction_check, (x, y) in self.directions:
                     if direction_check == "S":
                         if (cur_room.x + x, cur_room.y + y) in self.dungeon.rooms:
                             if self.dungeon.rooms[(cur_room.x + x, cur_room.y + y)].room_type == "boss":
@@ -100,7 +103,7 @@ class Generation:
                         self._store_wall(cur_room.x, cur_room.y, direction_check, False, False, self.sel_img)
                     self.sel_img = f"{PROJECT_DIR_NAME}/assets/visual/textures/walls" # reset sel_img for next wall
             if cur_room.room_type == "boss":
-                for direction_check, (x, y) in directions:
+                for direction_check, (x, y) in self.directions:
                     if direction_check == "S":
                         if (cur_room.x + x, cur_room.y + y) in self.dungeon.rooms:
                             # Boss south door exists but remains closed by default.

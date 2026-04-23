@@ -210,6 +210,9 @@ class World:
         # self._curr_room.render()
 
         temp = []
+
+        temp.append(self.update_room())
+
         temp.append(self._player.render(self._time))
         for indx, _entity in enumerate(self._entities):
             temp.append(self._entities[indx].render(self._time))
@@ -269,7 +272,7 @@ class World:
 
 # --- dungeon methods ---
 
-    def update_room(self) -> None:  # FIXME
+    def update_room(self) -> tuple[pygame.surface.Surface, pygame.rect.Rect]:  # FIXME
         """
         Updates the room according to changes.
 
@@ -277,8 +280,11 @@ class World:
 
         > door unlocks, etc.
         """
+    
         if self._curr_room.room_type != self._prev_room_type:
-            
+            for direction_check, (x, y) in Dungeon.directions:
+                if self._curr_room.room_type == "boss":
+                    
 
 # --- UI methods ---
 
