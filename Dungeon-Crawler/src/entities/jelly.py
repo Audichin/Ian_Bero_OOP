@@ -26,11 +26,8 @@ class Jelly(Entity):
                  speed: float = 300,
                  clamp_speed: float = 300,
                  friction: float = 5,
-                 HP: int = 3,
-                 assets: dict[str, Surface] | None = None,
-                 image: Surface | None = None,
-                 anim_timer: float = 100) -> None:
-
+                 HP: int = 3) -> None:
+        """Jellies are simple enemies that attack the player when they're close"""
         self._move_timer: float = self._MOVE_INTERVAL
 
         self._assets: dict[str, Surface] = dict[str, Surface]()

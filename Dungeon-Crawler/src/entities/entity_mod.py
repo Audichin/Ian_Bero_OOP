@@ -29,7 +29,7 @@ class Entity(sprite.Sprite):
     _SCALE: int = 5
     _INV_SEC: float = 0.1
 
-    __slots__: list[str] = ["_world"  # Any (World this entity belongs to)
+    __slots__: list[str] = ["_world",  # Any (World this entity belongs to)
                             "_assets",  # dict[str, Surface]
                             "_position",  # Vector2
                             "_prev_position",  # Vector2
