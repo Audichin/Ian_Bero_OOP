@@ -26,9 +26,9 @@ class Urchin(Entity):
 
     def __init__(self, world: Any,
                  position: Vector2 = Vector2(),
-                 speed: float = 200,
+                 speed: float = 50,
                  clamp_speed: float = 500,
-                 friction: float = 50,
+                 friction: float = 25,
                  HP: int = 5) -> None:
         """Urchins are enemies that move in a single direction at a time."""
         # intialize variables
@@ -96,7 +96,7 @@ class Urchin(Entity):
             abs_diff: tuple[float, float] = (abs(diff.x), abs(diff.y))
 
             # Set diff and targets
-            if abs_diff[0] < abs_diff[1]:
+            if abs_diff[0] > abs_diff[1]:
                 self._directions.append((int(diff.x / abs(diff.x)), 0))
                 self._directions.append((0, int(diff.y / abs(diff.y))))
                 self._target_pos.append(player.x)
