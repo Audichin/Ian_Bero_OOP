@@ -35,13 +35,17 @@ class Urchin(Entity):
         self._move_timer: float = self._MOVE_INTERVAL
         self._target_pos: list[float] = []
         self._directions: list[tuple[int, int]] = []
-        # Get urchin asset
-        urchin_sprite_sheet: Path = Path(__file__).parent / \
-            "../../assets/visual/sprites/urchin/urchin.png"
-        urchin_sprite: Surface = self._single_surface_from_sheet(
-            pygame.image.load(urchin_sprite_sheet), (0, 0), (32, 32))
 
-        super().__init__(world, position, speed, clamp_speed, friction, HP, image=urchin_sprite)
+        # Get urchin asset
+        self._assets: dict[str, Surface] = dict[str, Surface]()
+        urchin_sprite_sheet: Path = Path(__file__).parent / \
+            "../../assets/visual/sprites/urchin/urchin-sheet.png"
+        sheet: Surface = pygame.image.load(urchin_sprite_sheet)
+        self._all_frames_from_sheet(sheet, (32, 32), 4, "M", "")
+        print(self._assets)
+
+        super().__init__(world, position, speed, clamp_speed, friction,
+                         HP, image=self._assets["M0"], assets=self._assets)
 
 # ==== base methods ====
 
@@ -55,6 +59,10 @@ class Urchin(Entity):
         else:
             self.image.set_alpha(255)
         return super().render(time)
+
+    def animate(self, time: float) -> None:
+        anim_step: int = int((time*self.move_speed / 100) % 4)
+        self.image = self._assets[f'M{anim_step}']
 
 # ==== urchin methods ====
 
