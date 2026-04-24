@@ -121,6 +121,11 @@ class Entity(sprite.Sprite):
         """Entity position"""
         return self._position
 
+    @position.setter
+    def position(self, other: Vector2) -> None:
+        self._position = other
+        self.set_rect()
+
     @property
     def HP(self) -> int:
         """Entity hit points"""

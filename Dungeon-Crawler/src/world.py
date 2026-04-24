@@ -151,6 +151,12 @@ class World:
         - UI changes / updates
         - etc
         """
+
+        # Stop game if player health is zero
+        if self._player.HP <= 0:
+            self._player.position = pygame.Vector2(-999, -999)
+            return
+
         self._time += delta
         self._player.loop(delta)
 
@@ -190,15 +196,8 @@ class World:
         - UI
         - etc.
         """
-        # for indx, entity in enumerate(self._entities):
-        #     self._entities[indx].render()
-
-        # while self._sounds:
-        #     self._sound_manager.play_audio(self._sounds.pop())
-        # self.set_world_music()
-
-        # self._ui.render()
-        # self._curr_room.render()
+        # Check that the player is dead
+        # if self._player.HP <= 0:
 
         temp: list[tuple[pygame.Surface, pygame.Rect]] = []
         temp.append(self._player.render(self._time)[0])
