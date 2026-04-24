@@ -38,7 +38,7 @@ class Generation:
         self.dungeon = dungeon
         seed_value = self.dungeon.seed if self.dungeon is not None else None
         self.rng = random.Random(seed_value)
-        directions = [("N", (0, -1)), ("E", (1, 0)), ("S", (0, 1)), ("W", (-1, 0))] 
+        self.directions = [("N", (0, -1)), ("E", (1, 0)), ("S", (0, 1)), ("W", (-1, 0))] 
         # First is checking Left (W), Second is checking Up (N), Thrird is checking Right (E), Fourth is Down (S)
         self.sel_img: str = f"{PROJECT_DIR_NAME}/assets/visual/textures/walls"
         self.room_walls: dict[tuple[int, int, str], dict[str, object]] = {}
