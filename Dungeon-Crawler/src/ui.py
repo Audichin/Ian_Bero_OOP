@@ -22,15 +22,17 @@ class UI:
     _RESOLUTION: tuple[int, int] = (1440, 810)
     _SCALE: int = 5
     __slots__ = ["_assets",  # dict[str, Surface]
-                 "_hearts"]  # list[list[Any]]
-
+                 "_hearts",  # list[list[Any]]
+                 "_player_hp"]  # int (player health)
 # ==== inits ====
 
     def __init__(self) -> None:
         """UI Init."""
         self._assets: dict[str, Surface] = {}
+        self._player_hp: int = 10
         self.__init_item_slot()
         self.__init_hearts()
+        self.__init_gameover()
 
     def __init_item_slot(self) -> None:
         """Initializes the item slot for rendering."""
@@ -55,6 +57,14 @@ class UI:
             heart_rect.topleft = (0, (i*16*self._SCALE))
             self._hearts.append([self._assets['hearts_2'], heart_rect])
 
+    def __init_gameover(self) -> None:
+        """Initialize asset for game over"""
+        path: Path = Path(__file__).parent / \
+            "../assets/visual/ui/gameover.png"
+        gameover_sheet: Surface = pygame.image.load(path)
+        # Retrieve and store game over image
+        self._store_ui_element('gameover', gameover_sheet, (0, 0), (160, 64))
+
 # ==== base ====
 
     def render(self) -> list[tuple[Surface, Rect]]:
@@ -75,12 +85,18 @@ class UI:
         item_rect.topleft = (0, self._RESOLUTION[1] - 32*self._SCALE)
         temp.append((self._assets['item'], item_rect))
 
+        if self._player_hp <= 0:
+            gameover_rect: Rect = self._assets['gameover'].get_rect()
+            gameover_rect.topleft = (64 * self._SCALE, 32 * self._SCALE)
+            temp.append((self._assets['gameover'], gameover_rect))
+
         return temp
 
 # ==== UI methods ====
 
     def update_hearts(self, hp: int) -> None:
         """Update heart UI according to player health."""
+        self._player_hp = hp
         for indx, heart in enumerate(self._hearts):
             rel_hp: int = hp - (indx*2)
             if rel_hp > 2:

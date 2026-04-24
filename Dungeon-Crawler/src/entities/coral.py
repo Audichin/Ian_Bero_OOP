@@ -1,6 +1,7 @@
 """FIXME"""
 from pathlib import Path
 from typing import Any
+from math import sin
 
 import pygame
 from pygame import Vector2, Surface, Rect
@@ -27,7 +28,7 @@ class Coral(Entity):
                  position: Vector2 = Vector2(),
                  speed: float = 0,
                  clamp_speed: float = 0,
-                 HP: int = 1) -> None:
+                 HP: int = 2) -> None:
         """Corals are enemies that stay in place and shoot projectiles at the player."""
         # variable inits
         self._shot_timer: float = self._SHOOT_INTERVAL
@@ -54,6 +55,10 @@ class Coral(Entity):
         return super().loop(delta, move)
 
     def render(self, time: float) -> list[tuple[Surface, Rect]]:
+        if self._invincibility > 0:
+            self.image.set_alpha(int(abs(sin(time * 10) * 255)))
+        else:
+            self.image.set_alpha(255)
         to_render: list[tuple[Surface, Rect]] = []
         for shot in self._shots:
             to_render.append(shot.render())

@@ -196,8 +196,6 @@ class World:
         - UI
         - etc.
         """
-        # Check that the player is dead
-        # if self._player.HP <= 0:
 
         temp: list[tuple[pygame.Surface, pygame.Rect]] = []
         temp.append(self._player.render(self._time)[0])
