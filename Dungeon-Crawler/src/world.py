@@ -40,6 +40,8 @@ class World:
     to be utilized as an API or game engine.
     """
 
+    SCREEN_CENTER: tuple[int, int] = (720, 405)
+
     __slots__ = ["_sound_manager"  # : SoundManager
                  , "_time"  # : float
                  , "_sounds"  # : list[int] // int representation of sound
@@ -253,11 +255,11 @@ class World:
 
         > Example: Enemy -> Puzzle
         """
-        print(f"Music curr_room: {self._curr_room.room_type}, Music prev_room: {self._prev_room_type}")
+        # print(f"Music curr_room: {self._curr_room.room_type}, Music prev_room: {self._prev_room_type}")
         if self._curr_room.room_type != self._prev_room_type:
             prev_song = self._prev_music.pop()
-            print(f"Music prev_song: {prev_song}")
-            print(f"Music curr_song: {self._Music_IDs[self._curr_room.room_type]}")
+            # print(f"Music prev_song: {prev_song}")
+            # print(f"Music curr_song: {self._Music_IDs[self._curr_room.room_type]}")
             self._sound_manager.stop_audio(prev_song) # stop previous music
             self._sound_manager.play_audio(self._Music_IDs[self._curr_room.room_type]) # play new music
             self._prev_music.append(self._Music_IDs[self._curr_room.room_type]) # update prev_music
@@ -287,20 +289,6 @@ class World:
         > door unlocks, etc.
         """
         old_room = self._curr_room
-        next_room = (self._curr_room.x, self._curr_room.y)
-        if self._player._controller.down_movement:
-            next_room = (self._curr_room.x, self._curr_room.y - 1)
-        if self._player._controller.up_movement:
-            next_room = (self._curr_room.x, self._curr_room.y + 1)
-        if self._player._controller.left_movement:
-            next_room = (self._curr_room.x - 1, self._curr_room.y)
-        if self._player._controller.right_movement:
-            next_room = (self._curr_room.x + 1, self._curr_room.y)
-
-        try:
-            self._curr_room = self._dungeon.rooms[next_room]
-        except KeyError:
-            pass
 
         print(self._curr_room)
         # change of room
@@ -333,6 +321,71 @@ class World:
                 temp.append((wall_img, pygame.Rect(80, 5, 256, 160)))
 
         return temp
+
+    def get_room_hitboxes(self) -> dict[str, list[pygame.Rect]]:
+        """
+        Get all hitboxes in the current room.
+
+        hitboxes are ordered as:
+
+        'N': list[pygame.Rect],
+        'E': list[pygame.Rect],
+        'S': list[pygame.Rect],
+        'W': list[pygame.Rect]
+        """
+        all_hitboxes: dict[str, list[pygame.Rect]] = {}
+        orientations: list[str] = ['N', 'E', 'S', 'W']
+        for cardinal in orientations:
+            all_hitboxes[cardinal] = self._dungeon.wall_hitbox(self._curr_room, cardinal)
+        return all_hitboxes
+
+    def switch_room(self, cardinal: str) -> None:
+        """
+        Go to the next room with respects to the cardinal of the door
+        the player interacted with.
+        """
+
+        cardinal_pairs: dict[str, str] = {
+            'N': 'S',
+            'S': 'N',
+            'E': 'W',
+            'W': 'E'
+        }
+        position_tp: dict[str, tuple[float, float]] = {
+            'N': (720, 205),
+            'E': (1156, 445),
+            'S': (720, 685),
+            'W': (285, 445)
+        }
+
+        # next_room = (self._curr_room.x, self._curr_room.y)
+        # if self._player._controller.down_movement:
+        #     next_room = (self._curr_room.x, self._curr_room.y - 1)
+        # if self._player._controller.up_movement:
+        #     next_room = (self._curr_room.x, self._curr_room.y + 1)
+        # if self._player._controller.left_movement:
+        #     next_room = (self._curr_room.x - 1, self._curr_room.y)
+        # if self._player._controller.right_movement:
+        #     next_room = (self._curr_room.x + 1, self._curr_room.y)
+
+        next_room: tuple[int, int] = (0, 0)
+        if cardinal_pairs[cardinal] == 'S':
+            next_room = (self._curr_room.x, self._curr_room.y - 1)
+        elif cardinal_pairs[cardinal] == 'N':
+            next_room = (self._curr_room.x, self._curr_room.y + 1)
+        elif cardinal_pairs[cardinal] == 'E':
+            next_room = (self._curr_room.x + 1, self._curr_room.y)
+        else:
+            next_room = (self._curr_room.x - 1, self._curr_room.y + 1)
+
+        try:
+            self._curr_room = self._dungeon.rooms[next_room]
+        except KeyError:
+            raise KeyError("room doesnt exist")
+
+        self._player.position = pygame.Vector2(
+            position_tp[cardinal_pairs[cardinal]][0],
+            position_tp[cardinal_pairs[cardinal]][1])
 
 # --- UI methods ---
 
@@ -389,12 +442,7 @@ class World:
         # this collision return is temporary.
         # s_col returns all static objects (walls, pits, etc)
         if action == "s_col":
-            collides: list[pygame.Rect] = list[pygame.Rect]()
-            # Check collisions with all walls in a room.
-            """
-            FIXME
-            """
-            return collides
+            return self._entity_static_collision(entity)
         elif action == "player_pos":
             return self._player.position
         elif action == "player_col":
@@ -404,6 +452,34 @@ class World:
             self._player.damage(1)
 
         return 0
+
+    def _entity_static_collision(self, entity: Entity) -> list[pygame.Rect]:
+        """Check entity collides with nearest wall"""
+        collides: list[pygame.Rect] = list[pygame.Rect]()
+        checks: list[str] = []
+
+        # Check position relative to Y direction
+        if entity.position.y < self.SCREEN_CENTER[1]:
+            checks.append('N')
+        elif entity.position.y > self.SCREEN_CENTER[1]:
+            checks.append('S')
+        # Check position relative to X direction
+        if entity.position.x > self.SCREEN_CENTER[0]:
+            checks.append('E')
+        elif entity.position.x < self.SCREEN_CENTER[0]:
+            checks.append('W')
+
+        dungeon_walls: dict[str, list[pygame.Rect]] = self.get_room_hitboxes()
+        for cardinal in checks:
+            for segment, rec in enumerate(dungeon_walls[cardinal]):
+                if entity.rect.colliderect(rec):
+                    if segment == 1 and entity is self._player:
+                        print(f"door: {cardinal}")
+                        self.switch_room(cardinal)
+                        continue
+                    collides.append(rec)
+
+        return collides
 
 # ---- item methods ----
 
