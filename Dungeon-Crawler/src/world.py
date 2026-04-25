@@ -310,13 +310,15 @@ class World:
         directions = ["W", "N", "E", "S"]
         for d in directions:
             img_directory = self._dungeon._generation.room_walls.get((x, y, d))
+            print(f"img_directory: {img_directory}", f"for wall: {(x, y, d)}")
             if img_directory:
-                print(f"d: {d}\nimg: {img_directory['sel_img'].__str__()}")
+                # print(f"d: {d}\nimg: {img_directory['sel_img'].__str__()}")
                 wall_img: pygame.Surface = pygame.image.load(
                     img_directory['sel_img'].__str__()).convert_alpha()
                 wall_img = pygame.transform.scale(
                     wall_img, (256 * Dungeon._SCALE, 160 * Dungeon._SCALE))
                 temp.append((wall_img, pygame.Rect(80, 5, 256, 160)))  # FIXME - need to set rect walls correctly
+
         return temp
 
 # --- UI methods ---

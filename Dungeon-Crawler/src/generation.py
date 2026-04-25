@@ -1,7 +1,7 @@
 import sys
 import random
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 
 if TYPE_CHECKING:
@@ -31,7 +31,7 @@ class Generation:
         self.dungeon: Dungeon = dungeon
         seed_value = self.dungeon._seed if self.dungeon is not None else None
         self.rng = random.Random(seed_value)
-        self.directions = [("N", (0, 1)), ("E", (1, 0)), ("S", (0, -1)), ("W", (-1, 0))] 
+        self.directions = [("N", (0, 1)), ("E", (1, 0)), ("W", (-1, 0)), ("S", (0, -1))] 
         self.PROJECT_ROOT = Path(__file__).resolve().parents[1]
         self.SRC_ROOT = self.PROJECT_ROOT / "src"
         self.WALL_TEXTURE_ROOT = self.PROJECT_ROOT / "assets" / "visual" / "textures" / "walls"
