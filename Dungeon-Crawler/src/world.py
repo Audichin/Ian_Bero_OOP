@@ -210,6 +210,8 @@ class World:
 
         temp: list[tuple[pygame.Surface, pygame.Rect]] = []
 
+        self.play_world_music()
+
         for to_render in self.render_room():
             temp.append(to_render)
 
@@ -228,7 +230,6 @@ class World:
         for elem in self._ui.render():
             temp.append(elem)
 
-        self.play_world_music()
         self.play_sound_effects()
         return temp
 
@@ -252,12 +253,17 @@ class World:
 
         > Example: Enemy -> Puzzle
         """
-
+        print(f"Music curr_room: {self._curr_room.room_type}, Music prev_room: {self._prev_room_type}")
         if self._curr_room.room_type != self._prev_room_type:
-            self._sound_manager.stop_audio(self._prev_music.pop())
-            self._sound_manager.play_audio(self._Music_IDs[self._curr_room.room_type])
-            self._prev_music.append(self._Music_IDs[self._curr_room.room_type])
+            prev_song = self._prev_music.pop()
+            print(f"Music prev_song: {prev_song}")
+            print(f"Music curr_song: {self._Music_IDs[self._curr_room.room_type]}")
+            self._sound_manager.stop_audio(prev_song) # stop previous music
+            self._sound_manager.play_audio(self._Music_IDs[self._curr_room.room_type]) # play new music
+            self._prev_music.append(self._Music_IDs[self._curr_room.room_type]) # update prev_music
             self._prev_room_type = self._curr_room.room_type
+        else:
+            pass
 
     def queue_sound(self, sound: int) -> None:
         """
@@ -280,6 +286,7 @@ class World:
 
         > door unlocks, etc.
         """
+        old_room = self._curr_room
         next_room = (self._curr_room.x, self._curr_room.y)
         if self._player._controller.down_movement:
             next_room = (self._curr_room.x, self._curr_room.y - 1)
@@ -297,8 +304,8 @@ class World:
 
         print(self._curr_room)
         # change of room
-        if self._curr_room is not self._prev_room:
-            self._prev_room_type = self._curr_room.room_type
+        if self._curr_room is not old_room:
+            self._prev_room = old_room
 
     def render_room(self) -> list[tuple[pygame.Surface, pygame.Rect]]:
         """

@@ -12,7 +12,7 @@ class SoundManager:
         self._music: str = ""
         self._sounds: list[pygame.mixer.Sound] = []
         pygame.mixer.pre_init(buffer=4096)
-        pygame.mixer.set_num_channels(16)
+        pygame.mixer.set_num_channels(17)
         self.load_sound_effect()
         self.load_music()
 
@@ -78,8 +78,8 @@ class SoundManager:
                 pygame.mixer.Channel(9).fadeout(fadeout)  # Main_theme
             case 10:
                 pygame.mixer.Channel(10).fadeout(fadeout)  # Boss_theme
-            # case 11:
-            #     pygame.mixer.Channel(11).fadeout(fadeout)  # Puzzle_theme
+            case 11:
+                pygame.mixer.Channel(11).fadeout(fadeout)  # Puzzle_theme
             case 12:
                 pygame.mixer.Channel(12).fadeout(fadeout)  # Enemy_theme
             case _:
@@ -121,12 +121,12 @@ class SoundManager:
             case 10:
                 # Boss_theme
                 pygame.mixer.Channel(10).play(self._sounds[10], -1, fade_ms=fade_in)
-            # case 11:
+            case 11:
                 # Puzzle_theme
-                # pygame.mixer.Channel(11).play(self._sounds[11], -1, fade_ms = fade_in)
+                pygame.mixer.Channel(11).play(self._sounds[11], -1, fade_ms = fade_in)
             case 12:
                 # Enemy_theme
-                pygame.mixer.Channel(12).play(self._sounds[11], -1, fade_ms=fade_in)
+                pygame.mixer.Channel(12).play(self._sounds[12], -1, fade_ms=fade_in)
             case _:
                 print(f"Error: Sound index {sound_index} is out of range.")
 
@@ -142,23 +142,23 @@ class SoundManager:
 
         Main_theme_dir: Path = (MUSIC_DIR / "Main_theme.mp3")
         Boss_theme_dir: Path = (MUSIC_DIR / "Boss_theme.mp3")
-        # Puzzle_theme_dir: Path = (MUSIC_DIR / "Puzzle_Theme.mp3")
+        Puzzle_theme_dir: Path = (MUSIC_DIR / "Puzzle_theme.mp3")
         Enemy_theme_dir: Path = (MUSIC_DIR / "Enemy_theme.mp3")
 
         # Next few lines are for music
         Main_theme_sound = self.load_audio(Main_theme_dir.__str__())
         # Next themes to add:
         Boss_theme_sound = self.load_audio(Boss_theme_dir.__str__())
-        # Puzzle_theme_sound = self.load_audio(Puzzle_theme_dir)
+        Puzzle_theme_sound = self.load_audio(Puzzle_theme_dir.__str__())
         Enemy_theme_sound = self.load_audio(Enemy_theme_dir.__str__())
 
         # Main_theme_channel = pygame.mixer.Channel(9)
         # # Future channels needed:
-        # Boss_theme_channel = pygame.mixer.Channel(10)
-        # # Puzzle_theme_channel = pygame.mixer.Channel(11)
-        # Enemy_theme_channel = pygame.mixer.Channel(12)
+        Boss_theme_channel = pygame.mixer.Channel(10)
+        Puzzle_theme_channel = pygame.mixer.Channel(11)
+        Enemy_theme_channel = pygame.mixer.Channel(12)
 
-        for sound in [Main_theme_sound, Boss_theme_sound, Enemy_theme_sound]:
+        for sound in [Main_theme_sound, Boss_theme_sound, Enemy_theme_sound, Puzzle_theme_sound]:
             self._sounds.append(sound)
 
     def load_sound_effect(self) -> None:
