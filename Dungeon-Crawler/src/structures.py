@@ -9,25 +9,116 @@ try:
 except ImportError:
     from generation import Generation
 
+try:
+    from .entities.entity_mod import Entity
+    from .entities.jelly import Jelly
+    from .entities.urchin import Urchin
+    from .entities.coral import Coral
+except ImportError:
+    from entities.entity_mod import Entity
+    from entities.jelly import Jelly
+    from entities.urchin import Urchin
+    from entities.coral import Coral
+
 
 class Room:
     """
     Room class for handling cords, used by Dungeon class
     """
-    def __init__(self, x: int, y: int, room_type: str = "empty") -> None:
-        # what value types are these
-        self.x: int = x
-        self.y: int = y
-        self.room_type: str = room_type
-        self.connections: list[Self] = []
+    __slots__ = ["_world",
+                 "_x",
+                 "_y",
+                 "_rng",
+                 "_room_type",
+                 "_connections",
+                 "_enemies"]
 
-    # what is other-room
+    def __init__(self, world: Any,
+                 x: int, y: int,
+                 rng: random.Random,
+                 room_type: str = "empty") -> None:
+        self._world: Any = world
+        self._x: int = x
+        self._y: int = y
+        self._rng: random.Random = rng
+        self._room_type: str = room_type
+        self._connections: list[Self] = []
+        self._enemies: list[Entity] = []
+
+    def init_enemies(self) -> None:
+        """
+        Initialize enemies in this room.
+
+        This is a list representation of all the enemies
+        belonging to this room.
+        """
+        enemy_types: list[str] = [
+            "Jelly", "Jelly", "Urchin", "Coral", "Coral"]
+        room_bounds: dict[str, tuple[int, int]] = {
+            'X': (284, 1160),
+            'Y': (205, 685)
+        }
+
+        enemy_count = self._rng.randint(1, 5)
+
+        for i in range(enemy_count):
+            # get randomized values
+            enemy = self._rng.choice(enemy_types)
+            position: pygame.Vector2 = pygame.Vector2(
+                self._rng.randint(room_bounds['X'][0], room_bounds['X'][1]),
+                self._rng.randint(room_bounds['Y'][0], room_bounds['Y'][1])
+            )
+            # store enemy
+            if enemy == "Jelly":
+                self._enemies.append(Jelly(self._world, position))
+            elif enemy == "Urchin":
+                position.x = pygame.math.clamp(position.x, 325, 1119)
+                position.y = pygame.math.clamp(position.y, 246, 644)
+                self._enemies.append(Urchin(self._world, room_bounds, position))
+            else:
+                self._enemies.append(Coral(self._world, position))
+
+# ==== properties ====
+
+    @property
+    def x(self) -> int:
+        """room x position"""
+        return self._x
+
+    @property
+    def y(self) -> int:
+        """room y position"""
+        return self._y
+
+    @property
+    def room_type(self) -> str:
+        """room type"""
+        return self._room_type
+
+    @room_type.setter
+    def room_type(self, other: str) -> None:
+        self._room_type = other
+
+    @property
+    def connections(self) -> list[Self]:
+        """room connections"""
+        return self._connections
+
+    @property
+    def enemies(self) -> list[Entity]:
+        """enemies in this room"""
+        return self._enemies
+
+# ==== Room methods ====
+
     def connect(self, other_room: Self) -> None:
         """Creates a bidirectional connection."""
         if other_room not in self.connections:
             self.connections.append(other_room)
         if self not in other_room.connections:
             other_room.connections.append(self)
+
+# ==== overloads ====
 
     def __repr__(self) -> str:
         return f"Room({self.x}, {self.y}, {self.room_type})"
@@ -41,7 +132,8 @@ class Dungeon:
     _SCALE: int = 5
     _RESOLUTION: tuple[int, int] = (1440, 810)
 
-    __slots__ = ["_seed",  # Any
+    __slots__ = ["_world",  # Any
+                 "_seed",  # Any
                  "_total_rooms",  # int
                  "_min_puzzle_rooms",  # int
                  "_native_size",  # tuple[int, int]
@@ -49,9 +141,11 @@ class Dungeon:
                  "_rng",  # random.Random
                  "_generation"]  # Generation
 
-    def __init__(self, seed: Any,
+    def __init__(self, world: Any,
+                 seed: Any,
                  total_rooms: int = 12,
                  min_puzzle_rooms: int = 4) -> None:
+        self._world: Any = world
         self._seed: Any = seed
         self._total_rooms: int = total_rooms
         self._min_puzzle_rooms: int = min_puzzle_rooms
@@ -82,7 +176,7 @@ class Dungeon:
         """
         Generates the layout for dungeon
         """
-        start = Room(0, 0, "start")
+        start = Room(self._world, 0, 0, self._rng, "start")
         self.rooms[(0, 0)] = start
         active_rooms = [start]
 
@@ -96,7 +190,7 @@ class Dungeon:
             new_y = current.y + dy
 
             if (new_x, new_y) not in self.rooms:
-                new_room = Room(new_x, new_y)
+                new_room = Room(self._world, new_x, new_y, self._rng)
                 self.rooms[(new_x, new_y)] = new_room
                 current.connect(new_room)
                 active_rooms.append(new_room)
@@ -158,6 +252,7 @@ class Dungeon:
         for room in remaining:
             if room.room_type == "empty":
                 room.room_type = "enemy"
+                room.init_enemies()
 
     def wall_hitbox(self, room: Room, orientation: str) -> list[pygame.Rect]:
         """

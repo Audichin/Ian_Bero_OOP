@@ -18,13 +18,15 @@ class Urchin(Entity):
 
     _MOVE_INTERVAL: float = 1
 
-    __slots__: list[str] = ["_move_timer",  # float
+    __slots__: list[str] = ["_bounds",  # dict[str, tuple[int, int]]
+                            "_move_timer",  # float
                             "_target_pos",  # list[float]
                             "_directions"]  # list[tuple(int, int)]
 
 # ==== inits ====
 
     def __init__(self, world: Any,
+                 bounds: dict[str, tuple[int, int]],
                  position: Vector2 = Vector2(),
                  speed: float = 50,
                  clamp_speed: float = 500,
@@ -32,6 +34,7 @@ class Urchin(Entity):
                  HP: int = 5) -> None:
         """Urchins are enemies that move in a single direction at a time."""
         # intialize variables
+        self._bounds: dict[str, tuple[int, int]] = bounds
         self._move_timer: float = self._MOVE_INTERVAL
         self._target_pos: list[float] = []
         self._directions: list[tuple[int, int]] = []
@@ -76,15 +79,21 @@ class Urchin(Entity):
         """
         # check if we are moving
         if len(self._directions):
-            if self._directions[0][0] == 0:
+            if self._world.entity_action(self, "s_col"):
+                self._directions.pop(0)
+                self._target_pos.pop(0)
+                self._move_timer = self._MOVE_INTERVAL
+            elif self._directions[0][0] == 0:
+                # check bounds
                 # check if we have passed the target in the y direction
-                if self.__check_y_target():
+                if self.__check_y_bounds() or self.__check_y_target():
                     self._directions.pop(0)
                     self._target_pos.pop(0)
                     self._move_timer = self._MOVE_INTERVAL
             elif self._directions[0][1] == 0:
+                # check bounds
                 # check if we have passed the target in the x direction
-                if self.__check_x_target():
+                if self.__check_x_bounds() or self.__check_x_target():
                     self._directions.pop(0)
                     self._target_pos.pop(0)
                     self._move_timer = self._MOVE_INTERVAL
@@ -132,4 +141,18 @@ class Urchin(Entity):
             return True if self.position.x > self._target_pos[0] else False
         elif self._directions[0][0] < 0:
             return True if self.position.x < self._target_pos[0] else False
+        return False
+
+    def __check_y_bounds(self) -> bool:
+        if self._target_pos[0] < self._bounds['Y'][0]:
+            return True
+        elif self._target_pos[0] > self._bounds['Y'][1]:
+            return True
+        return False
+
+    def __check_x_bounds(self) -> bool:
+        if self._target_pos[0] < self._bounds['X'][0]:
+            return True
+        elif self._target_pos[0] > self._bounds['X'][1]:
+            return True
         return False

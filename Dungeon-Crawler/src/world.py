@@ -22,9 +22,6 @@ import pygame
 
 from sound import SoundManager
 from entities.entity_mod import Entity
-from entities.jelly import Jelly
-from entities.urchin import Urchin
-from entities.coral import Coral
 from entities.player import Player
 from items.item import Item
 from structures import Dungeon, Room
@@ -50,7 +47,6 @@ class World:
                  , "_prev_music"  # : list[int] // int representation of music
                  , "_Music_IDs"  # : dict[str, int] // string representation of music
                  , "_prev_room_type"
-                 , "_entities"  # : list[Entity]
                  , "_player"  # : Player
                  , "_items"  # Item // items in the room
                  , "_item_slot"  # : Item // item to be used with player action
@@ -59,7 +55,9 @@ class World:
                  , "_dungeon"  # : Dungeon
                  , "_dungeon_seed"  # : Any
                  , "_curr_room"  # : Room
-                 , "_prev_room"]  # : Room
+                 , "_prev_room"  # : Room
+                 , "_room_transition"  # : float // transition timer
+                 , "_transition_state"]  # : int // 1 = up, -1 = down, 0 = none
 
 # --- initializers ---
 
@@ -84,6 +82,8 @@ class World:
 
         # initialize dungeon
         self._dungeon_init(seed)
+        self._room_transition: float = 0
+        self._transition_state: int = 0
 
         # inialize sounds
         self._sounds: list[int] = list[int]()
@@ -106,7 +106,7 @@ class World:
             seed (Any): Dungeon seed
         """
         self._dungeon_seed: Any = seed
-        self._dungeon: Dungeon = Dungeon(self._dungeon_seed)
+        self._dungeon: Dungeon = Dungeon(self, self._dungeon_seed)
         self._curr_room: Room = self._dungeon.rooms[(0, 0)]
         self._prev_room: Room = self._dungeon.rooms[(0, 0)]
         self._prev_room_type: str = "none"
@@ -120,11 +120,6 @@ class World:
 
         > the starting room. All regular values should be set.
         """
-        self._entities: list[Entity] = list[Entity]()
-        # self._entities.append(Jelly(self, position=pygame.Vector2(600, 255)))
-        # self._entities.append(Jelly(self, position=pygame.Vector2(300, 755)))
-        # self._entities.append(Urchin(self, position=pygame.Vector2(800, 300)))
-        # self._entities.append(Coral(self, position=pygame.Vector2(1200, 400)))
         self._player: Player = Player(self, position=pygame.Vector2(400, 255))
 
     def _ui_init(self) -> None:  # FIXME
@@ -177,10 +172,10 @@ class World:
         self._time += delta
         self._player.loop(delta)
 
-        for indx, _entity in enumerate(self._entities):
-            self._entities[indx].loop(delta)
-            if _entity.HP <= 0:
-                self._entities.pop(indx)
+        for indx, entity in enumerate(self._curr_room.enemies):
+            entity.loop(delta)
+            if entity.HP <= 0:
+                self._curr_room.enemies.pop(indx)
 
         if len(self._items):
             for indx, _item in enumerate(self._items):
@@ -188,11 +183,8 @@ class World:
 
         self._item_slot.loop(delta)
 
-        # print(self._inventory)
-
-        self.update_room()
+        self.update_room(delta)
         self.update_ui()
-        # print("world-loop")
 
 # --- render method ---
 
@@ -219,7 +211,7 @@ class World:
             temp.append(to_render)
 
         temp.append(self._player.render(self._time)[0])
-        for entity in self._entities:
+        for entity in self._curr_room.enemies:
             for entity_item in entity.render(self._time):
                 temp.append(entity_item)
 
@@ -229,6 +221,14 @@ class World:
 
         for proj in self._item_slot.render_projectiles():
             temp.append(proj)
+
+        # black box for transition
+        if self._transition_state:
+            # create a black box
+            black_box: pygame.Surface = pygame.Surface((1440, 810))
+            black_box.fill((0, 0, 0))
+            black_box.set_alpha(int(self._room_transition * 255))
+            temp.append((black_box, black_box.get_rect()))
 
         # final one on display stack
         for elem in self._ui.render():
@@ -286,7 +286,7 @@ class World:
 
 # --- dungeon methods ---
 
-    def update_room(self) -> None:  # FIXME
+    def update_room(self, delta: float) -> None:  # FIXME
         """
         Updates the room according to changes.
 
@@ -294,11 +294,16 @@ class World:
 
         > door unlocks, etc.
         """
-        old_room = self._curr_room
 
-        # change of room
-        if self._curr_room is not old_room:
-            self._prev_room = old_room
+        # handle transition
+        if self._transition_state:
+            self._room_transition += (delta * self._transition_state) * 10
+
+        if self._room_transition > 1 and self._transition_state == 1:
+            self._transition_state = -1
+        elif self._room_transition <= 0 and self._transition_state == -1:
+            self._transition_state = 0
+            self._room_transition = 0
 
     def render_room(self) -> list[tuple[pygame.Surface, pygame.Rect]]:
         """
@@ -347,21 +352,28 @@ class World:
         Go to the next room with respects to the cardinal of the door
         the player interacted with.
         """
+        # set transition state to 1
+        if not self._transition_state:
+            self._transition_state = 1
+
+        if self._room_transition < 1:
+            return
+
         position_tp: dict[str, tuple[float, float]] = {
-            'N': (720, 725),
-            'E': (240, 445),
-            'S': (720, 150),
-            'W': (1200, 445)
+            'N': (720, 725),  # position to tp player if they go through N door
+            'E': (240, 445),  # position to tp player if they go through E door
+            'S': (720, 150),  # position to tp player if they go through S door
+            'W': (1200, 445)  # position to tp player if they go through W door
         }
 
         next_room: tuple[int, int] = (0, 0)
-        if cardinal == 'S':
+        if cardinal == 'S':  # going through south door
             next_room = (self._curr_room.x, self._curr_room.y - 1)
-        elif cardinal == 'N':
+        elif cardinal == 'N':  # going through north door
             next_room = (self._curr_room.x, self._curr_room.y + 1)
-        elif cardinal == 'E':
+        elif cardinal == 'E':  # going through east door
             next_room = (self._curr_room.x + 1, self._curr_room.y)
-        elif cardinal == 'W':
+        elif cardinal == 'W':  # going through west door
             next_room = (self._curr_room.x - 1, self._curr_room.y)
 
         try:
@@ -369,6 +381,7 @@ class World:
         except KeyError:
             raise KeyError("room doesnt exist")
 
+        # teleport player to appropriate position
         self._player.position = pygame.Vector2(
             position_tp[cardinal][0],
             position_tp[cardinal][1])
@@ -406,7 +419,6 @@ class World:
                 self._player.position, self._player.look_dir)
 
     def quit_controller(self) -> None:
-        """FIXME"""
         self._player.quit_controller()
 
     def entity_action(self, entity: Entity, action: str,
@@ -498,7 +510,7 @@ class World:
                 self._items.remove(item)
                 return True
         if action == "attack":
-            for entity in self._entities:
+            for entity in self._curr_room.enemies:
                 if projectile and pygame.sprite.collide_rect(projectile, entity):
                     entity.damage(projectile.damage_points)
                     return True
@@ -529,7 +541,7 @@ class World:
 
         # store all present entity data
         entity_data: list[dict[str, Any]] = list[dict[str, Any]]()
-        for entity in self._entities:
+        for entity in self._curr_room.enemies:
             entity_data.append(
                 {
                     'name': entity.__str__(),

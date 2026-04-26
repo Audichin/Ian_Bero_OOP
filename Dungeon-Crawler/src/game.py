@@ -334,7 +334,7 @@ class Game:
         """
         Build the game here!
         """
-        seed: Any = 2983324
+        seed: Any = 2983
         game: Game = Game(seed=seed)
         game.run_game()
 
