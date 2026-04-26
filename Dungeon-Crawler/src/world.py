@@ -93,8 +93,8 @@ class World:
         self._Music_IDs = {
             "start": 9,
             "boss": 10,
-            "puzzle": 11,
-            "enemy": 12
+            "enemy": 11,
+            "puzzle": 12
         }
 
     def _dungeon_init(self, seed: Any) -> None:
