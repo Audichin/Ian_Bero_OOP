@@ -75,9 +75,11 @@ class Room:
         belonging to this room.
         """
         enemy_types: list[str] = [
-            "Jelly", "Jelly", "Urchin", "Coral", "Coral"]
+            "Jelly", "Jelly", "Jelly", "Jelly", "Jelly",
+            "Coral", "Coral", "Coral",
+            "Urchin"]
 
-        enemy_count = self._rng.randint(1, 5)
+        enemy_count = self._rng.randint(1, 3)
 
         for i in range(enemy_count):
             # get randomized values
@@ -124,22 +126,33 @@ class Room:
         """enemies in this room"""
         return self._enemies
 
-# ==== Room methods ====
-
-    def update_puzzle(self) -> bool:
+    @property
+    def puzzle_state(self) -> int:
         """
-        Updates the room if it is a puzzle room.
+        current puzzle room state
 
         Returns:
-            bool: Room state. False == not finished, True == finished.
+            int: Room state. 0 == not finished, 1 == next pattern, 2 == finished.
+        """
+        if len(self._enemies):
+            return 0
+        if self._current_pattern >= len(self._puzzle_enemy_pattern):
+            return 2
+        return 1
+
+# ==== Room methods ====
+
+    def update_puzzle(self) -> None:
+        """
+        Updates the room if it is a puzzle room.
         """
         # check if enemies are alive
         if len(self._enemies):
-            return False
+            return
 
         # check enemy patterns
         if self._current_pattern >= len(self._puzzle_enemy_pattern):
-            return True
+            return
 
         # pop next pattern
         print("pop next pattern")
@@ -148,7 +161,7 @@ class Room:
         for enemy in next_pattern:
             self.create_enemy(enemy['name'], enemy['position'])
 
-        return False
+        return
 
     def create_enemy(self, type: str, position: pygame.Vector2) -> None:
         """
@@ -350,7 +363,7 @@ class Dungeon:
 
         raise ValueError(f"Invalid orientation for wall hitbox: {orientation}")
 
-    def set_all_doors_in_room(self, room: Room, state: bool) -> None:
+    def set_all_doors_in_room(self, room: Room, state: bool, boss: bool) -> None:
         """
         Sets all the doors in a room to the state.
 
@@ -358,25 +371,27 @@ class Dungeon:
             room (Room): Room to set the walls of
             state (bool): The state to switch the wall to.
                 A true = open, a false = closed.
+            boss (bool): Whether to open boss door or not.
         """
         orientations: list[str] = ['N', 'E', 'S', 'W']
 
         for cardinal in orientations:
-            self.set_wall_door(room, cardinal, state)
+            self.set_wall_door(room, cardinal, state, boss)
 
-    def switch_all_doors_in_room(self, room: Room) -> None:
+    def switch_all_doors_in_room(self, room: Room, boss: bool) -> None:
         """
         Switches the state of all the walls in a room.
 
         Args:
             room (Room): room to switch walls.
+            boss (bool): Whether to open boss door or not.
         """
         orientations: list[str] = ['N', 'E', 'S', 'W']
 
         for cardinal in orientations:
-            self.switch_wall_door_state(room, cardinal)
+            self.switch_wall_door_state(room, cardinal, boss)
 
-    def set_wall_door(self, room: Room, orientation: str, state: bool) -> None:
+    def set_wall_door(self, room: Room, orientation: str, state: bool, boss: bool) -> None:
         """
         Set the wall corresponding to the room and orientation.
 
@@ -385,6 +400,7 @@ class Dungeon:
             orientation (str): The wall to set the state to.
             state (bool): The state to switch the wall to.
                 A true = open, a false = closed.
+            boss (bool): Whether to open boss door or not.
         """
         wall_data = self._generation.room_walls.get((room.x, room.y, orientation))
         if wall_data is None:
@@ -399,17 +415,18 @@ class Dungeon:
 
         # open door if the door is closed.
         if state and not isopen:
-            self.switch_wall_door_state(room, orientation)
+            self.switch_wall_door_state(room, orientation, boss)
         elif not state and isopen:
-            self.switch_wall_door_state(room, orientation)
+            self.switch_wall_door_state(room, orientation, boss)
 
-    def switch_wall_door_state(self, room: Room, orientation: str) -> None:
+    def switch_wall_door_state(self, room: Room, orientation: str, boss: bool) -> None:
         """
         Switches the state of the corresponding room wall.
 
         Args:
             room (Room): room the wall belongs to
             orientation (str): wall.
+            boss (bool): Whether to open boss door or not.
         """
         wall_data = self._generation.room_walls.get((room.x, room.y, orientation))
         if wall_data is None:
@@ -422,6 +439,10 @@ class Dungeon:
 
         if not hasdoor:
             return  # No changes
+
+        # do not open boss door
+        if walltype.__str__() == "Boss" and not boss:
+            return
 
         wall_data['isopen'] = not isopen  # flip state
 

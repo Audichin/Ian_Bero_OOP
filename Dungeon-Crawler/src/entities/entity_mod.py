@@ -103,6 +103,7 @@ class Entity(sprite.Sprite):
 
         self.image: Surface = temp_img
         self.rect: Rect = self.image.get_rect()
+        self.set_rect()
 
     def _sound_init(self) -> None:
         """

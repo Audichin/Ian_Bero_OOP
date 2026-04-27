@@ -297,9 +297,19 @@ class World:
         > door unlocks, etc.
         """
         if self._curr_room.room_type == "puzzle":
-            if self._curr_room.update_puzzle():
-                self._curr_room.room_type = "puzzle_clear"
-                self._dungeon.set_all_doors_in_room(self._curr_room, True)
+            # get puzzle room state
+            puzzle_room_state = self._curr_room.puzzle_state
+            if puzzle_room_state == 2:
+                self._sound_manager.play_audio(0)
+                self._curr_room.room_type = "enemy"
+                self._dungeon.set_all_doors_in_room(self._curr_room, True, False)
+            elif puzzle_room_state == 1 and not self._transition_state:
+                self._transition_state = 1
+            elif puzzle_room_state == 1 and self._room_transition >= 1:
+                self._player.position = pygame.Vector2(
+                    self.SCREEN_CENTER[0], self.SCREEN_CENTER[1]
+                )
+                self._curr_room.update_puzzle()
 
         # handle transition
         if self._transition_state:
@@ -391,7 +401,7 @@ class World:
             self._player.position = pygame.Vector2(
                 self.SCREEN_CENTER[0], self.SCREEN_CENTER[1]
             )
-            self._dungeon.set_all_doors_in_room(self._curr_room, False)
+            self._dungeon.set_all_doors_in_room(self._curr_room, False, False)
             return
 
         # teleport player to appropriate position
