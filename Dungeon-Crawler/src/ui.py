@@ -22,6 +22,7 @@ class UI:
     _RESOLUTION: tuple[int, int] = (1440, 810)
     _SCALE: int = 5
     __slots__ = ["_assets",  # dict[str, Surface]
+                 "_inventory",  # list[tuple[Surface, Rect]]
                  "_hearts",  # list[list[Any]]
                  "_player_hp"]  # int (player health)
 # ==== inits ====
@@ -30,6 +31,7 @@ class UI:
         """UI Init."""
         self._assets: dict[str, Surface] = {}
         self._player_hp: int = 10
+        self._inventory: list[tuple[Surface, Rect]] = []
         self.__init_item_slot()
         self.__init_hearts()
         self.__init_gameover()
@@ -85,6 +87,12 @@ class UI:
         item_rect.topleft = (0, self._RESOLUTION[1] - 32*self._SCALE)
         temp.append((self._assets['item'], item_rect))
 
+        # append iventory items to display
+        for item in self._inventory:
+            temp.append((item[0], item[1]))
+            print(item[1])
+
+        # display game over
         if self._player_hp <= 0:
             gameover_rect: Rect = self._assets['gameover'].get_rect()
             gameover_rect.topleft = (64 * self._SCALE, 32 * self._SCALE)
@@ -111,6 +119,12 @@ class UI:
         item_path: Path = Path(__file__).parent / \
             f"../assets/visual/items/{item_name}/icon.png"
         self._store_ui_element('item', pygame.image.load(item_path), (0, 0), (32, 32))
+
+    def update_items(self, items: list[tuple[Surface, Rect]]) -> None:
+        """Update the items to display"""
+        self._inventory = items
+        for i, _item in enumerate(self._inventory):
+            self._inventory[i][1].topleft = (272 * self._SCALE, (i*16*self._SCALE))
 
 # ==== get image from file ====
 

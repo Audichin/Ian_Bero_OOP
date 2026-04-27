@@ -24,6 +24,7 @@ from sound import SoundManager
 from entities.entity_mod import Entity
 from entities.player import Player
 from items.item import Item
+from items.heart import Heart
 from structures import Dungeon, Room
 from items.projectile import Projectile
 from items.bubble import BubbleWeapon
@@ -145,8 +146,8 @@ class World:
         """
         self._items: list[Item] = list[Item]()
         self._items = [
-            # Item(self, position=pygame.Vector2(800, 0)),
-            # Item(self, position=pygame.Vector2(304, 564))
+            Heart(self, position=pygame.Vector2(800, 600)),
+            Item(self, position=pygame.Vector2(304, 564))
             ]
         self._item_slot : Item = BubbleWeapon(self)
         self._inventory : list[Item] = list[Item]()
@@ -421,6 +422,11 @@ class World:
         """
         self._ui.update_hearts(self._player.HP)
 
+        inventory_items: list[tuple[pygame.Surface, pygame.Rect]] = []
+        for item in self._inventory:
+            inventory_items.append((item.image, item.rect))
+        self._ui.update_items(inventory_items)
+
 # --- entity methods ---
 
     def player_action(self, action: str) -> None:
@@ -437,9 +443,10 @@ class World:
         Args:
             action (str): Action ID passed by player.
         """
-        if action == "action_a":
-            self._item_slot.item_action_a(
-                self._player.position, self._player.look_dir)
+        match action:
+            case "action_a":
+                self._item_slot.item_action_a(
+                    self._player.position, self._player.look_dir)
 
     def quit_controller(self) -> None:
         self._player.quit_controller()
@@ -466,22 +473,23 @@ class World:
         """
         # this collision return is temporary.
         # s_col returns all static objects (walls, pits, etc)
-        if action == "s_col":
-            if projectile:
-                return self._static_collision(projectile)
-            return self._static_collision(entity)
-        elif action == "player_pos":
-            return self._player.position
-        elif action == "player_col":
-            if projectile:
-                if pygame.sprite.collide_rect(projectile, self._player):
+        match action:
+            case "s_col":
+                if projectile:
+                    return self._static_collision(projectile)
+                return self._static_collision(entity)
+            case "player_pos":
+                return self._player.position
+            case "player_col":
+                if projectile:
+                    if pygame.sprite.collide_rect(projectile, self._player):
+                        return self._player.rect
+                if pygame.sprite.collide_rect(entity, self._player):
                     return self._player.rect
-            if pygame.sprite.collide_rect(entity, self._player):
-                return self._player.rect
-        elif action == "player_dmg_1":
-            self._player.damage(1)
-        elif action == "player_dmg_2":
-            self._player.damage(2)
+            case "player_dmg_1":
+                self._player.damage(1)
+            case"player_dmg_2":
+                self._player.damage(2)
 
         return 0
 
@@ -519,27 +527,40 @@ class World:
         """
         Get item action and projectiles.
 
+        requests:
+        * grabbed: called when item is touched
+        * store: called when item is put into inventory
+        * use: called when the item should be used and deleted
+        * heal_1: used to heal the player by one point
+        * attack: used by item slot items that act as weapons
+        * s_col: used for projectiles
+
         Args:
             item (Item): Item requesting action.
             action (str): Action code.
             projectile (Projectile | None, optional): Projectile passed. Defaults to None.
-
-        Returns:
-            Any: _description_
         """
-        if action == "grabbed":
-            if pygame.sprite.collide_rect(item, self._player):
-                self._inventory.append(item)
-                self._items.remove(item)
-                return True
-        if action == "attack":
-            for entity in self._curr_room.enemies:
-                if projectile and pygame.sprite.collide_rect(projectile, entity):
-                    entity.damage(projectile.damage_points)
+        match action:
+            case "grabbed":
+                if pygame.sprite.collide_rect(item, self._player):
                     return True
-        if action == "s_col":
-            if projectile:
-                return self._static_collision(projectile)
+            case "store":
+                if pygame.sprite.collide_rect(item, self._player):
+                    self._inventory.append(item)
+                    self._items.remove(item)
+                    return None
+            case "use":
+                self._items.remove(item)
+            case "heal_1":
+                self._player.HP += 1
+            case "attack":
+                for entity in self._curr_room.enemies:
+                    if projectile and pygame.sprite.collide_rect(projectile, entity):
+                        entity.damage(projectile.damage_points)
+                        return True
+            case "s_col":
+                if projectile:
+                    return self._static_collision(projectile)
         return 0
 
 # --- properties ---

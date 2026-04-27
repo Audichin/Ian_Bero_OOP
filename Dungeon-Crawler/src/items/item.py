@@ -64,7 +64,7 @@ class Item(sprite.Sprite):
         Item class object.
 
         Args:
-            world (Any): The world inheriting this Item.
+            world (Any): The world holding this Item.
             position (Vector2, optional): The position of this Item. Defaults to Vector2().
             state (int, optional): Item state to start. Defaults to GROUNDED.
             type (int, optional): Item type. Helps define behavior. Defaults to SINGLEUSE.
@@ -83,6 +83,9 @@ class Item(sprite.Sprite):
         self._assets = assets
         self.__image_init(image)
 
+        self._sounds: dict[str, int] = {}
+        self._sound_init()
+
     def __image_init(self, img_in: Surface | None = None) -> None:
         """
         Item Image initialization.
@@ -99,6 +102,12 @@ class Item(sprite.Sprite):
         self.image: Surface = temp_img
         self.rect: Rect = self.image.get_rect()
         self.set_rect()
+
+    def _sound_init(self) -> None:
+        """
+        The base of this does nothing, it just serves as
+        a blueprint for other entity classes that add sounds
+        """
 
 # ---- properties -----
 
@@ -200,9 +209,13 @@ class Item(sprite.Sprite):
     def check_player_touched(self) -> None:
         """Check if the player collects this item by colliding with it."""
         if self._world.item_action(self, "grabbed"):
-            #  Change state, move it very far off screen.
+            self._world.item_action(self, "store")
             self.set_state(self.COLLECTED)
             self._position = Vector2(-999, -999)
 
     def item_action_a(self, player_pos: Vector2, player_look: tuple[int, int]) -> None:
         """Base method for items with actions. Does nothing."""
+
+    def play_sound(self, sound_key: str) -> None:
+        """FIXME"""
+        self._world.queue_sound(self._sounds[sound_key])
