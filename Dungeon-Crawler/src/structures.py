@@ -16,6 +16,7 @@ try:
     from .entities.coral import Coral
     from .items.item import Item
     from .items.heart import Heart
+    from .items.key import KeyFragment
 except ImportError:
     from entities.entity_mod import Entity
     from entities.jelly import Jelly
@@ -23,6 +24,7 @@ except ImportError:
     from entities.coral import Coral
     from items.item import Item
     from items.heart import Heart
+    from items.key import KeyFragment
 
 
 class Room:
@@ -212,6 +214,8 @@ class Room:
         match item_type:
             case 'heart':
                 self._items.append(Heart(self._world, position))
+            case 'keyfragment':
+                self._items.append(KeyFragment(self._world, position))
 
     def connect(self, other_room: Self) -> None:
         """Creates a bidirectional connection."""

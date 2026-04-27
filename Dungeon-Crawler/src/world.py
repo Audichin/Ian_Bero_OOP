@@ -296,6 +296,9 @@ class World:
             if puzzle_room_state == 2:
                 self._sound_manager.play_audio(0)
                 self._curr_room.room_type = "start"
+                self._curr_room.create_item('keyfragment', pygame.Vector2(
+                    self.SCREEN_CENTER[0], self.SCREEN_CENTER[1]
+                ))
                 self._dungeon.set_all_doors_in_room(self._curr_room, True, False)
             elif puzzle_room_state == 1 and not self._transition_state:
                 self._transition_state = 1
@@ -550,8 +553,10 @@ class World:
                     return None
             case "use":
                 self._curr_room.items.remove(item)
+                return None
             case "heal_1":
                 self._player.HP += 1
+                return None
             case "attack":
                 for entity in self._curr_room.enemies:
                     if projectile and pygame.sprite.collide_rect(projectile, entity):
