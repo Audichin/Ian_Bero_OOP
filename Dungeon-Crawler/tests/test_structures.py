@@ -3,7 +3,7 @@ import hypothesis.strategies as some
 from unittest.mock import patch
 import unittest
 
-from src.structures import Structures
+from structures import Structures
 
 class TestStructures(unittest.TestCase):
     @given(some.text())
