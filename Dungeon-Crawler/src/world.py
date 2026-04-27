@@ -322,6 +322,7 @@ class World:
         directions = ["W", "N", "E", "S"]
         for d in directions:
             img_directory = self._dungeon._generation.room_walls.get((x, y, d))
+            print(img_directory)
             if img_directory:
                 wall_img: pygame.Surface = pygame.image.load(
                     img_directory['sel_img'].__str__()).convert_alpha()

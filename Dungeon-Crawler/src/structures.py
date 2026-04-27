@@ -294,6 +294,103 @@ class Dungeon:
 
         raise ValueError(f"Invalid orientation for wall hitbox: {orientation}")
 
+    def set_all_doors_in_room(self, room: Room, state: bool) -> None:
+        """
+        Sets all the doors in a room to the state.
+
+        Args:
+            room (Room): Room to set the walls of
+            state (bool): The state to switch the wall to.
+                A true = open, a false = closed.
+        """
+        orientations: list[str] = ['N', 'E', 'S', 'W']
+
+        for cardinal in orientations:
+            self.set_wall_door(room, cardinal, state)
+
+    def switch_all_doors_in_room(self, room: Room) -> None:
+        """
+        Switches the state of all the walls in a room.
+
+        Args:
+            room (Room): room to switch walls.
+        """
+        orientations: list[str] = ['N', 'E', 'S', 'W']
+
+        for cardinal in orientations:
+            self.switch_wall_door_state(room, cardinal)
+
+    def set_wall_door(self, room: Room, orientation: str, state: bool) -> None:
+        """
+        Set the wall corresponding to the room and orientation.
+
+        Args:
+            room (Room): Room the wall belongs to.
+            orientation (str): The wall to set the state to.
+            state (bool): The state to switch the wall to.
+                A true = open, a false = closed.
+        """
+        wall_data = self._generation.room_walls.get((room.x, room.y, orientation))
+        if wall_data is None:
+            raise ValueError()
+        # get wall attributes.
+        hasdoor = wall_data['hasdoor']
+        isopen = wall_data['isopen']
+
+        # early return
+        if not hasdoor:
+            return
+
+        # open door if the door is closed.
+        if state and not isopen:
+            self.switch_wall_door_state(room, orientation)
+        elif not state and isopen:
+            self.switch_wall_door_state(room, orientation)
+
+    def switch_wall_door_state(self, room: Room, orientation: str) -> None:
+        """
+        Switches the state of the corresponding room wall.
+
+        Args:
+            room (Room): room the wall belongs to
+            orientation (str): wall.
+        """
+        wall_data = self._generation.room_walls.get((room.x, room.y, orientation))
+        if wall_data is None:
+            raise ValueError()
+
+        # wall attribute get
+        hasdoor = wall_data['hasdoor']
+        isopen = wall_data['isopen']
+        walltype = wall_data['wall_type']
+
+        if not hasdoor:
+            return  # No changes
+
+        wall_data['isopen'] = not isopen  # flip state
+
+        # set image path
+        image_path = f"{self._generation.PROJECT_DIR_NAME}/assets/visual/textures/walls"
+        if walltype.__str__() == "Boss":
+            image_path += "/boss/"
+        else:
+            image_path += "/door/"
+
+        # set the rest of the path corresponding to the wall.
+        image_path += orientation + "_"
+        if wall_data['isopen']:
+            image_path += "o"
+        else:
+            image_path += "x"
+        if orientation == "S" and walltype.__str__() == 'Boss':
+            image_path += "_" + walltype.__str__()
+        elif orientation != "S":
+            image_path += "_" + walltype.__str__()
+        image_path += ".png"
+
+        # set asset
+        wall_data['sel_img'] = self._generation.whole_filepath(image_path)
+
     def get_wall_N_rects(self, hasdoor: object, isopen: object) -> list[pygame.Rect]:
         """return North wall rects"""
         if hasdoor and isopen:

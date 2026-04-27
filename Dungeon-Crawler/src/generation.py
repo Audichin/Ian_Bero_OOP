@@ -77,7 +77,8 @@ class Generation:
                         if self.dungeon.rooms[(cur_room.x + x, cur_room.y + y)].room_type == "boss":
                             self.sel_img += "/boss/S_x_Boss.png"
                             self._store_wall(
-                                cur_room.x, cur_room.y, direction_check, True, False, self.sel_img)
+                                cur_room.x, cur_room.y, direction_check,
+                                True, False, "Boss", self.sel_img)
                             self._reset_sel_img()
                             # South wall of boss room will always be closed,
                             # so we can break out of the loop after storing the wall
@@ -87,12 +88,14 @@ class Generation:
                             self.Sel_ori(direction_check)
                             self.sel_img += "o_Boss.png"
                             self._store_wall(
-                                cur_room.x, cur_room.y, direction_check, True, False, self.sel_img)
+                                cur_room.x, cur_room.y, direction_check,
+                                True, False, "Boss", self.sel_img)
                             self._reset_sel_img()
                             continue
                         self.sel_img += "/door/S_o.png"
                         self._store_wall(
-                            cur_room.x, cur_room.y, direction_check, True, True, self.sel_img)
+                            cur_room.x, cur_room.y, direction_check,
+                            True, True, "", self.sel_img)
                         self._reset_sel_img()
                         # South wall of non-boss room will always be open,
                         # so we can break out of the loop after storing the wall
@@ -100,7 +103,8 @@ class Generation:
                     else:
                         self.sel_img += "/empty/S_1.png"
                         self._store_wall(
-                            cur_room.x, cur_room.y, direction_check, False, False, self.sel_img)
+                            cur_room.x, cur_room.y, direction_check,
+                            False, False, "1", self.sel_img)
                     self._reset_sel_img()
                     continue
 
@@ -110,7 +114,8 @@ class Generation:
                         self.Sel_ori(direction_check)
                         self.sel_img += "x_Boss.png"
                         self._store_wall(
-                            cur_room.x, cur_room.y, direction_check, True, False, self.sel_img)
+                            cur_room.x, cur_room.y, direction_check,
+                            True, False, "Boss", self.sel_img)
                         self._reset_sel_img()
                         continue
                     elif cur_room.room_type == "boss":
@@ -118,22 +123,25 @@ class Generation:
                         self.Sel_ori(direction_check)
                         self.sel_img += "o_Boss.png"
                         self._store_wall(
-                            cur_room.x, cur_room.y, direction_check, True, False, self.sel_img)
+                            cur_room.x, cur_room.y, direction_check,
+                            True, False, "Boss", self.sel_img)
                         self._reset_sel_img()
                         continue
                     self.sel_img += "/door/"
                     self.Sel_ori(direction_check)
                     self.sel_img += "o_"
-                    self.Ran_wall()
+                    wall_type = self.Ran_wall()
                     self._store_wall(
-                        cur_room.x, cur_room.y, direction_check, True, True, self.sel_img)
+                        cur_room.x, cur_room.y, direction_check,
+                        True, True, wall_type, self.sel_img)
                     self._reset_sel_img()
                 else:
                     self.sel_img += "/empty/"
                     self.Sel_ori(direction_check)
-                    self.Ran_wall()
+                    wall_type = self.Ran_wall()
                     self._store_wall(
-                        cur_room.x, cur_room.y, direction_check, False, False, self.sel_img)
+                        cur_room.x, cur_room.y, direction_check,
+                        False, False, wall_type, self.sel_img)
                 self._reset_sel_img()
 
     def Sel_ori(self, wall_ori: str) -> None:
@@ -151,19 +159,24 @@ class Generation:
         if wall_ori == 'S':
             self.sel_img += "/S_"
 
-    def Ran_wall(self) -> None:
+    def Ran_wall(self) -> str:
         """
         Selects a random wall based on our random seed to allow for simular walls with like seed
         """
         wall_type = self.rng.randint(1, 4)
         if wall_type == 1:
             self.sel_img += "1.png"
+            return "1"
         if wall_type == 2:
             self.sel_img += "2.png"
+            return "2"
         if wall_type == 3:
             self.sel_img += "3.png"
+            return "3"
         if wall_type == 4:
             self.sel_img += "4.png"
+            return "4"
+        return "0"
 
     def whole_filepath(self, rel_path: str) -> Path:
         """
@@ -188,6 +201,7 @@ class Generation:
                     orientation: str,
                     hasdoor: bool,
                     isopen: bool,
+                    walltype: str,
                     rel_path: str | Path) -> None:
         """
         Stores wall data in the room_walls dictionary.
@@ -207,5 +221,6 @@ class Generation:
             "ori": orientation,
             "hasdoor": hasdoor,
             "isopen": isopen,
+            "wall_type": walltype,
             "sel_img": sel_img_path,
             }
