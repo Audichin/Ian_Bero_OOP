@@ -4,6 +4,13 @@
 > ![WARNING]
 > Make sure you have the latest version of pygame-ce installed.
 
+### TO RUN THE GAME:
+Go to the root directory of the project and in your terminal enter:
+```
+make play
+```
+or run game.py in the src directory.
+
 Ian and Heriberto OOP project
 
 | Name                | Value                                          |
