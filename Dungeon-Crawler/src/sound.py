@@ -145,18 +145,21 @@ class SoundManager:
         Puzzle_theme_dir: Path = (MUSIC_DIR / "Puzzle_theme.mp3")
         Enemy_theme_dir: Path = (MUSIC_DIR / "Enemy_theme.mp3")
 
-        # Next few lines are for music
+
         Main_theme_sound = self.load_audio(Main_theme_dir.__str__())
-        # Next themes to add:
         Boss_theme_sound = self.load_audio(Boss_theme_dir.__str__())
         Puzzle_theme_sound = self.load_audio(Puzzle_theme_dir.__str__())
         Enemy_theme_sound = self.load_audio(Enemy_theme_dir.__str__())
 
-        # Main_theme_channel = pygame.mixer.Channel(9)
-        # # # Future channels needed:
-        # Boss_theme_channel = pygame.mixer.Channel(10)
-        # Puzzle_theme_channel = pygame.mixer.Channel(11)
-        # Enemy_theme_channel = pygame.mixer.Channel(12)
+        Main_theme_channel = pygame.mixer.Channel(9)
+        Boss_theme_channel = pygame.mixer.Channel(10)
+        Puzzle_theme_channel = pygame.mixer.Channel(11)
+        Enemy_theme_channel = pygame.mixer.Channel(12)
+
+        Main_theme_channel.set_volume(.35)
+        Boss_theme_channel.set_volume(.35)
+        Puzzle_theme_channel.set_volume(.35)
+        Enemy_theme_channel.set_volume(.35)
 
         for sound in [Main_theme_sound, Boss_theme_sound, Enemy_theme_sound, Puzzle_theme_sound]:
             self._sounds.append(sound)
@@ -181,15 +184,25 @@ class SoundManager:
         PChurt_sound = self.load_audio((SOUND_DIR / "PChurt.wav").__str__())
         Swordmiss_sound = self.load_audio((SOUND_DIR / "Swordmiss.wav").__str__())
 
-        # Chest_pick_channel = pygame.mixer.Channel(0)
-        # Death_channel = pygame.mixer.Channel(1)
-        # Explosion_channel = pygame.mixer.Channel(2)
-        # Flame_channel = pygame.mixer.Channel(3)
-        # Fuze_channel = pygame.mixer.Channel(4)
-        # Healing_channel = pygame.mixer.Channel(5)
-        # NPChurt_channel = pygame.mixer.Channel(6)
-        # PChurt_channel = pygame.mixer.Channel(7)
-        # Swordmiss_channel = pygame.mixer.Channel(8)
+        Chest_pick_channel = pygame.mixer.Channel(0)
+        Death_channel = pygame.mixer.Channel(1)
+        Explosion_channel = pygame.mixer.Channel(2)
+        Flame_channel = pygame.mixer.Channel(3)
+        Fuze_channel = pygame.mixer.Channel(4)
+        Healing_channel = pygame.mixer.Channel(5)
+        NPChurt_channel = pygame.mixer.Channel(6)
+        PChurt_channel = pygame.mixer.Channel(7)
+        Swordmiss_channel = pygame.mixer.Channel(8)
+
+        Chest_pick_channel.set_volume(.05)
+        Death_channel.set_volume(.05)
+        Explosion_channel.set_volume(.05)
+        Flame_channel.set_volume(.05)
+        Fuze_channel.set_volume(.05)
+        Healing_channel.set_volume(.05)
+        NPChurt_channel.set_volume(.05)
+        PChurt_channel.set_volume(.05)
+        Swordmiss_channel.set_volume(.05)
 
         for sound in [Chest_pick_sound, Death_sound, Explosion_sound,
                       Flame_sound, Fuze_sound, Healing_sound, NPChurt_sound,
