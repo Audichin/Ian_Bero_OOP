@@ -31,7 +31,7 @@ class Urchin(Entity):
                  speed: float = 50,
                  clamp_speed: float = 500,
                  friction: float = 25,
-                 HP: int = 4) -> None:
+                 HP: int = 3) -> None:
         """Urchins are enemies that move in a single direction at a time."""
         # intialize variables
         self._bounds: dict[str, tuple[int, int]] = bounds
