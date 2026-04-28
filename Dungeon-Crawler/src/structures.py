@@ -14,6 +14,7 @@ try:
     from .entities.jelly import Jelly
     from .entities.urchin import Urchin
     from .entities.coral import Coral
+    from .entities.boss import Boss
     from .items.item import Item
     from .items.heart import Heart
     from .items.key import KeyFragment
@@ -22,6 +23,7 @@ except ImportError:
     from entities.jelly import Jelly
     from entities.urchin import Urchin
     from entities.coral import Coral
+    from entities.boss import Boss
     from items.item import Item
     from items.heart import Heart
     from items.key import KeyFragment
@@ -35,6 +37,8 @@ class Room:
         'X': (284, 1160),
         'Y': (205, 685)
     }
+
+    SCREEN_CENTER: tuple[int, int] = (720, 405)
 
     __slots__ = ["_world",
                  "_x",
@@ -196,12 +200,15 @@ class Room:
             position (pygame.Vector2): Enemy position.
         """
 
-        if enemy_type == "Jelly":
-            self._enemies.append(Jelly(self._world, position))
-        elif enemy_type == "Urchin":
-            self._enemies.append(Urchin(self._world, self.ROOM_BOUNDS, position))
-        else:
-            self._enemies.append(Coral(self._world, position))
+        match enemy_type:
+            case "Jelly":
+                self._enemies.append(Jelly(self._world, position))
+            case "Urchin":
+                self._enemies.append(Urchin(self._world, self.ROOM_BOUNDS, position))
+            case "Coral":
+                self._enemies.append(Coral(self._world, position))
+            case "Boss":
+                self._enemies.append(Boss(self._world, self.ROOM_BOUNDS, position))
 
     def create_item(self, item_type: str, position: pygame.Vector2) -> None:
         """
@@ -339,6 +346,8 @@ class Dungeon:
         # Find farthest room for boss
         boss_room = self._find_farthest_room(start_room)
         boss_room.room_type = "boss"
+        boss_room.create_enemy('Boss', pygame.Vector2(
+            Room.SCREEN_CENTER[0] + 300, Room.SCREEN_CENTER[1]))
 
         remaining = [
             r for r in all_rooms

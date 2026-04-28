@@ -146,6 +146,7 @@ class World:
         """
         self._item_slot : Item = BubbleWeapon(self)
         self._inventory : list[Item] = list[Item]()
+        # self._inventory.append(Key(self))
 
 # --- loop method ---
 
@@ -264,7 +265,6 @@ class World:
         #       Music prev_room: {self._prev_room_type}")
         if self._curr_room.room_type != self._prev_room_type:
             prev_song = self._prev_music.pop()
-            print(f"Music prev_song: {prev_song}")
             # print(f"Music curr_song: {self._Music_IDs[self._curr_room.room_type]}")
             self._sound_manager.stop_audio(prev_song)  # stop previous music
             # play new music
@@ -435,14 +435,12 @@ class World:
         match self._curr_room.room_type:
             case"puzzle":
                 self._player.position = pygame.Vector2(
-                    self.SCREEN_CENTER[0], self.SCREEN_CENTER[1]
-                )
+                    self.SCREEN_CENTER[0], self.SCREEN_CENTER[1])
                 self._dungeon.set_all_doors_in_room(self._curr_room, False, False)
                 return
             case "boss":
                 self._player.position = pygame.Vector2(
-                    self.SCREEN_CENTER[0] - 300, self.SCREEN_CENTER[1]
-                )
+                    self.SCREEN_CENTER[0] - 300, self.SCREEN_CENTER[1])
                 self._dungeon.set_all_doors_in_room(self._curr_room, False, True)
                 return
         # teleport player to appropriate position
@@ -524,7 +522,7 @@ class World:
                 if projectile:
                     if pygame.sprite.collide_rect(projectile, self._player):
                         return self._player.rect
-                if pygame.sprite.collide_rect(entity, self._player):
+                elif pygame.sprite.collide_rect(entity, self._player):
                     return self._player.rect
             case "player_dmg_1":
                 self._player.damage(1)

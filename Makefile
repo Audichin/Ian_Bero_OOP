@@ -3,7 +3,11 @@ TEST_ARGS = -s --verbose --color=yes
 TYPE_CHECK = mypy --strict --allow-untyped-decorators --ignore-missing-imports
 STYLE_CHECK = flake8
 COVERAGE = python -m pytest
-ASSIGNMENT = ./assignments
+GAME = ./Dungeon-Crawler/src/game.py
+
+.PHONY: play
+play:
+	python3 $(GAME)
 
 .PHONY: all
 all: check-style check-type run-test clean

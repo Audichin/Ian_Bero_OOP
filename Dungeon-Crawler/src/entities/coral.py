@@ -63,7 +63,9 @@ class Coral(Entity):
         self.coral_attack(delta)
         for indx, shot in enumerate(self._shots):
             shot.loop(delta)
-            if self._world.entity_action(self, "player_col", shot):
+            if shot.move_speed == 0:
+                self._shots.pop(indx)
+            elif self._world.entity_action(self, "player_col", shot):
                 self._world.entity_action(self, "player_dmg_1")
                 self._shots.pop(indx)
         return super().loop(delta, move)
