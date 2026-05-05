@@ -28,6 +28,7 @@ class Generation:
 
     sel_img -> (str) our path to get to the right texture (boss textures are still being made)
     """
+
     def __init__(self, dungeon: Any = None):
         self.dungeon: Dungeon = dungeon
         seed_value = self.dungeon._seed if self.dungeon is not None else None
@@ -223,4 +224,4 @@ class Generation:
             "isopen": isopen,
             "wall_type": walltype,
             "sel_img": sel_img_path,
-            }
+        }

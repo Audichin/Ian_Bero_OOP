@@ -47,8 +47,7 @@ class World:
                  , "_sounds"  # : list[int] // int representation of sound
                  , "_prev_music"  # : list[int] // int representation of music
                  , "_Music_IDs"  # : dict[str, int] // string representation of music
-                 , "_prev_room_type"
-                 , "_player"  # : Player
+                 , "_prev_room_type", "_player"  # : Player
                  , "_item_slot"  # : Item // item to be used with player action
                  , "_inventory"  # : list[Item]
                  , "_ui"  # : UI
@@ -134,7 +133,7 @@ class World:
 
         > display.
         """
-        self._ui : UI = UI()
+        self._ui: UI = UI()
         self._ui.update_item_slot(self._item_slot.name)
 
     def _item_init(self) -> None:
@@ -144,8 +143,8 @@ class World:
 
         > Inventory and grounded items should be empty.
         """
-        self._item_slot : Item = BubbleWeapon(self)
-        self._inventory : list[Item] = list[Item]()
+        self._item_slot: Item = BubbleWeapon(self)
+        self._inventory: list[Item] = list[Item]()
         # self._inventory.append(Key(self))
 
 # --- loop method ---

@@ -58,7 +58,7 @@ class UI:
         self._hearts: list[list[Any]] = []
         for i in range(5):
             heart_rect: Rect = self._assets['hearts_2'].get_rect()
-            heart_rect.topleft = (0, (i*16*self._SCALE))
+            heart_rect.topleft = (0, (i * 16 * self._SCALE))
             self._hearts.append([self._assets['hearts_2'], heart_rect])
 
     def __init_gameover(self) -> None:
@@ -89,12 +89,12 @@ class UI:
 
         # append the item slot to the display
         item_slot_rect: Rect = self._assets['item_slot'].get_rect()
-        item_slot_rect.topleft = (0, self._RESOLUTION[1] - 32*self._SCALE)
+        item_slot_rect.topleft = (0, self._RESOLUTION[1] - 32 * self._SCALE)
         temp.append((self._assets['item_slot'], item_slot_rect))
 
         # append item on top of the display
         item_rect: Rect = self._assets['item'].get_rect()
-        item_rect.topleft = (0, self._RESOLUTION[1] - 32*self._SCALE)
+        item_rect.topleft = (0, self._RESOLUTION[1] - 32 * self._SCALE)
         temp.append((self._assets['item'], item_rect))
 
         # append iventory items to display
@@ -121,7 +121,7 @@ class UI:
         """Update heart UI according to player health."""
         self._player_hp = hp
         for indx, heart in enumerate(self._hearts):
-            rel_hp: int = hp - (indx*2)
+            rel_hp: int = hp - (indx * 2)
             if rel_hp > 2:
                 heart[0] = self._assets['hearts_2']
                 continue
@@ -140,7 +140,7 @@ class UI:
         """Update the items to display"""
         self._inventory = items
         for i, _item in enumerate(self._inventory):
-            self._inventory[i][1].topleft = (272 * self._SCALE, (i*16*self._SCALE))
+            self._inventory[i][1].topleft = (272 * self._SCALE, (i * 16 * self._SCALE))
 
     def update_victory(self, victory: bool) -> None:
         """Updates to show victory"""

@@ -19,6 +19,7 @@ class Key(Item):
 
     A key is used to open the boss door in the dungeon.
     """
+
     def __init__(self, world: Any) -> None:
         """
         Key class item

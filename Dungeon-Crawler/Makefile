@@ -2,7 +2,9 @@ DOCS = ./docs
 TESTS = ./tests/test_*
 UMLFILES = ./uml/*.plantuml
 UMLDIAGRAMDIR = ./uml/diagrams/
-SRC = ./src/*.py
+SRC = ./src/
+ITEMS = $(SRC)items/
+ENTITIES = $(SRC)entities/
 
 .PHONY: all check-styles fix-styles check-types create-docs test-coverage test create-uml clean
 
@@ -16,12 +18,12 @@ fix-styles:
 	autopep8 --in-place --recursive --aggressive --aggressive .
 
 check-types:
-	mypy --disallow-untyped-defs --strict .
+	@echo "For type-checking, run global make!"
 
 create-docs:
 	@echo "Creating documentation..."
 	mkdir -p $(DOCS)
-	pdoc --output-dir $(DOCS)/code_docs $(SRC)
+	pdoc --output-dir $(DOCS)/code_docs $(SRC)*.py $(ENTITIES)*.py $(ITEMS)*.py
 
 test-coverage: create-docs
 	@echo "Running test-coverage..."

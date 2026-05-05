@@ -1,5 +1,7 @@
 """
 Boss entity module.
+
+Contains both the actual Boss entity and the Boss projectiles.
 """
 from pathlib import Path
 from typing import Any
@@ -79,6 +81,7 @@ class Boss(Entity):
                          HP, image=self._assets["M0"], assets=self._assets)
 
     def _sound_init(self) -> None:
+        """Initialize boss sounds"""
         self._sounds['hurt'] = 6
         self._sounds['shoot'] = 2
         self._sounds['move'] = 3
@@ -96,6 +99,12 @@ class Boss(Entity):
 # ==== base methods ====
 
     def loop(self, delta: float, move: Vector2 | None = None) -> None:
+        """
+        Boss loop. Handles shots, movement, and behavior.
+
+        Args:
+            delta (float): delta time
+        """
         self.switch_mode(delta)
         self.boss_attack()
 
@@ -109,6 +118,15 @@ class Boss(Entity):
         return super().loop(delta, self.boss_move(delta))
 
     def render(self, time: float) -> list[tuple[Surface, Rect]]:
+        """
+        Boss render. Returns itself and all its projectiles.
+
+        Args:
+            time (float): Time the program has been run for.
+
+        Returns:
+            list[tuple[Surface, Rect]]: list of rendering attributes.
+        """
         if self._invincibility > 0:
             self.image.set_alpha(int(abs(sin(time * 10) * 255)))
         else:
@@ -123,6 +141,12 @@ class Boss(Entity):
         return to_render
 
     def animate(self, time: float) -> None:
+        """
+        Boss animation. Switch between two sprites.
+
+        Args:
+            time (float): Time since the start of program in seconds.
+        """
         anim_step: int = int(time % 2)
         if anim_step:
             self.image = self._assets['M0']
@@ -136,6 +160,15 @@ class Boss(Entity):
         Check what mode we are in.
 
         Depending on the mode type, we return a different Vector2
+
+        Args:
+            delta (float): Delta time.
+
+        Raises:
+            Exception: _description_
+
+        Returns:
+            Vector2: _description_
         """
         match self._mode:
             case self._JELLY:
@@ -145,8 +178,10 @@ class Boss(Entity):
 
         raise Exception("Didnt match a mode.")
 
-    def boss_shoot(self, delta: float) -> None:
-        """Shoot in four directions"""
+    def boss_shoot(self) -> None:
+        """
+        Shoot in four directions
+        """
 
         self.play_sound('shoot')
         # get player position and difference
@@ -169,11 +204,18 @@ class Boss(Entity):
             self._shots.append(new_shot)
 
     def boss_attack(self) -> None:
+        """If touching player, deal 2 damage.
+        """
         if self._world.entity_action(self, "player_col"):
             self._world.entity_action(self, "player_dmg_2")
 
     def switch_mode(self, delta: float) -> None:
-        """Switch to the next mode when mode timer is zero."""
+        """
+        Switch to the next mode when mode timer is zero
+
+        Args:
+            delta (float): delta time
+        """
         # decrement timer
         self._mode_timer -= delta
 
@@ -182,7 +224,7 @@ class Boss(Entity):
             self._mode_timer = self._SWITCH_INTERVAL
             if self._mode > self._URCHIN:
                 self._mode = self._JELLY
-            self.boss_shoot(delta)
+            self.boss_shoot()
 
             # set attributes
             match self._mode:
@@ -199,12 +241,10 @@ class Boss(Entity):
 
     def jelly_move(self, delta: float) -> Vector2:
         """
-        1. Search for player position
-            * if found, move to player
-            * else, stay in place
+        Jelly behavior.
 
-        2. touching player?
-            * deal damage
+        Args:
+            delta (float): delta time
         """
         player: Vector2 = self._world.entity_action(self, "player_pos")
         diff: Vector2 = Vector2(player.x - self._position.x, player.y - self._position.y)
@@ -232,12 +272,10 @@ class Boss(Entity):
 
     def urchin_move(self, delta: float) -> Vector2:
         """
-        1. Check if currently moving (timer is less than or equal to 0).
-            * true: continue moving
-        2. If not moving, get the player position.
-        Get difference, determine the smaller value (x or y).
-        Depending on that value, set direction to be a cardinal direction.
-        Set target position.
+        Urchin behavior.
+
+        Args:
+            delta (float): delta time
         """
         # check if we are moving
         self.__check_all_potential()
@@ -274,6 +312,11 @@ class Boss(Entity):
         return Vector2()
 
     def __check_all_potential(self) -> None:
+        """Check all the potential directions in Urchin behavior.
+
+        If there has been a collision or the boss has passed the target,
+        pop the current direction and target, and reset the movement timer.
+        """
         if len(self._directions):
             if self._world.entity_action(self, "s_col"):
                 self._directions.pop(0)
@@ -295,6 +338,12 @@ class Boss(Entity):
                     self._move_timer = self._URCHIN_MOVE_INTERVAL
 
     def __check_y_target(self) -> bool:
+        """
+        Check if boss has passed the target in the Y direction.
+
+        Returns:
+            bool: True if target pass. False if not.
+        """
         if self._directions[0][1] > 0:
             return True if self.position.y > self._target_pos[0] else False
         elif self._directions[0][1] < 0:
@@ -302,6 +351,12 @@ class Boss(Entity):
         return False
 
     def __check_x_target(self) -> bool:
+        """
+        Check if boss has passed the target in the X direction.
+
+        Returns:
+            bool: True if target pass. False if not.
+        """
         if self._directions[0][0] > 0:
             return True if self.position.x > self._target_pos[0] else False
         elif self._directions[0][0] < 0:
@@ -309,6 +364,11 @@ class Boss(Entity):
         return False
 
     def __check_y_bounds(self) -> bool:
+        """Check if the target is outside of urchin Y-axis bounds.
+
+        Returns:
+            bool: True if target out of bounds. False if not.
+        """
         if self._target_pos[0] < self._bounds['Y'][0]:
             return True
         elif self._target_pos[0] > self._bounds['Y'][1]:
@@ -316,6 +376,11 @@ class Boss(Entity):
         return False
 
     def __check_x_bounds(self) -> bool:
+        """Check if the target is outside of urchin X-axis bounds.
+
+        Returns:
+            bool: True if target out of bounds. False if not.
+        """
         if self._target_pos[0] < self._bounds['X'][0]:
             return True
         elif self._target_pos[0] > self._bounds['X'][1]:
@@ -331,6 +396,9 @@ class BossShot(Projectile):
     def __init__(self, position: Vector2,
                  speed: float = 300,
                  friction: float = .5) -> None:
+        """Boss projectiles deal more damage than regular projectiles, and are
+        large.
+        """
         shot_path: Path = Path(__file__).parent / \
             "../../assets/visual/sprites/boss/boss_shot.png"
         shot_sheet: Surface = pygame.image.load(shot_path)

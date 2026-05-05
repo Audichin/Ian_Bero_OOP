@@ -77,7 +77,7 @@ class Urchin(Entity):
         return super().render(time)
 
     def animate(self, time: float) -> None:
-        anim_step: int = int((time*self.move_speed / 100) % 4)
+        anim_step: int = int((time * self.move_speed / 100) % 4)
         self.image = self._assets[f'M{anim_step}']
 
 # ==== urchin methods ====

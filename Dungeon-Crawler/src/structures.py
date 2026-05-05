@@ -308,7 +308,6 @@ class Dungeon:
                 active_rooms.append(new_room)
 
     def _find_farthest_room(self, start: Room) -> Room:
-
         """
         Finding the farthest room for setting the dungeon room to the farthest room away.
 
