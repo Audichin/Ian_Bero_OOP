@@ -335,7 +335,8 @@ class Entity(sprite.Sprite):
             group_size (int): Size of a frame group.
             pattern (str): Pattern present in the sprite sheet.
             type (str): Type of assets (Ex: movement)
-            func (Callable[..., Any] | None, optional): Optional sprite splitting function. Defaults to None.
+            func (Callable[..., Any] | None, optional): Optional sprite splitting function.
+            Defaults to None.
         """
 
         def standard() -> None:

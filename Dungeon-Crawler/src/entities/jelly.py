@@ -14,7 +14,7 @@ class Jelly(Entity):
     Simple enemy
 
     Stays in place until the player is within range.
-    
+
     When player is in range, inch towards them on an interval
     """
     _DIST_DETECT: float = 350.0

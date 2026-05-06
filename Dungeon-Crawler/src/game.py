@@ -23,7 +23,6 @@ from typing import Self, Any
 import random
 
 import pygame
-import pygame.mixer_music as music
 from pygame import locals
 
 from world import World

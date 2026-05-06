@@ -220,7 +220,7 @@ class PlayerController:
     """
     Player controller class. Handles external inputs from both keyboard and
     controller.
-    
+
     Currently mainly supports PS4 controllers.
     """
     _instance = None

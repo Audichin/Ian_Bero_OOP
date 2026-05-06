@@ -17,7 +17,7 @@ from items.projectile import Projectile
 class Boss(Entity):
     """
     Boss enemy
-    
+
     Acts as all other entities combined into a hybrid.
     Changes between jelly and urchin movements as a pattern,
     and shoots in four directions between transitions.

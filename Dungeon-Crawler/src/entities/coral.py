@@ -16,7 +16,7 @@ from items.projectile import Projectile
 class Coral(Entity):
     """
     Coral enemy
-    
+
     Stays in place and shoots at the player during its lifespan.
     """
 

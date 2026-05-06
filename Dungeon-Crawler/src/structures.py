@@ -70,7 +70,7 @@ class Room:
                  room_type: str = "empty") -> None:
         """Single room object.
 
-        Each room has a type, position relative to starting room, and 
+        Each room has a type, position relative to starting room, and
         an rng pre-seeded for generating entities and items.
 
         Args:
