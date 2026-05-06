@@ -1,4 +1,4 @@
-"""FIXME"""
+"""Jelly Entity Module."""
 from pathlib import Path
 from typing import Any
 from math import sin
@@ -11,10 +11,11 @@ from entities.entity_mod import Entity
 
 class Jelly(Entity):
     """
-    Simple enemy:
-    * detect the distance to the player
-    * if player is within distance, move towards them
-    * else, don't move, just stay in place
+    Simple enemy
+
+    Stays in place until the player is within range.
+    
+    When player is in range, inch towards them on an interval
     """
     _DIST_DETECT: float = 350.0
     _MOVE_INTERVAL: float = 2  # measured in seconds
@@ -41,6 +42,8 @@ class Jelly(Entity):
                          HP=HP)
 
     def _sound_init(self) -> None:
+        """Jellyfish sound initialization
+        """
         self._sounds['hurt'] = 6
         self._sounds['move'] = 6
         self._sounds['death'] = 1
@@ -57,10 +60,23 @@ class Jelly(Entity):
 # ==== base methods ====
 
     def loop(self, delta: float, move: Vector2 | None = None) -> None:
+        """Jellyfish loop method. Attacks and moves.
+
+        Args:
+            delta (float): delta time.
+        """
         self.jelly_attack()
         return super().loop(delta, self.jelly_move(delta))
 
     def render(self, time: float) -> list[tuple[Surface, Rect]]:
+        """Jellyfish render method.
+
+        Args:
+            time (float): delta time.
+
+        Returns:
+            list[tuple[Surface, Rect]]: Entity render data.
+        """
         if self._invincibility > 0:
             self.image.set_alpha(int(abs(sin(time * 10) * 255)))
         else:
@@ -77,13 +93,16 @@ class Jelly(Entity):
 # ---- jelly methods ----
 
     def jelly_move(self, delta: float) -> Vector2:
-        """
-        1. Search for player position
-            * if found, move to player
-            * else, stay in place
+        """Jelly movement logic.
 
-        2. touching player?
-            * deal damage
+        Jelly detects if the player is close enough, and then accelerates in
+        that direction.
+
+        Args:
+            delta (float): delta time.
+
+        Returns:
+            Vector2: movement direction vector.
         """
         player: Vector2 = self._world.entity_action(self, "player_pos")
         diff: Vector2 = Vector2(player.x - self._position.x, player.y - self._position.y)
@@ -108,5 +127,7 @@ class Jelly(Entity):
         return vector_ret
 
     def jelly_attack(self) -> None:
+        """Deal one point of damage if touching player.
+        """
         if self._world.entity_action(self, "player_col"):
             self._world.entity_action(self, "player_dmg_1")

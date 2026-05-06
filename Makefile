@@ -5,10 +5,6 @@ STYLE_CHECK = flake8
 COVERAGE = python -m pytest
 GAME = ./Dungeon-Crawler/src/game.py
 
-.PHONY: play
-play:
-	python $(GAME)
-
 .PHONY: all
 all: check-style check-type run-test clean
 	@echo "All checks passed"
@@ -25,7 +21,7 @@ check-style:
 # discover and run all tests
 .PHONY: run-test
 run-test:
-	@echo "FIXME"
+	$(TEST) $(TEST_ARGS) ./Dungeon-Crawler/tests/
 
 .PHONY: clean
 clean:
@@ -35,3 +31,7 @@ clean:
 	rm -rf `find . -type d -name .mypy_cache` # remove all mypy cache
 	rm -rf `find . -type d -name .hypothesis` # remove all hypothesis cache
 	rm -rf `find . -name .coverage` # remove all coverage cache 
+
+.PHONY: play
+play:
+	python $(GAME)

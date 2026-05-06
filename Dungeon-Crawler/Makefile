@@ -55,4 +55,5 @@ clean:
 	rm -rf `find . -type d -name .pytest_cache`
 	rm -rf `find . -type d -name .mypy_cache`
 	rm -rf `find . -type f -name .coverage`
+	rm -rf `find . -type d -name .hypothesis`
 	

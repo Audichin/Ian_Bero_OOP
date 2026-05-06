@@ -12,9 +12,6 @@ Inccludes management for but is not limited to:
 
 All in-world objects should be handled within this module.
 Interactions between in-world objects should be handled within this module.
-
-NOTE: MUUUCHH of the functionality is commented to allow the program to remain
-functional. Please be sure to un-comment lines of code you are able to use.
 """
 from typing import Any
 import pygame
@@ -124,7 +121,7 @@ class World:
         self._player: Player = Player(self, position=pygame.Vector2(
             self.SCREEN_CENTER[0], self.SCREEN_CENTER[1]))
 
-    def _ui_init(self) -> None:  # FIXME
+    def _ui_init(self) -> None:
         """
         UI initializer.
         > World UI should be initialized here.
@@ -145,7 +142,7 @@ class World:
         """
         self._item_slot: Item = BubbleWeapon(self)
         self._inventory: list[Item] = list[Item]()
-        # self._inventory.append(Key(self))
+        # self._inventory.append(Key(self))  # uncomment to get a key at the start.
 
 # --- loop method ---
 
@@ -160,6 +157,9 @@ class World:
         - entity loop
         - UI changes / updates
         - etc
+
+        Args:
+            delta (float): delta time. Milliseconds passed since last frame.
         """
 
         # Stop game if player health is zero
@@ -197,9 +197,8 @@ class World:
 
 # --- render method ---
 
-    def render(self) -> list[tuple[pygame.surface.Surface, pygame.rect.Rect]]:  # FIXME
-        """
-        World Render method.
+    def render(self) -> list[tuple[pygame.surface.Surface, pygame.rect.Rect]]:
+        """World Render method.
         > Called once at the end of each frame by game, **AFTER** loop.
 
         > When called, all render functions of every object should be called.
@@ -213,6 +212,9 @@ class World:
         - items
         - UI
         - etc.
+
+        Returns:
+            list[tuple[pygame.surface.Surface, pygame.rect.Rect]]: Render data to blit.
         """
         temp: list[tuple[pygame.Surface, pygame.Rect]] = []
 
@@ -260,7 +262,7 @@ class World:
         while self._sounds:
             self._sound_manager.play_audio(self._sounds.pop())
 
-    def play_world_music(self) -> None:  # FIXME
+    def play_world_music(self) -> None:
         """
         Sets the world music according to the room type.
         > This method should change the music once the room type changes
@@ -294,13 +296,15 @@ class World:
 
 # --- dungeon methods ---
 
-    def update_room(self, delta: float) -> None:  # FIXME
-        """
-        Updates the room according to changes.
+    def update_room(self, delta: float) -> None:
+        """Updates the room according to changes.
 
         > Called each frame, updates the room according to puzzle completion,
 
         > door unlocks, etc.
+
+        Args:
+            delta (float): Delta time.
         """
         # puzzle room
         match self._curr_room.room_type:
@@ -361,8 +365,10 @@ class World:
             self._room_transition = 0
 
     def render_room(self) -> list[tuple[pygame.Surface, pygame.Rect]]:
-        """
-        Render the room
+        """Pass render data of the current room.
+
+        Returns:
+            list[tuple[pygame.Surface, pygame.Rect]]: Room render data.
         """
         temp: list[tuple[pygame.Surface, pygame.Rect]] = []
 
@@ -387,8 +393,7 @@ class World:
         return temp
 
     def get_room_hitboxes(self) -> dict[str, list[pygame.Rect]]:
-        """
-        Get all hitboxes in the current room.
+        """Get all hitboxes in the current room.
 
         hitboxes are ordered as:
 
@@ -396,6 +401,9 @@ class World:
         'E': list[pygame.Rect],
         'S': list[pygame.Rect],
         'W': list[pygame.Rect]
+
+        Returns:
+            dict[str, list[pygame.Rect]]: Hitboxes of the current room.
         """
         all_hitboxes: dict[str, list[pygame.Rect]] = {}
         orientations: list[str] = ['N', 'E', 'S', 'W']
@@ -404,9 +412,14 @@ class World:
         return all_hitboxes
 
     def switch_room(self, cardinal: str) -> None:
-        """
-        Go to the next room with respects to the cardinal of the door
+        """Go to the next room with respects to the cardinal of the door
         the player interacted with.
+
+        Args:
+            cardinal (str): Cardinal direction to switch room towards.
+
+        Raises:
+            KeyError: Room attempted to be accessed doesn't exist.`
         """
         # set transition state to 1
         if not self._transition_state:
@@ -457,7 +470,7 @@ class World:
 
 # --- UI methods ---
 
-    def update_ui(self) -> None:  # FIXME
+    def update_ui(self) -> None:
         """
         Updates the UI according to changes.
 
@@ -494,12 +507,13 @@ class World:
                     self._player.position, self._player.look_dir)
 
     def quit_controller(self) -> None:
+        """Quit the current controller connected.
+        """
         self._player.quit_controller()
 
     def entity_action(self, entity: Entity, action: str,
                       projectile: Projectile | None = None) -> Any:
-        """
-        Get entity actons and change the world accordingly.
+        """Get entity actons and change the world accordingly.
         > Whenever an entity makes an action (such as attacking)
 
         > this function is to be called by that entity.
@@ -512,9 +526,12 @@ class World:
         * player_dmg_2: damage the player by two points
 
         Args:
-            entity (Entity): Entity calling the function.
+            entity (Entity): Entity calling to world.
+            action (str): Action entity wishes to call.
+            projectile (Projectile | None, optional): Projectiles connected. Defaults to None.
 
-            action (str): Action ID passed by the entity.
+        Returns:
+            Any: Status, arguments, etc.
         """
         # this collision return is temporary.
         # s_col returns all static objects (walls, pits, etc)
@@ -539,7 +556,14 @@ class World:
         return 0
 
     def _static_collision(self, obj: Entity | Projectile) -> list[pygame.Rect]:
-        """Check entity collides with nearest wall"""
+        """Check entity collides with nearest wall
+
+        Args:
+            obj (Entity | Projectile): Object to pass static collision data to.
+
+        Returns:
+            list[pygame.Rect]: Collision data (passed if object collides.)
+        """
         collides: list[pygame.Rect] = list[pygame.Rect]()
         checks: list[str] = []
 
@@ -617,12 +641,6 @@ class World:
         return 0
 
 # --- properties ---
-
-    @property
-    def music(self) -> str:
-        """Music currently playing. Handled by sound manager."""
-        # return self._sound_manager.Getmusic
-        return ""  # FIXME
 
     @property
     def data(self) -> dict[str, Any]:

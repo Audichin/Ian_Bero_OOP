@@ -51,9 +51,6 @@
                                 <a class="function" href="#Game.on_render">on_render</a>
                         </li>
                         <li>
-                                <a class="function" href="#Game.sound_handler">sound_handler</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#Game.cleanup">cleanup</a>
                         </li>
                         <li>
@@ -164,7 +161,7 @@ and then render the game to the screen last.</p>
 </span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>                 <span class="p">,</span> <span class="s2">&quot;_seed&quot;</span><span class="p">]</span>  <span class="c1"># seed: any</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
 </span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Simple singleton implementation&quot;&quot;&quot;</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Singleton.&quot;&quot;&quot;</span>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">:</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>  <span class="c1"># *args assumed added.</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="k">else</span><span class="p">:</span>
@@ -324,139 +321,104 @@ and then render the game to the screen last.</p>
 </span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">            * Item</span>
 </span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">            * etc.</span>
 </span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="sd">        * etc.</span>
-</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>
-</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="sd">        Also calls sound handler.</span>
-</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
-</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a>        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
-</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
-</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>
-</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>        <span class="c1"># check to display debug</span>
-</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug_mode</span><span class="p">:</span>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_debug</span><span class="p">()</span>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a>        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a>
+</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a>        <span class="c1"># check to display debug</span>
+</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug_mode</span><span class="p">:</span>
+</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_debug</span><span class="p">()</span>
+</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
 </span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>
-</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>    <span class="c1"># --- cleanup module ---</span>
 </span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>
-</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sound_handler</span><span class="p">()</span>
-</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>
-</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>    <span class="c1"># --- sound module ---</span>
+</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="sd">        Cleanup method.</span>
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sound_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">        Sound Handler method.</span>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>
-</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="sd">        May not be needed, but if it is:</span>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">        &gt; Handles all object sounds in a queue</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a><span class="sd">        Sound includes:</span>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a><span class="sd">        * Music</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a><span class="sd">        * Sound effects</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="sd">        STEPS:</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="sd">            1. Retrieve sound data from WORLD</span>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="sd">                * includes both sounds and music</span>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="sd">            2. Play music.</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a><span class="sd">                * If the music changed from the last, fade them.</span>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="sd">        All of the above should be done at the _VOLUME constant.</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>        <span class="c1"># set volumes</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>        <span class="n">music</span><span class="o">.</span><span class="n">set_volume</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_VOLUME</span><span class="p">)</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>        <span class="n">world_music</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">music</span>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>        <span class="k">if</span> <span class="n">world_music</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_music</span><span class="p">:</span>  <span class="c1"># Fade out music.</span>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>            <span class="n">music</span><span class="o">.</span><span class="n">queue</span><span class="p">(</span><span class="n">world_music</span><span class="p">,</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>            <span class="k">if</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mixer</span><span class="o">.</span><span class="n">music</span><span class="o">.</span><span class="n">get_busy</span><span class="p">():</span>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>                <span class="n">music</span><span class="o">.</span><span class="n">fadeout</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>
-</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>    <span class="c1"># --- cleanup module ---</span>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a><span class="sd">        Cleanup method.</span>
-</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>
-</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a><span class="sd">        &gt; Utilize this method every time the game closes down.</span>
-</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>
-</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="sd">        Things that should be cleaned up upon a game close:</span>
-</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a><span class="sd">        * Audio handler</span>
-</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="sd">        * Visual screen</span>
-</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a><span class="sd">        * Anything else that needs to be safely shut down.</span>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">quit_controller</span><span class="p">()</span>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">joystick</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>
-</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>    <span class="c1"># --- loop module ---</span>
-</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>
-</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a><span class="sd">        Loop method.</span>
-</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="sd">        &gt; Calls the loop method of all in game objects with a loop method.</span>
-</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a>
-</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a><span class="sd">        Those with loop methods should include:</span>
-</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a><span class="sd">        * World</span>
-</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a><span class="sd">            * Entity</span>
-</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a><span class="sd">                * Player</span>
-</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a><span class="sd">                * Enemy</span>
-</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a><span class="sd">                * etc.</span>
-</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a><span class="sd">            * Items</span>
-</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a><span class="sd">            * etc.</span>
-</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a><span class="sd">        * etc.</span>
-</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a>        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framerate</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FPS</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Game runs at 60fps</span>
-</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>        <span class="c1"># print(self._framerate.get_fps())</span>
-</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>
-</span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a>    <span class="c1"># --- run game module ---</span>
-</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a>
-</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run_game</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a><span class="sd">        Run Game method.</span>
-</span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a><span class="sd">        &gt; Starts and continues to run the game in a while loop.</span>
-</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a>
-</span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a><span class="sd">        &gt; Everything that the game does should be within the while-loop.</span>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="sd">        &gt; Utilize this method every time the game closes down.</span>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">        Things that should be cleaned up upon a game close:</span>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">        * Audio handler</span>
+</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="sd">        * Visual screen</span>
+</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">        * Anything else that needs to be safely shut down.</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">quit_controller</span><span class="p">()</span>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">joystick</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>    <span class="c1"># --- loop module ---</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="sd">        Loop method.</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a><span class="sd">        &gt; Calls the loop method of all in game objects with a loop method.</span>
+</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a><span class="sd">        Those with loop methods should include:</span>
+</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a><span class="sd">        * World</span>
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="sd">            * Entity</span>
+</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="sd">                * Player</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="sd">                * Enemy</span>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="sd">                * etc.</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a><span class="sd">            * Items</span>
+</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="sd">            * etc.</span>
+</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a><span class="sd">        * etc.</span>
+</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framerate</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FPS</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Game runs at 60fps</span>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>        <span class="c1"># print(self._framerate.get_fps())</span>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>
+</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>    <span class="c1"># --- run game module ---</span>
+</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>
+</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run_game</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a><span class="sd">        Run Game method.</span>
+</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="sd">        &gt; Starts and continues to run the game in a while loop.</span>
+</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>
+</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a><span class="sd">        &gt; Everything that the game does should be within the while-loop.</span>
+</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>
+</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a><span class="sd">        Game actions during run-time includes:</span>
+</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a><span class="sd">        * Handling events</span>
+</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a><span class="sd">        * Main game loop</span>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a><span class="sd">            * Player actions and movement</span>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a><span class="sd">            * Enemy actions and movement</span>
+</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a><span class="sd">            * Dungeon room logic</span>
+</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a><span class="sd">            * Puzzle logic</span>
+</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a><span class="sd">            * Inventory handling</span>
+</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a><span class="sd">            * etc.</span>
+</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a><span class="sd">        * Render handler</span>
+</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="sd">            * Dungeon rendering</span>
+</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a><span class="sd">            * Player rendering</span>
+</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a><span class="sd">            * Enemy rendering</span>
+</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a><span class="sd">            * etc.</span>
+</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a><span class="sd">            * also handles sounds!</span>
+</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_game_init</span><span class="p">()</span>
+</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
+</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_handler</span><span class="p">()</span>
+</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_loop</span><span class="p">()</span>
+</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_render</span><span class="p">()</span>
+</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a>
+</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a>    <span class="c1"># --- static methods ---</span>
+</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>
+</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a><span class="sd">        Run the game here!</span>
+</span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a>        <span class="n">seed</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+</span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a>        <span class="n">game</span><span class="p">:</span> <span class="n">Game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a>        <span class="n">game</span><span class="o">.</span><span class="n">run_game</span><span class="p">()</span>
+</span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a>
 </span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a>
-</span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a><span class="sd">        Game actions during run-time includes:</span>
-</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a><span class="sd">        * Handling events</span>
-</span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a><span class="sd">        * Main game loop</span>
-</span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a><span class="sd">            * Player actions and movement</span>
-</span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a><span class="sd">            * Enemy actions and movement</span>
-</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a><span class="sd">            * Dungeon room logic</span>
-</span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a><span class="sd">            * Puzzle logic</span>
-</span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a><span class="sd">            * Inventory handling</span>
-</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a><span class="sd">            * etc.</span>
-</span><span id="L-317"><a href="#L-317"><span class="linenos">317</span></a><span class="sd">        * Render handler</span>
-</span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a><span class="sd">            * Dungeon rendering</span>
-</span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a><span class="sd">            * Player rendering</span>
-</span><span id="L-320"><a href="#L-320"><span class="linenos">320</span></a><span class="sd">            * Enemy rendering</span>
-</span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a><span class="sd">            * etc.</span>
-</span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a><span class="sd">            * also handles sounds!</span>
-</span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_game_init</span><span class="p">()</span>
-</span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a>        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
-</span><span id="L-326"><a href="#L-326"><span class="linenos">326</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_handler</span><span class="p">()</span>
-</span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_loop</span><span class="p">()</span>
-</span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_render</span><span class="p">()</span>
-</span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
-</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>
-</span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a>    <span class="c1"># --- static methods ---</span>
-</span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a>
-</span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a><span class="sd">        Build the game here!</span>
-</span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a>        <span class="n">seed</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
-</span><span id="L-339"><a href="#L-339"><span class="linenos">339</span></a>        <span class="n">game</span><span class="p">:</span> <span class="n">Game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-</span><span id="L-340"><a href="#L-340"><span class="linenos">340</span></a>        <span class="n">game</span><span class="o">.</span><span class="n">run_game</span><span class="p">()</span>
-</span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a>
-</span><span id="L-342"><a href="#L-342"><span class="linenos">342</span></a>
-</span><span id="L-343"><a href="#L-343"><span class="linenos">343</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a>    <span class="n">Game</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a>    <span class="n">Game</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -492,7 +454,7 @@ and then render the game to the screen last.</p>
 </span><span id="Game-50"><a href="#Game-50"><span class="linenos"> 50</span></a>                 <span class="p">,</span> <span class="s2">&quot;_seed&quot;</span><span class="p">]</span>  <span class="c1"># seed: any</span>
 </span><span id="Game-51"><a href="#Game-51"><span class="linenos"> 51</span></a>
 </span><span id="Game-52"><a href="#Game-52"><span class="linenos"> 52</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-</span><span id="Game-53"><a href="#Game-53"><span class="linenos"> 53</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Simple singleton implementation&quot;&quot;&quot;</span>
+</span><span id="Game-53"><a href="#Game-53"><span class="linenos"> 53</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Singleton.&quot;&quot;&quot;</span>
 </span><span id="Game-54"><a href="#Game-54"><span class="linenos"> 54</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">:</span>
 </span><span id="Game-55"><a href="#Game-55"><span class="linenos"> 55</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>  <span class="c1"># *args assumed added.</span>
 </span><span id="Game-56"><a href="#Game-56"><span class="linenos"> 56</span></a>        <span class="k">else</span><span class="p">:</span>
@@ -652,135 +614,100 @@ and then render the game to the screen last.</p>
 </span><span id="Game-210"><a href="#Game-210"><span class="linenos">210</span></a><span class="sd">            * Item</span>
 </span><span id="Game-211"><a href="#Game-211"><span class="linenos">211</span></a><span class="sd">            * etc.</span>
 </span><span id="Game-212"><a href="#Game-212"><span class="linenos">212</span></a><span class="sd">        * etc.</span>
-</span><span id="Game-213"><a href="#Game-213"><span class="linenos">213</span></a>
-</span><span id="Game-214"><a href="#Game-214"><span class="linenos">214</span></a><span class="sd">        Also calls sound handler.</span>
-</span><span id="Game-215"><a href="#Game-215"><span class="linenos">215</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game-216"><a href="#Game-216"><span class="linenos">216</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
-</span><span id="Game-217"><a href="#Game-217"><span class="linenos">217</span></a>        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
-</span><span id="Game-218"><a href="#Game-218"><span class="linenos">218</span></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
-</span><span id="Game-219"><a href="#Game-219"><span class="linenos">219</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-</span><span id="Game-220"><a href="#Game-220"><span class="linenos">220</span></a>
-</span><span id="Game-221"><a href="#Game-221"><span class="linenos">221</span></a>        <span class="c1"># check to display debug</span>
-</span><span id="Game-222"><a href="#Game-222"><span class="linenos">222</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug_mode</span><span class="p">:</span>
-</span><span id="Game-223"><a href="#Game-223"><span class="linenos">223</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_debug</span><span class="p">()</span>
+</span><span id="Game-213"><a href="#Game-213"><span class="linenos">213</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Game-214"><a href="#Game-214"><span class="linenos">214</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+</span><span id="Game-215"><a href="#Game-215"><span class="linenos">215</span></a>        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+</span><span id="Game-216"><a href="#Game-216"><span class="linenos">216</span></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+</span><span id="Game-217"><a href="#Game-217"><span class="linenos">217</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+</span><span id="Game-218"><a href="#Game-218"><span class="linenos">218</span></a>
+</span><span id="Game-219"><a href="#Game-219"><span class="linenos">219</span></a>        <span class="c1"># check to display debug</span>
+</span><span id="Game-220"><a href="#Game-220"><span class="linenos">220</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug_mode</span><span class="p">:</span>
+</span><span id="Game-221"><a href="#Game-221"><span class="linenos">221</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_debug</span><span class="p">()</span>
+</span><span id="Game-222"><a href="#Game-222"><span class="linenos">222</span></a>
+</span><span id="Game-223"><a href="#Game-223"><span class="linenos">223</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
 </span><span id="Game-224"><a href="#Game-224"><span class="linenos">224</span></a>
-</span><span id="Game-225"><a href="#Game-225"><span class="linenos">225</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+</span><span id="Game-225"><a href="#Game-225"><span class="linenos">225</span></a>    <span class="c1"># --- cleanup module ---</span>
 </span><span id="Game-226"><a href="#Game-226"><span class="linenos">226</span></a>
-</span><span id="Game-227"><a href="#Game-227"><span class="linenos">227</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sound_handler</span><span class="p">()</span>
-</span><span id="Game-228"><a href="#Game-228"><span class="linenos">228</span></a>
-</span><span id="Game-229"><a href="#Game-229"><span class="linenos">229</span></a>    <span class="c1"># --- sound module ---</span>
+</span><span id="Game-227"><a href="#Game-227"><span class="linenos">227</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Game-228"><a href="#Game-228"><span class="linenos">228</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Game-229"><a href="#Game-229"><span class="linenos">229</span></a><span class="sd">        Cleanup method.</span>
 </span><span id="Game-230"><a href="#Game-230"><span class="linenos">230</span></a>
-</span><span id="Game-231"><a href="#Game-231"><span class="linenos">231</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sound_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Game-232"><a href="#Game-232"><span class="linenos">232</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Game-233"><a href="#Game-233"><span class="linenos">233</span></a><span class="sd">        Sound Handler method.</span>
-</span><span id="Game-234"><a href="#Game-234"><span class="linenos">234</span></a>
-</span><span id="Game-235"><a href="#Game-235"><span class="linenos">235</span></a><span class="sd">        May not be needed, but if it is:</span>
-</span><span id="Game-236"><a href="#Game-236"><span class="linenos">236</span></a><span class="sd">        &gt; Handles all object sounds in a queue</span>
-</span><span id="Game-237"><a href="#Game-237"><span class="linenos">237</span></a>
-</span><span id="Game-238"><a href="#Game-238"><span class="linenos">238</span></a><span class="sd">        Sound includes:</span>
-</span><span id="Game-239"><a href="#Game-239"><span class="linenos">239</span></a><span class="sd">        * Music</span>
-</span><span id="Game-240"><a href="#Game-240"><span class="linenos">240</span></a><span class="sd">        * Sound effects</span>
-</span><span id="Game-241"><a href="#Game-241"><span class="linenos">241</span></a>
-</span><span id="Game-242"><a href="#Game-242"><span class="linenos">242</span></a><span class="sd">        STEPS:</span>
-</span><span id="Game-243"><a href="#Game-243"><span class="linenos">243</span></a><span class="sd">            1. Retrieve sound data from WORLD</span>
-</span><span id="Game-244"><a href="#Game-244"><span class="linenos">244</span></a><span class="sd">                * includes both sounds and music</span>
-</span><span id="Game-245"><a href="#Game-245"><span class="linenos">245</span></a><span class="sd">            2. Play music.</span>
-</span><span id="Game-246"><a href="#Game-246"><span class="linenos">246</span></a><span class="sd">                * If the music changed from the last, fade them.</span>
-</span><span id="Game-247"><a href="#Game-247"><span class="linenos">247</span></a>
-</span><span id="Game-248"><a href="#Game-248"><span class="linenos">248</span></a><span class="sd">        All of the above should be done at the _VOLUME constant.</span>
-</span><span id="Game-249"><a href="#Game-249"><span class="linenos">249</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game-250"><a href="#Game-250"><span class="linenos">250</span></a>        <span class="c1"># set volumes</span>
-</span><span id="Game-251"><a href="#Game-251"><span class="linenos">251</span></a>        <span class="n">music</span><span class="o">.</span><span class="n">set_volume</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_VOLUME</span><span class="p">)</span>
-</span><span id="Game-252"><a href="#Game-252"><span class="linenos">252</span></a>
-</span><span id="Game-253"><a href="#Game-253"><span class="linenos">253</span></a>        <span class="n">world_music</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">music</span>
-</span><span id="Game-254"><a href="#Game-254"><span class="linenos">254</span></a>
-</span><span id="Game-255"><a href="#Game-255"><span class="linenos">255</span></a>        <span class="k">if</span> <span class="n">world_music</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_music</span><span class="p">:</span>  <span class="c1"># Fade out music.</span>
-</span><span id="Game-256"><a href="#Game-256"><span class="linenos">256</span></a>            <span class="n">music</span><span class="o">.</span><span class="n">queue</span><span class="p">(</span><span class="n">world_music</span><span class="p">,</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="Game-257"><a href="#Game-257"><span class="linenos">257</span></a>            <span class="k">if</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mixer</span><span class="o">.</span><span class="n">music</span><span class="o">.</span><span class="n">get_busy</span><span class="p">():</span>
-</span><span id="Game-258"><a href="#Game-258"><span class="linenos">258</span></a>                <span class="n">music</span><span class="o">.</span><span class="n">fadeout</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-</span><span id="Game-259"><a href="#Game-259"><span class="linenos">259</span></a>
-</span><span id="Game-260"><a href="#Game-260"><span class="linenos">260</span></a>    <span class="c1"># --- cleanup module ---</span>
-</span><span id="Game-261"><a href="#Game-261"><span class="linenos">261</span></a>
-</span><span id="Game-262"><a href="#Game-262"><span class="linenos">262</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Game-263"><a href="#Game-263"><span class="linenos">263</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Game-264"><a href="#Game-264"><span class="linenos">264</span></a><span class="sd">        Cleanup method.</span>
-</span><span id="Game-265"><a href="#Game-265"><span class="linenos">265</span></a>
-</span><span id="Game-266"><a href="#Game-266"><span class="linenos">266</span></a><span class="sd">        &gt; Utilize this method every time the game closes down.</span>
-</span><span id="Game-267"><a href="#Game-267"><span class="linenos">267</span></a>
-</span><span id="Game-268"><a href="#Game-268"><span class="linenos">268</span></a><span class="sd">        Things that should be cleaned up upon a game close:</span>
-</span><span id="Game-269"><a href="#Game-269"><span class="linenos">269</span></a><span class="sd">        * Audio handler</span>
-</span><span id="Game-270"><a href="#Game-270"><span class="linenos">270</span></a><span class="sd">        * Visual screen</span>
-</span><span id="Game-271"><a href="#Game-271"><span class="linenos">271</span></a><span class="sd">        * Anything else that needs to be safely shut down.</span>
-</span><span id="Game-272"><a href="#Game-272"><span class="linenos">272</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game-273"><a href="#Game-273"><span class="linenos">273</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</span><span id="Game-274"><a href="#Game-274"><span class="linenos">274</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">quit_controller</span><span class="p">()</span>
-</span><span id="Game-275"><a href="#Game-275"><span class="linenos">275</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">joystick</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</span><span id="Game-276"><a href="#Game-276"><span class="linenos">276</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</span><span id="Game-277"><a href="#Game-277"><span class="linenos">277</span></a>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
-</span><span id="Game-278"><a href="#Game-278"><span class="linenos">278</span></a>
-</span><span id="Game-279"><a href="#Game-279"><span class="linenos">279</span></a>    <span class="c1"># --- loop module ---</span>
-</span><span id="Game-280"><a href="#Game-280"><span class="linenos">280</span></a>
-</span><span id="Game-281"><a href="#Game-281"><span class="linenos">281</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Game-282"><a href="#Game-282"><span class="linenos">282</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Game-283"><a href="#Game-283"><span class="linenos">283</span></a><span class="sd">        Loop method.</span>
-</span><span id="Game-284"><a href="#Game-284"><span class="linenos">284</span></a><span class="sd">        &gt; Calls the loop method of all in game objects with a loop method.</span>
-</span><span id="Game-285"><a href="#Game-285"><span class="linenos">285</span></a>
-</span><span id="Game-286"><a href="#Game-286"><span class="linenos">286</span></a><span class="sd">        Those with loop methods should include:</span>
-</span><span id="Game-287"><a href="#Game-287"><span class="linenos">287</span></a><span class="sd">        * World</span>
-</span><span id="Game-288"><a href="#Game-288"><span class="linenos">288</span></a><span class="sd">            * Entity</span>
-</span><span id="Game-289"><a href="#Game-289"><span class="linenos">289</span></a><span class="sd">                * Player</span>
-</span><span id="Game-290"><a href="#Game-290"><span class="linenos">290</span></a><span class="sd">                * Enemy</span>
-</span><span id="Game-291"><a href="#Game-291"><span class="linenos">291</span></a><span class="sd">                * etc.</span>
-</span><span id="Game-292"><a href="#Game-292"><span class="linenos">292</span></a><span class="sd">            * Items</span>
-</span><span id="Game-293"><a href="#Game-293"><span class="linenos">293</span></a><span class="sd">            * etc.</span>
-</span><span id="Game-294"><a href="#Game-294"><span class="linenos">294</span></a><span class="sd">        * etc.</span>
-</span><span id="Game-295"><a href="#Game-295"><span class="linenos">295</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game-296"><a href="#Game-296"><span class="linenos">296</span></a>        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framerate</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FPS</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Game runs at 60fps</span>
-</span><span id="Game-297"><a href="#Game-297"><span class="linenos">297</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-</span><span id="Game-298"><a href="#Game-298"><span class="linenos">298</span></a>        <span class="c1"># print(self._framerate.get_fps())</span>
-</span><span id="Game-299"><a href="#Game-299"><span class="linenos">299</span></a>
-</span><span id="Game-300"><a href="#Game-300"><span class="linenos">300</span></a>    <span class="c1"># --- run game module ---</span>
-</span><span id="Game-301"><a href="#Game-301"><span class="linenos">301</span></a>
-</span><span id="Game-302"><a href="#Game-302"><span class="linenos">302</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run_game</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Game-303"><a href="#Game-303"><span class="linenos">303</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Game-304"><a href="#Game-304"><span class="linenos">304</span></a><span class="sd">        Run Game method.</span>
-</span><span id="Game-305"><a href="#Game-305"><span class="linenos">305</span></a><span class="sd">        &gt; Starts and continues to run the game in a while loop.</span>
-</span><span id="Game-306"><a href="#Game-306"><span class="linenos">306</span></a>
-</span><span id="Game-307"><a href="#Game-307"><span class="linenos">307</span></a><span class="sd">        &gt; Everything that the game does should be within the while-loop.</span>
-</span><span id="Game-308"><a href="#Game-308"><span class="linenos">308</span></a>
-</span><span id="Game-309"><a href="#Game-309"><span class="linenos">309</span></a><span class="sd">        Game actions during run-time includes:</span>
-</span><span id="Game-310"><a href="#Game-310"><span class="linenos">310</span></a><span class="sd">        * Handling events</span>
-</span><span id="Game-311"><a href="#Game-311"><span class="linenos">311</span></a><span class="sd">        * Main game loop</span>
-</span><span id="Game-312"><a href="#Game-312"><span class="linenos">312</span></a><span class="sd">            * Player actions and movement</span>
-</span><span id="Game-313"><a href="#Game-313"><span class="linenos">313</span></a><span class="sd">            * Enemy actions and movement</span>
-</span><span id="Game-314"><a href="#Game-314"><span class="linenos">314</span></a><span class="sd">            * Dungeon room logic</span>
-</span><span id="Game-315"><a href="#Game-315"><span class="linenos">315</span></a><span class="sd">            * Puzzle logic</span>
-</span><span id="Game-316"><a href="#Game-316"><span class="linenos">316</span></a><span class="sd">            * Inventory handling</span>
-</span><span id="Game-317"><a href="#Game-317"><span class="linenos">317</span></a><span class="sd">            * etc.</span>
-</span><span id="Game-318"><a href="#Game-318"><span class="linenos">318</span></a><span class="sd">        * Render handler</span>
-</span><span id="Game-319"><a href="#Game-319"><span class="linenos">319</span></a><span class="sd">            * Dungeon rendering</span>
-</span><span id="Game-320"><a href="#Game-320"><span class="linenos">320</span></a><span class="sd">            * Player rendering</span>
-</span><span id="Game-321"><a href="#Game-321"><span class="linenos">321</span></a><span class="sd">            * Enemy rendering</span>
-</span><span id="Game-322"><a href="#Game-322"><span class="linenos">322</span></a><span class="sd">            * etc.</span>
-</span><span id="Game-323"><a href="#Game-323"><span class="linenos">323</span></a><span class="sd">            * also handles sounds!</span>
-</span><span id="Game-324"><a href="#Game-324"><span class="linenos">324</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game-325"><a href="#Game-325"><span class="linenos">325</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_game_init</span><span class="p">()</span>
-</span><span id="Game-326"><a href="#Game-326"><span class="linenos">326</span></a>        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
-</span><span id="Game-327"><a href="#Game-327"><span class="linenos">327</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_handler</span><span class="p">()</span>
-</span><span id="Game-328"><a href="#Game-328"><span class="linenos">328</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_loop</span><span class="p">()</span>
-</span><span id="Game-329"><a href="#Game-329"><span class="linenos">329</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_render</span><span class="p">()</span>
-</span><span id="Game-330"><a href="#Game-330"><span class="linenos">330</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
-</span><span id="Game-331"><a href="#Game-331"><span class="linenos">331</span></a>
-</span><span id="Game-332"><a href="#Game-332"><span class="linenos">332</span></a>    <span class="c1"># --- static methods ---</span>
-</span><span id="Game-333"><a href="#Game-333"><span class="linenos">333</span></a>
-</span><span id="Game-334"><a href="#Game-334"><span class="linenos">334</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="Game-335"><a href="#Game-335"><span class="linenos">335</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Game-336"><a href="#Game-336"><span class="linenos">336</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Game-337"><a href="#Game-337"><span class="linenos">337</span></a><span class="sd">        Build the game here!</span>
-</span><span id="Game-338"><a href="#Game-338"><span class="linenos">338</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game-339"><a href="#Game-339"><span class="linenos">339</span></a>        <span class="n">seed</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
-</span><span id="Game-340"><a href="#Game-340"><span class="linenos">340</span></a>        <span class="n">game</span><span class="p">:</span> <span class="n">Game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-</span><span id="Game-341"><a href="#Game-341"><span class="linenos">341</span></a>        <span class="n">game</span><span class="o">.</span><span class="n">run_game</span><span class="p">()</span>
+</span><span id="Game-231"><a href="#Game-231"><span class="linenos">231</span></a><span class="sd">        &gt; Utilize this method every time the game closes down.</span>
+</span><span id="Game-232"><a href="#Game-232"><span class="linenos">232</span></a>
+</span><span id="Game-233"><a href="#Game-233"><span class="linenos">233</span></a><span class="sd">        Things that should be cleaned up upon a game close:</span>
+</span><span id="Game-234"><a href="#Game-234"><span class="linenos">234</span></a><span class="sd">        * Audio handler</span>
+</span><span id="Game-235"><a href="#Game-235"><span class="linenos">235</span></a><span class="sd">        * Visual screen</span>
+</span><span id="Game-236"><a href="#Game-236"><span class="linenos">236</span></a><span class="sd">        * Anything else that needs to be safely shut down.</span>
+</span><span id="Game-237"><a href="#Game-237"><span class="linenos">237</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Game-238"><a href="#Game-238"><span class="linenos">238</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</span><span id="Game-239"><a href="#Game-239"><span class="linenos">239</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">quit_controller</span><span class="p">()</span>
+</span><span id="Game-240"><a href="#Game-240"><span class="linenos">240</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">joystick</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</span><span id="Game-241"><a href="#Game-241"><span class="linenos">241</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</span><span id="Game-242"><a href="#Game-242"><span class="linenos">242</span></a>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</span><span id="Game-243"><a href="#Game-243"><span class="linenos">243</span></a>
+</span><span id="Game-244"><a href="#Game-244"><span class="linenos">244</span></a>    <span class="c1"># --- loop module ---</span>
+</span><span id="Game-245"><a href="#Game-245"><span class="linenos">245</span></a>
+</span><span id="Game-246"><a href="#Game-246"><span class="linenos">246</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Game-247"><a href="#Game-247"><span class="linenos">247</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Game-248"><a href="#Game-248"><span class="linenos">248</span></a><span class="sd">        Loop method.</span>
+</span><span id="Game-249"><a href="#Game-249"><span class="linenos">249</span></a><span class="sd">        &gt; Calls the loop method of all in game objects with a loop method.</span>
+</span><span id="Game-250"><a href="#Game-250"><span class="linenos">250</span></a>
+</span><span id="Game-251"><a href="#Game-251"><span class="linenos">251</span></a><span class="sd">        Those with loop methods should include:</span>
+</span><span id="Game-252"><a href="#Game-252"><span class="linenos">252</span></a><span class="sd">        * World</span>
+</span><span id="Game-253"><a href="#Game-253"><span class="linenos">253</span></a><span class="sd">            * Entity</span>
+</span><span id="Game-254"><a href="#Game-254"><span class="linenos">254</span></a><span class="sd">                * Player</span>
+</span><span id="Game-255"><a href="#Game-255"><span class="linenos">255</span></a><span class="sd">                * Enemy</span>
+</span><span id="Game-256"><a href="#Game-256"><span class="linenos">256</span></a><span class="sd">                * etc.</span>
+</span><span id="Game-257"><a href="#Game-257"><span class="linenos">257</span></a><span class="sd">            * Items</span>
+</span><span id="Game-258"><a href="#Game-258"><span class="linenos">258</span></a><span class="sd">            * etc.</span>
+</span><span id="Game-259"><a href="#Game-259"><span class="linenos">259</span></a><span class="sd">        * etc.</span>
+</span><span id="Game-260"><a href="#Game-260"><span class="linenos">260</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Game-261"><a href="#Game-261"><span class="linenos">261</span></a>        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framerate</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FPS</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Game runs at 60fps</span>
+</span><span id="Game-262"><a href="#Game-262"><span class="linenos">262</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+</span><span id="Game-263"><a href="#Game-263"><span class="linenos">263</span></a>        <span class="c1"># print(self._framerate.get_fps())</span>
+</span><span id="Game-264"><a href="#Game-264"><span class="linenos">264</span></a>
+</span><span id="Game-265"><a href="#Game-265"><span class="linenos">265</span></a>    <span class="c1"># --- run game module ---</span>
+</span><span id="Game-266"><a href="#Game-266"><span class="linenos">266</span></a>
+</span><span id="Game-267"><a href="#Game-267"><span class="linenos">267</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run_game</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Game-268"><a href="#Game-268"><span class="linenos">268</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Game-269"><a href="#Game-269"><span class="linenos">269</span></a><span class="sd">        Run Game method.</span>
+</span><span id="Game-270"><a href="#Game-270"><span class="linenos">270</span></a><span class="sd">        &gt; Starts and continues to run the game in a while loop.</span>
+</span><span id="Game-271"><a href="#Game-271"><span class="linenos">271</span></a>
+</span><span id="Game-272"><a href="#Game-272"><span class="linenos">272</span></a><span class="sd">        &gt; Everything that the game does should be within the while-loop.</span>
+</span><span id="Game-273"><a href="#Game-273"><span class="linenos">273</span></a>
+</span><span id="Game-274"><a href="#Game-274"><span class="linenos">274</span></a><span class="sd">        Game actions during run-time includes:</span>
+</span><span id="Game-275"><a href="#Game-275"><span class="linenos">275</span></a><span class="sd">        * Handling events</span>
+</span><span id="Game-276"><a href="#Game-276"><span class="linenos">276</span></a><span class="sd">        * Main game loop</span>
+</span><span id="Game-277"><a href="#Game-277"><span class="linenos">277</span></a><span class="sd">            * Player actions and movement</span>
+</span><span id="Game-278"><a href="#Game-278"><span class="linenos">278</span></a><span class="sd">            * Enemy actions and movement</span>
+</span><span id="Game-279"><a href="#Game-279"><span class="linenos">279</span></a><span class="sd">            * Dungeon room logic</span>
+</span><span id="Game-280"><a href="#Game-280"><span class="linenos">280</span></a><span class="sd">            * Puzzle logic</span>
+</span><span id="Game-281"><a href="#Game-281"><span class="linenos">281</span></a><span class="sd">            * Inventory handling</span>
+</span><span id="Game-282"><a href="#Game-282"><span class="linenos">282</span></a><span class="sd">            * etc.</span>
+</span><span id="Game-283"><a href="#Game-283"><span class="linenos">283</span></a><span class="sd">        * Render handler</span>
+</span><span id="Game-284"><a href="#Game-284"><span class="linenos">284</span></a><span class="sd">            * Dungeon rendering</span>
+</span><span id="Game-285"><a href="#Game-285"><span class="linenos">285</span></a><span class="sd">            * Player rendering</span>
+</span><span id="Game-286"><a href="#Game-286"><span class="linenos">286</span></a><span class="sd">            * Enemy rendering</span>
+</span><span id="Game-287"><a href="#Game-287"><span class="linenos">287</span></a><span class="sd">            * etc.</span>
+</span><span id="Game-288"><a href="#Game-288"><span class="linenos">288</span></a><span class="sd">            * also handles sounds!</span>
+</span><span id="Game-289"><a href="#Game-289"><span class="linenos">289</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Game-290"><a href="#Game-290"><span class="linenos">290</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_game_init</span><span class="p">()</span>
+</span><span id="Game-291"><a href="#Game-291"><span class="linenos">291</span></a>        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
+</span><span id="Game-292"><a href="#Game-292"><span class="linenos">292</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_handler</span><span class="p">()</span>
+</span><span id="Game-293"><a href="#Game-293"><span class="linenos">293</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_loop</span><span class="p">()</span>
+</span><span id="Game-294"><a href="#Game-294"><span class="linenos">294</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_render</span><span class="p">()</span>
+</span><span id="Game-295"><a href="#Game-295"><span class="linenos">295</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</span><span id="Game-296"><a href="#Game-296"><span class="linenos">296</span></a>
+</span><span id="Game-297"><a href="#Game-297"><span class="linenos">297</span></a>    <span class="c1"># --- static methods ---</span>
+</span><span id="Game-298"><a href="#Game-298"><span class="linenos">298</span></a>
+</span><span id="Game-299"><a href="#Game-299"><span class="linenos">299</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="Game-300"><a href="#Game-300"><span class="linenos">300</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Game-301"><a href="#Game-301"><span class="linenos">301</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Game-302"><a href="#Game-302"><span class="linenos">302</span></a><span class="sd">        Run the game here!</span>
+</span><span id="Game-303"><a href="#Game-303"><span class="linenos">303</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Game-304"><a href="#Game-304"><span class="linenos">304</span></a>        <span class="n">seed</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+</span><span id="Game-305"><a href="#Game-305"><span class="linenos">305</span></a>        <span class="n">game</span><span class="p">:</span> <span class="n">Game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+</span><span id="Game-306"><a href="#Game-306"><span class="linenos">306</span></a>        <span class="n">game</span><span class="o">.</span><span class="n">run_game</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -1020,21 +947,17 @@ and then render the game to the screen last.</p>
 </span><span id="Game.on_render-210"><a href="#Game.on_render-210"><span class="linenos">210</span></a><span class="sd">            * Item</span>
 </span><span id="Game.on_render-211"><a href="#Game.on_render-211"><span class="linenos">211</span></a><span class="sd">            * etc.</span>
 </span><span id="Game.on_render-212"><a href="#Game.on_render-212"><span class="linenos">212</span></a><span class="sd">        * etc.</span>
-</span><span id="Game.on_render-213"><a href="#Game.on_render-213"><span class="linenos">213</span></a>
-</span><span id="Game.on_render-214"><a href="#Game.on_render-214"><span class="linenos">214</span></a><span class="sd">        Also calls sound handler.</span>
-</span><span id="Game.on_render-215"><a href="#Game.on_render-215"><span class="linenos">215</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game.on_render-216"><a href="#Game.on_render-216"><span class="linenos">216</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
-</span><span id="Game.on_render-217"><a href="#Game.on_render-217"><span class="linenos">217</span></a>        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
-</span><span id="Game.on_render-218"><a href="#Game.on_render-218"><span class="linenos">218</span></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
-</span><span id="Game.on_render-219"><a href="#Game.on_render-219"><span class="linenos">219</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-</span><span id="Game.on_render-220"><a href="#Game.on_render-220"><span class="linenos">220</span></a>
-</span><span id="Game.on_render-221"><a href="#Game.on_render-221"><span class="linenos">221</span></a>        <span class="c1"># check to display debug</span>
-</span><span id="Game.on_render-222"><a href="#Game.on_render-222"><span class="linenos">222</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug_mode</span><span class="p">:</span>
-</span><span id="Game.on_render-223"><a href="#Game.on_render-223"><span class="linenos">223</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_debug</span><span class="p">()</span>
-</span><span id="Game.on_render-224"><a href="#Game.on_render-224"><span class="linenos">224</span></a>
-</span><span id="Game.on_render-225"><a href="#Game.on_render-225"><span class="linenos">225</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-</span><span id="Game.on_render-226"><a href="#Game.on_render-226"><span class="linenos">226</span></a>
-</span><span id="Game.on_render-227"><a href="#Game.on_render-227"><span class="linenos">227</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sound_handler</span><span class="p">()</span>
+</span><span id="Game.on_render-213"><a href="#Game.on_render-213"><span class="linenos">213</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Game.on_render-214"><a href="#Game.on_render-214"><span class="linenos">214</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+</span><span id="Game.on_render-215"><a href="#Game.on_render-215"><span class="linenos">215</span></a>        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+</span><span id="Game.on_render-216"><a href="#Game.on_render-216"><span class="linenos">216</span></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+</span><span id="Game.on_render-217"><a href="#Game.on_render-217"><span class="linenos">217</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+</span><span id="Game.on_render-218"><a href="#Game.on_render-218"><span class="linenos">218</span></a>
+</span><span id="Game.on_render-219"><a href="#Game.on_render-219"><span class="linenos">219</span></a>        <span class="c1"># check to display debug</span>
+</span><span id="Game.on_render-220"><a href="#Game.on_render-220"><span class="linenos">220</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug_mode</span><span class="p">:</span>
+</span><span id="Game.on_render-221"><a href="#Game.on_render-221"><span class="linenos">221</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_debug</span><span class="p">()</span>
+</span><span id="Game.on_render-222"><a href="#Game.on_render-222"><span class="linenos">222</span></a>
+</span><span id="Game.on_render-223"><a href="#Game.on_render-223"><span class="linenos">223</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -1064,76 +987,6 @@ and then render the game to the screen last.</p>
 </ul></li>
 <li>etc.</li>
 </ul>
-
-<p>Also calls sound handler.</p>
-</div>
-
-
-                            </div>
-                            <div id="Game.sound_handler" class="classattr">
-                                        <input id="Game.sound_handler-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">sound_handler</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
-
-                <label class="view-source-button" for="Game.sound_handler-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#Game.sound_handler"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Game.sound_handler-231"><a href="#Game.sound_handler-231"><span class="linenos">231</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sound_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Game.sound_handler-232"><a href="#Game.sound_handler-232"><span class="linenos">232</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Game.sound_handler-233"><a href="#Game.sound_handler-233"><span class="linenos">233</span></a><span class="sd">        Sound Handler method.</span>
-</span><span id="Game.sound_handler-234"><a href="#Game.sound_handler-234"><span class="linenos">234</span></a>
-</span><span id="Game.sound_handler-235"><a href="#Game.sound_handler-235"><span class="linenos">235</span></a><span class="sd">        May not be needed, but if it is:</span>
-</span><span id="Game.sound_handler-236"><a href="#Game.sound_handler-236"><span class="linenos">236</span></a><span class="sd">        &gt; Handles all object sounds in a queue</span>
-</span><span id="Game.sound_handler-237"><a href="#Game.sound_handler-237"><span class="linenos">237</span></a>
-</span><span id="Game.sound_handler-238"><a href="#Game.sound_handler-238"><span class="linenos">238</span></a><span class="sd">        Sound includes:</span>
-</span><span id="Game.sound_handler-239"><a href="#Game.sound_handler-239"><span class="linenos">239</span></a><span class="sd">        * Music</span>
-</span><span id="Game.sound_handler-240"><a href="#Game.sound_handler-240"><span class="linenos">240</span></a><span class="sd">        * Sound effects</span>
-</span><span id="Game.sound_handler-241"><a href="#Game.sound_handler-241"><span class="linenos">241</span></a>
-</span><span id="Game.sound_handler-242"><a href="#Game.sound_handler-242"><span class="linenos">242</span></a><span class="sd">        STEPS:</span>
-</span><span id="Game.sound_handler-243"><a href="#Game.sound_handler-243"><span class="linenos">243</span></a><span class="sd">            1. Retrieve sound data from WORLD</span>
-</span><span id="Game.sound_handler-244"><a href="#Game.sound_handler-244"><span class="linenos">244</span></a><span class="sd">                * includes both sounds and music</span>
-</span><span id="Game.sound_handler-245"><a href="#Game.sound_handler-245"><span class="linenos">245</span></a><span class="sd">            2. Play music.</span>
-</span><span id="Game.sound_handler-246"><a href="#Game.sound_handler-246"><span class="linenos">246</span></a><span class="sd">                * If the music changed from the last, fade them.</span>
-</span><span id="Game.sound_handler-247"><a href="#Game.sound_handler-247"><span class="linenos">247</span></a>
-</span><span id="Game.sound_handler-248"><a href="#Game.sound_handler-248"><span class="linenos">248</span></a><span class="sd">        All of the above should be done at the _VOLUME constant.</span>
-</span><span id="Game.sound_handler-249"><a href="#Game.sound_handler-249"><span class="linenos">249</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game.sound_handler-250"><a href="#Game.sound_handler-250"><span class="linenos">250</span></a>        <span class="c1"># set volumes</span>
-</span><span id="Game.sound_handler-251"><a href="#Game.sound_handler-251"><span class="linenos">251</span></a>        <span class="n">music</span><span class="o">.</span><span class="n">set_volume</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_VOLUME</span><span class="p">)</span>
-</span><span id="Game.sound_handler-252"><a href="#Game.sound_handler-252"><span class="linenos">252</span></a>
-</span><span id="Game.sound_handler-253"><a href="#Game.sound_handler-253"><span class="linenos">253</span></a>        <span class="n">world_music</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">music</span>
-</span><span id="Game.sound_handler-254"><a href="#Game.sound_handler-254"><span class="linenos">254</span></a>
-</span><span id="Game.sound_handler-255"><a href="#Game.sound_handler-255"><span class="linenos">255</span></a>        <span class="k">if</span> <span class="n">world_music</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_music</span><span class="p">:</span>  <span class="c1"># Fade out music.</span>
-</span><span id="Game.sound_handler-256"><a href="#Game.sound_handler-256"><span class="linenos">256</span></a>            <span class="n">music</span><span class="o">.</span><span class="n">queue</span><span class="p">(</span><span class="n">world_music</span><span class="p">,</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="Game.sound_handler-257"><a href="#Game.sound_handler-257"><span class="linenos">257</span></a>            <span class="k">if</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mixer</span><span class="o">.</span><span class="n">music</span><span class="o">.</span><span class="n">get_busy</span><span class="p">():</span>
-</span><span id="Game.sound_handler-258"><a href="#Game.sound_handler-258"><span class="linenos">258</span></a>                <span class="n">music</span><span class="o">.</span><span class="n">fadeout</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Sound Handler method.</p>
-
-<p>May not be needed, but if it is:</p>
-
-<blockquote>
-  <p>Handles all object sounds in a queue</p>
-</blockquote>
-
-<p>Sound includes:</p>
-
-<ul>
-<li>Music</li>
-<li>Sound effects</li>
-</ul>
-
-<p>STEPS:
-    1. Retrieve sound data from WORLD
-        * includes both sounds and music
-    2. Play music.
-        * If the music changed from the last, fade them.</p>
-
-<p>All of the above should be done at the _VOLUME constant.</p>
 </div>
 
 
@@ -1149,22 +1002,22 @@ and then render the game to the screen last.</p>
 
     </div>
     <a class="headerlink" href="#Game.cleanup"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Game.cleanup-262"><a href="#Game.cleanup-262"><span class="linenos">262</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Game.cleanup-263"><a href="#Game.cleanup-263"><span class="linenos">263</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Game.cleanup-264"><a href="#Game.cleanup-264"><span class="linenos">264</span></a><span class="sd">        Cleanup method.</span>
-</span><span id="Game.cleanup-265"><a href="#Game.cleanup-265"><span class="linenos">265</span></a>
-</span><span id="Game.cleanup-266"><a href="#Game.cleanup-266"><span class="linenos">266</span></a><span class="sd">        &gt; Utilize this method every time the game closes down.</span>
-</span><span id="Game.cleanup-267"><a href="#Game.cleanup-267"><span class="linenos">267</span></a>
-</span><span id="Game.cleanup-268"><a href="#Game.cleanup-268"><span class="linenos">268</span></a><span class="sd">        Things that should be cleaned up upon a game close:</span>
-</span><span id="Game.cleanup-269"><a href="#Game.cleanup-269"><span class="linenos">269</span></a><span class="sd">        * Audio handler</span>
-</span><span id="Game.cleanup-270"><a href="#Game.cleanup-270"><span class="linenos">270</span></a><span class="sd">        * Visual screen</span>
-</span><span id="Game.cleanup-271"><a href="#Game.cleanup-271"><span class="linenos">271</span></a><span class="sd">        * Anything else that needs to be safely shut down.</span>
-</span><span id="Game.cleanup-272"><a href="#Game.cleanup-272"><span class="linenos">272</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game.cleanup-273"><a href="#Game.cleanup-273"><span class="linenos">273</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</span><span id="Game.cleanup-274"><a href="#Game.cleanup-274"><span class="linenos">274</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">quit_controller</span><span class="p">()</span>
-</span><span id="Game.cleanup-275"><a href="#Game.cleanup-275"><span class="linenos">275</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">joystick</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</span><span id="Game.cleanup-276"><a href="#Game.cleanup-276"><span class="linenos">276</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</span><span id="Game.cleanup-277"><a href="#Game.cleanup-277"><span class="linenos">277</span></a>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Game.cleanup-227"><a href="#Game.cleanup-227"><span class="linenos">227</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Game.cleanup-228"><a href="#Game.cleanup-228"><span class="linenos">228</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Game.cleanup-229"><a href="#Game.cleanup-229"><span class="linenos">229</span></a><span class="sd">        Cleanup method.</span>
+</span><span id="Game.cleanup-230"><a href="#Game.cleanup-230"><span class="linenos">230</span></a>
+</span><span id="Game.cleanup-231"><a href="#Game.cleanup-231"><span class="linenos">231</span></a><span class="sd">        &gt; Utilize this method every time the game closes down.</span>
+</span><span id="Game.cleanup-232"><a href="#Game.cleanup-232"><span class="linenos">232</span></a>
+</span><span id="Game.cleanup-233"><a href="#Game.cleanup-233"><span class="linenos">233</span></a><span class="sd">        Things that should be cleaned up upon a game close:</span>
+</span><span id="Game.cleanup-234"><a href="#Game.cleanup-234"><span class="linenos">234</span></a><span class="sd">        * Audio handler</span>
+</span><span id="Game.cleanup-235"><a href="#Game.cleanup-235"><span class="linenos">235</span></a><span class="sd">        * Visual screen</span>
+</span><span id="Game.cleanup-236"><a href="#Game.cleanup-236"><span class="linenos">236</span></a><span class="sd">        * Anything else that needs to be safely shut down.</span>
+</span><span id="Game.cleanup-237"><a href="#Game.cleanup-237"><span class="linenos">237</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Game.cleanup-238"><a href="#Game.cleanup-238"><span class="linenos">238</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</span><span id="Game.cleanup-239"><a href="#Game.cleanup-239"><span class="linenos">239</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">quit_controller</span><span class="p">()</span>
+</span><span id="Game.cleanup-240"><a href="#Game.cleanup-240"><span class="linenos">240</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">joystick</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</span><span id="Game.cleanup-241"><a href="#Game.cleanup-241"><span class="linenos">241</span></a>        <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</span><span id="Game.cleanup-242"><a href="#Game.cleanup-242"><span class="linenos">242</span></a>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -1196,24 +1049,24 @@ and then render the game to the screen last.</p>
 
     </div>
     <a class="headerlink" href="#Game.on_loop"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Game.on_loop-281"><a href="#Game.on_loop-281"><span class="linenos">281</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Game.on_loop-282"><a href="#Game.on_loop-282"><span class="linenos">282</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Game.on_loop-283"><a href="#Game.on_loop-283"><span class="linenos">283</span></a><span class="sd">        Loop method.</span>
-</span><span id="Game.on_loop-284"><a href="#Game.on_loop-284"><span class="linenos">284</span></a><span class="sd">        &gt; Calls the loop method of all in game objects with a loop method.</span>
-</span><span id="Game.on_loop-285"><a href="#Game.on_loop-285"><span class="linenos">285</span></a>
-</span><span id="Game.on_loop-286"><a href="#Game.on_loop-286"><span class="linenos">286</span></a><span class="sd">        Those with loop methods should include:</span>
-</span><span id="Game.on_loop-287"><a href="#Game.on_loop-287"><span class="linenos">287</span></a><span class="sd">        * World</span>
-</span><span id="Game.on_loop-288"><a href="#Game.on_loop-288"><span class="linenos">288</span></a><span class="sd">            * Entity</span>
-</span><span id="Game.on_loop-289"><a href="#Game.on_loop-289"><span class="linenos">289</span></a><span class="sd">                * Player</span>
-</span><span id="Game.on_loop-290"><a href="#Game.on_loop-290"><span class="linenos">290</span></a><span class="sd">                * Enemy</span>
-</span><span id="Game.on_loop-291"><a href="#Game.on_loop-291"><span class="linenos">291</span></a><span class="sd">                * etc.</span>
-</span><span id="Game.on_loop-292"><a href="#Game.on_loop-292"><span class="linenos">292</span></a><span class="sd">            * Items</span>
-</span><span id="Game.on_loop-293"><a href="#Game.on_loop-293"><span class="linenos">293</span></a><span class="sd">            * etc.</span>
-</span><span id="Game.on_loop-294"><a href="#Game.on_loop-294"><span class="linenos">294</span></a><span class="sd">        * etc.</span>
-</span><span id="Game.on_loop-295"><a href="#Game.on_loop-295"><span class="linenos">295</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game.on_loop-296"><a href="#Game.on_loop-296"><span class="linenos">296</span></a>        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framerate</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FPS</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Game runs at 60fps</span>
-</span><span id="Game.on_loop-297"><a href="#Game.on_loop-297"><span class="linenos">297</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-</span><span id="Game.on_loop-298"><a href="#Game.on_loop-298"><span class="linenos">298</span></a>        <span class="c1"># print(self._framerate.get_fps())</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Game.on_loop-246"><a href="#Game.on_loop-246"><span class="linenos">246</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Game.on_loop-247"><a href="#Game.on_loop-247"><span class="linenos">247</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Game.on_loop-248"><a href="#Game.on_loop-248"><span class="linenos">248</span></a><span class="sd">        Loop method.</span>
+</span><span id="Game.on_loop-249"><a href="#Game.on_loop-249"><span class="linenos">249</span></a><span class="sd">        &gt; Calls the loop method of all in game objects with a loop method.</span>
+</span><span id="Game.on_loop-250"><a href="#Game.on_loop-250"><span class="linenos">250</span></a>
+</span><span id="Game.on_loop-251"><a href="#Game.on_loop-251"><span class="linenos">251</span></a><span class="sd">        Those with loop methods should include:</span>
+</span><span id="Game.on_loop-252"><a href="#Game.on_loop-252"><span class="linenos">252</span></a><span class="sd">        * World</span>
+</span><span id="Game.on_loop-253"><a href="#Game.on_loop-253"><span class="linenos">253</span></a><span class="sd">            * Entity</span>
+</span><span id="Game.on_loop-254"><a href="#Game.on_loop-254"><span class="linenos">254</span></a><span class="sd">                * Player</span>
+</span><span id="Game.on_loop-255"><a href="#Game.on_loop-255"><span class="linenos">255</span></a><span class="sd">                * Enemy</span>
+</span><span id="Game.on_loop-256"><a href="#Game.on_loop-256"><span class="linenos">256</span></a><span class="sd">                * etc.</span>
+</span><span id="Game.on_loop-257"><a href="#Game.on_loop-257"><span class="linenos">257</span></a><span class="sd">            * Items</span>
+</span><span id="Game.on_loop-258"><a href="#Game.on_loop-258"><span class="linenos">258</span></a><span class="sd">            * etc.</span>
+</span><span id="Game.on_loop-259"><a href="#Game.on_loop-259"><span class="linenos">259</span></a><span class="sd">        * etc.</span>
+</span><span id="Game.on_loop-260"><a href="#Game.on_loop-260"><span class="linenos">260</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Game.on_loop-261"><a href="#Game.on_loop-261"><span class="linenos">261</span></a>        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framerate</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FPS</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Game runs at 60fps</span>
+</span><span id="Game.on_loop-262"><a href="#Game.on_loop-262"><span class="linenos">262</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+</span><span id="Game.on_loop-263"><a href="#Game.on_loop-263"><span class="linenos">263</span></a>        <span class="c1"># print(self._framerate.get_fps())</span>
 </span></pre></div>
 
 
@@ -1254,35 +1107,35 @@ and then render the game to the screen last.</p>
 
     </div>
     <a class="headerlink" href="#Game.run_game"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Game.run_game-302"><a href="#Game.run_game-302"><span class="linenos">302</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run_game</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Game.run_game-303"><a href="#Game.run_game-303"><span class="linenos">303</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Game.run_game-304"><a href="#Game.run_game-304"><span class="linenos">304</span></a><span class="sd">        Run Game method.</span>
-</span><span id="Game.run_game-305"><a href="#Game.run_game-305"><span class="linenos">305</span></a><span class="sd">        &gt; Starts and continues to run the game in a while loop.</span>
-</span><span id="Game.run_game-306"><a href="#Game.run_game-306"><span class="linenos">306</span></a>
-</span><span id="Game.run_game-307"><a href="#Game.run_game-307"><span class="linenos">307</span></a><span class="sd">        &gt; Everything that the game does should be within the while-loop.</span>
-</span><span id="Game.run_game-308"><a href="#Game.run_game-308"><span class="linenos">308</span></a>
-</span><span id="Game.run_game-309"><a href="#Game.run_game-309"><span class="linenos">309</span></a><span class="sd">        Game actions during run-time includes:</span>
-</span><span id="Game.run_game-310"><a href="#Game.run_game-310"><span class="linenos">310</span></a><span class="sd">        * Handling events</span>
-</span><span id="Game.run_game-311"><a href="#Game.run_game-311"><span class="linenos">311</span></a><span class="sd">        * Main game loop</span>
-</span><span id="Game.run_game-312"><a href="#Game.run_game-312"><span class="linenos">312</span></a><span class="sd">            * Player actions and movement</span>
-</span><span id="Game.run_game-313"><a href="#Game.run_game-313"><span class="linenos">313</span></a><span class="sd">            * Enemy actions and movement</span>
-</span><span id="Game.run_game-314"><a href="#Game.run_game-314"><span class="linenos">314</span></a><span class="sd">            * Dungeon room logic</span>
-</span><span id="Game.run_game-315"><a href="#Game.run_game-315"><span class="linenos">315</span></a><span class="sd">            * Puzzle logic</span>
-</span><span id="Game.run_game-316"><a href="#Game.run_game-316"><span class="linenos">316</span></a><span class="sd">            * Inventory handling</span>
-</span><span id="Game.run_game-317"><a href="#Game.run_game-317"><span class="linenos">317</span></a><span class="sd">            * etc.</span>
-</span><span id="Game.run_game-318"><a href="#Game.run_game-318"><span class="linenos">318</span></a><span class="sd">        * Render handler</span>
-</span><span id="Game.run_game-319"><a href="#Game.run_game-319"><span class="linenos">319</span></a><span class="sd">            * Dungeon rendering</span>
-</span><span id="Game.run_game-320"><a href="#Game.run_game-320"><span class="linenos">320</span></a><span class="sd">            * Player rendering</span>
-</span><span id="Game.run_game-321"><a href="#Game.run_game-321"><span class="linenos">321</span></a><span class="sd">            * Enemy rendering</span>
-</span><span id="Game.run_game-322"><a href="#Game.run_game-322"><span class="linenos">322</span></a><span class="sd">            * etc.</span>
-</span><span id="Game.run_game-323"><a href="#Game.run_game-323"><span class="linenos">323</span></a><span class="sd">            * also handles sounds!</span>
-</span><span id="Game.run_game-324"><a href="#Game.run_game-324"><span class="linenos">324</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game.run_game-325"><a href="#Game.run_game-325"><span class="linenos">325</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_game_init</span><span class="p">()</span>
-</span><span id="Game.run_game-326"><a href="#Game.run_game-326"><span class="linenos">326</span></a>        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
-</span><span id="Game.run_game-327"><a href="#Game.run_game-327"><span class="linenos">327</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_handler</span><span class="p">()</span>
-</span><span id="Game.run_game-328"><a href="#Game.run_game-328"><span class="linenos">328</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_loop</span><span class="p">()</span>
-</span><span id="Game.run_game-329"><a href="#Game.run_game-329"><span class="linenos">329</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_render</span><span class="p">()</span>
-</span><span id="Game.run_game-330"><a href="#Game.run_game-330"><span class="linenos">330</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Game.run_game-267"><a href="#Game.run_game-267"><span class="linenos">267</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run_game</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Game.run_game-268"><a href="#Game.run_game-268"><span class="linenos">268</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Game.run_game-269"><a href="#Game.run_game-269"><span class="linenos">269</span></a><span class="sd">        Run Game method.</span>
+</span><span id="Game.run_game-270"><a href="#Game.run_game-270"><span class="linenos">270</span></a><span class="sd">        &gt; Starts and continues to run the game in a while loop.</span>
+</span><span id="Game.run_game-271"><a href="#Game.run_game-271"><span class="linenos">271</span></a>
+</span><span id="Game.run_game-272"><a href="#Game.run_game-272"><span class="linenos">272</span></a><span class="sd">        &gt; Everything that the game does should be within the while-loop.</span>
+</span><span id="Game.run_game-273"><a href="#Game.run_game-273"><span class="linenos">273</span></a>
+</span><span id="Game.run_game-274"><a href="#Game.run_game-274"><span class="linenos">274</span></a><span class="sd">        Game actions during run-time includes:</span>
+</span><span id="Game.run_game-275"><a href="#Game.run_game-275"><span class="linenos">275</span></a><span class="sd">        * Handling events</span>
+</span><span id="Game.run_game-276"><a href="#Game.run_game-276"><span class="linenos">276</span></a><span class="sd">        * Main game loop</span>
+</span><span id="Game.run_game-277"><a href="#Game.run_game-277"><span class="linenos">277</span></a><span class="sd">            * Player actions and movement</span>
+</span><span id="Game.run_game-278"><a href="#Game.run_game-278"><span class="linenos">278</span></a><span class="sd">            * Enemy actions and movement</span>
+</span><span id="Game.run_game-279"><a href="#Game.run_game-279"><span class="linenos">279</span></a><span class="sd">            * Dungeon room logic</span>
+</span><span id="Game.run_game-280"><a href="#Game.run_game-280"><span class="linenos">280</span></a><span class="sd">            * Puzzle logic</span>
+</span><span id="Game.run_game-281"><a href="#Game.run_game-281"><span class="linenos">281</span></a><span class="sd">            * Inventory handling</span>
+</span><span id="Game.run_game-282"><a href="#Game.run_game-282"><span class="linenos">282</span></a><span class="sd">            * etc.</span>
+</span><span id="Game.run_game-283"><a href="#Game.run_game-283"><span class="linenos">283</span></a><span class="sd">        * Render handler</span>
+</span><span id="Game.run_game-284"><a href="#Game.run_game-284"><span class="linenos">284</span></a><span class="sd">            * Dungeon rendering</span>
+</span><span id="Game.run_game-285"><a href="#Game.run_game-285"><span class="linenos">285</span></a><span class="sd">            * Player rendering</span>
+</span><span id="Game.run_game-286"><a href="#Game.run_game-286"><span class="linenos">286</span></a><span class="sd">            * Enemy rendering</span>
+</span><span id="Game.run_game-287"><a href="#Game.run_game-287"><span class="linenos">287</span></a><span class="sd">            * etc.</span>
+</span><span id="Game.run_game-288"><a href="#Game.run_game-288"><span class="linenos">288</span></a><span class="sd">            * also handles sounds!</span>
+</span><span id="Game.run_game-289"><a href="#Game.run_game-289"><span class="linenos">289</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Game.run_game-290"><a href="#Game.run_game-290"><span class="linenos">290</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_game_init</span><span class="p">()</span>
+</span><span id="Game.run_game-291"><a href="#Game.run_game-291"><span class="linenos">291</span></a>        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
+</span><span id="Game.run_game-292"><a href="#Game.run_game-292"><span class="linenos">292</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_handler</span><span class="p">()</span>
+</span><span id="Game.run_game-293"><a href="#Game.run_game-293"><span class="linenos">293</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_loop</span><span class="p">()</span>
+</span><span id="Game.run_game-294"><a href="#Game.run_game-294"><span class="linenos">294</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">on_render</span><span class="p">()</span>
+</span><span id="Game.run_game-295"><a href="#Game.run_game-295"><span class="linenos">295</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -1334,18 +1187,18 @@ and then render the game to the screen last.</p>
 
     </div>
     <a class="headerlink" href="#Game.main"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Game.main-334"><a href="#Game.main-334"><span class="linenos">334</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="Game.main-335"><a href="#Game.main-335"><span class="linenos">335</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Game.main-336"><a href="#Game.main-336"><span class="linenos">336</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Game.main-337"><a href="#Game.main-337"><span class="linenos">337</span></a><span class="sd">        Build the game here!</span>
-</span><span id="Game.main-338"><a href="#Game.main-338"><span class="linenos">338</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Game.main-339"><a href="#Game.main-339"><span class="linenos">339</span></a>        <span class="n">seed</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
-</span><span id="Game.main-340"><a href="#Game.main-340"><span class="linenos">340</span></a>        <span class="n">game</span><span class="p">:</span> <span class="n">Game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-</span><span id="Game.main-341"><a href="#Game.main-341"><span class="linenos">341</span></a>        <span class="n">game</span><span class="o">.</span><span class="n">run_game</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Game.main-299"><a href="#Game.main-299"><span class="linenos">299</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="Game.main-300"><a href="#Game.main-300"><span class="linenos">300</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Game.main-301"><a href="#Game.main-301"><span class="linenos">301</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Game.main-302"><a href="#Game.main-302"><span class="linenos">302</span></a><span class="sd">        Run the game here!</span>
+</span><span id="Game.main-303"><a href="#Game.main-303"><span class="linenos">303</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Game.main-304"><a href="#Game.main-304"><span class="linenos">304</span></a>        <span class="n">seed</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+</span><span id="Game.main-305"><a href="#Game.main-305"><span class="linenos">305</span></a>        <span class="n">game</span><span class="p">:</span> <span class="n">Game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+</span><span id="Game.main-306"><a href="#Game.main-306"><span class="linenos">306</span></a>        <span class="n">game</span><span class="o">.</span><span class="n">run_game</span><span class="p">()</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Build the game here!</p>
+            <div class="docstring"><p>Run the game here!</p>
 </div>
 
 

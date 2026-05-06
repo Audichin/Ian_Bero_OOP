@@ -80,7 +80,11 @@ class UI:
 # ==== base ====
 
     def render(self) -> list[tuple[Surface, Rect]]:
-        """Return all displays"""
+        """Return all displays
+
+        Returns:
+            list[tuple[Surface, Rect]]: UI render data.
+        """
         temp: list[tuple[Surface, Rect]] = []
 
         # append hearts to the display
@@ -118,7 +122,11 @@ class UI:
 # ==== UI methods ====
 
     def update_hearts(self, hp: int) -> None:
-        """Update heart UI according to player health."""
+        """Update heart UI according to player health.
+
+        Args:
+            hp (int): Passed player HP.
+        """
         self._player_hp = hp
         for indx, heart in enumerate(self._hearts):
             rel_hp: int = hp - (indx * 2)
@@ -131,13 +139,21 @@ class UI:
             heart[0] = self._assets[f'hearts_{rel_hp}']
 
     def update_item_slot(self, item_name: str) -> None:
-        """Update the item in the item slot."""
+        """Update the item in the item slot.
+
+        Args:
+            item_name (str): name of item passed.
+        """
         item_path: Path = Path(__file__).parent / \
             f"../assets/visual/items/{item_name}/icon.png"
         self._store_ui_element('item', pygame.image.load(item_path), (0, 0), (32, 32))
 
     def update_items(self, items: list[tuple[Surface, Rect]]) -> None:
-        """Update the items to display"""
+        """Update the items to display
+
+        Args:
+            items (list[tuple[Surface, Rect]]): All items contained in inventory.
+        """
         self._inventory = items
         for i, _item in enumerate(self._inventory):
             self._inventory[i][1].topleft = (272 * self._SCALE, (i * 16 * self._SCALE))
@@ -152,7 +168,14 @@ class UI:
                           image: Surface,
                           position: tuple[int, int],
                           dimension: tuple[int, int]) -> None:
-        """FIXME"""
+        """Store a single UI asset into _assets.
+
+        Args:
+            name (str): Name of the asset.
+            image (Surface): Image to cut frame from.
+            position (tuple[int, int]): Top-Left position of the asset to cut.
+            dimension (tuple[int, int]): Width and height of asset to cut out.
+        """
         single: Surface = Surface(dimension).convert_alpha()
         single.blit(image, (0, 0), (position[0], position[1], dimension[0], dimension[1]))
         single = pygame.transform.scale(single, (dimension[0] * self._SCALE,

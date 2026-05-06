@@ -1,3 +1,6 @@
+"""
+Sound module.
+"""
 import sys
 import os
 from pathlib import Path
@@ -5,10 +8,17 @@ import pygame
 
 
 class SoundManager:
+    """
+    SoundManager class.
+
+    Plays music and sounds correlating to indexes passed to this class.
+    """
 
     PROJECT_ROOT = Path(__file__).parent / ".."
 
     def __init__(self) -> None:
+        """Sound manager object. Handles all sounds in-game.
+        """
         self._music: str = ""
         self._sounds: list[pygame.mixer.Sound] = []
         pygame.mixer.pre_init(buffer=4096)
@@ -18,12 +28,7 @@ class SoundManager:
 
     @property
     def music(self) -> str:
-        """
-        Gets the current music.
-
-        Returns:
-            str: _description_
-        """
+        """Current music being played."""
         return self._music
 
     @music.setter
@@ -32,6 +37,7 @@ class SoundManager:
 
     @property
     def sounds(self) -> list[pygame.mixer.Sound]:
+        """All sounds contained in manager"""
         return self._sounds
 
     @sounds.setter
@@ -39,9 +45,7 @@ class SoundManager:
         self._sounds = new_sounds
 
     def pause_audio(self) -> None:
-        """
-        Pauses the music.
-        """
+        """Pauses the music."""
         pygame.mixer.music.pause()
 
     def stop_audio(self, sound_index: int) -> None:
@@ -133,9 +137,6 @@ class SoundManager:
     def load_music(self) -> None:
         """
         Adds music to the list of sounds. Performed duricng initialization.
-
-        Args:
-            new_sounds (list[pygame.mixer.Sound]): List of new sounds that got added
         """
 
         MUSIC_DIR = self.PROJECT_ROOT / "assets" / "audio" / "music"
@@ -166,9 +167,6 @@ class SoundManager:
     def load_sound_effect(self) -> None:
         """
         Adds a new sound effect to the list of sounds. Performed during initialization.
-
-        Args:
-            new_sound (pygame.mixer.Sound): The new sound effect to add.
         """
 
         SOUND_DIR: Path = self.PROJECT_ROOT / "assets" / "audio" / "sound"

@@ -9,6 +9,13 @@ from pygame import sprite, Vector2, Surface, Rect
 class Projectile(sprite.Sprite):
     """
     Base class for all projectiles.
+
+    A projectile is a game object that has movement data, sound data,
+    and damage data. They do not possess hitpoints, instead opting
+    to be deleted once they expire.
+
+    Projectiles are typically used by items or entities to create
+    obstacles that damage other entities.
     """
 
     _SCALE: int = 5
@@ -25,7 +32,15 @@ class Projectile(sprite.Sprite):
                  friction: float = 10.0,
                  damage: int = 1,
                  image: Surface | None = None) -> None:
-        """FIXME"""
+        """Projectile object. Utilized for damaging other entities.
+
+        Args:
+            position (Vector2, optional): World position. Defaults to Vector2().
+            speed (float, optional): Projectile speed increase per frame. Defaults to 100.0.
+            friction (float, optional): Projectile fricition. Defaults to 10.0.
+            damage (int, optional): Damage a projectile can deal. Defaults to 1.
+            image (Surface | None, optional): Image this projectile possesses. Defaults to None.
+        """
         super().__init__()
 
         self._dmg: int = damage
@@ -45,7 +60,11 @@ class Projectile(sprite.Sprite):
         self.__image_init(image)
 
     def __image_init(self, img_in: Surface | None) -> None:
-        """FIXME"""
+        """Image and rect initialization.
+
+        Args:
+            img_in (Surface | None): Input image. Important for Rect creation.
+        """
         temp_img: Surface = Surface((8 * self._SCALE, 8 * self._SCALE))
         temp_img.fill((222, 133, 255))
         if img_in:
@@ -106,8 +125,13 @@ class Projectile(sprite.Sprite):
             self.move(delta)
 
     def render(self) -> tuple[Surface, Rect]:
-        """
-        Returns the current image and rect of a projectile.
+        """Returns the current image and rect of a projectile.
+
+        Raises:
+            AttributeError: Image doesn't exist.
+
+        Returns:
+            tuple[Surface, Rect]: Projectile render data.
         """
         try:
             self.image.set_colorkey((0, 0, 0))
@@ -123,7 +147,7 @@ class Projectile(sprite.Sprite):
 
         Args:
             delta (float): milliseconds since last frame.
-            dir (Vector2 | None, optional): direction of acceleration
+            dir (Vector2 | None, optional): direction of acceleration. Defaults to (0, 0)
         """
         self.push(dir)
         # handle x
@@ -145,19 +169,36 @@ class Projectile(sprite.Sprite):
         self.move_to(self.position + (self._velocity * delta))
 
     def move_to(self, new_pos: Vector2) -> None:
-        """FIXME"""
+        """Move position to the passed position and update rect.
+
+        Args:
+            new_pos (Vector2): New position.
+        """
         self._position = new_pos
         self.set_rect()
 
     def push(self, dir: Vector2) -> None:
-        """FIXME"""
+        """Add passed direction to velocity.
+
+        Args:
+            dir (Vector2): Passed direction vector.
+        """
         self._velocity += Vector2(dir.x * self.speed, dir.y * self.speed)
 
 # ==== get image from file ====
 
     def _single_from_sheet(self, image: Surface,
                            dimension: tuple[int, int]) -> Surface:
-        """FIXME"""
+        """
+        Obtain a single frame from a sprite sheet.
+
+        Args:
+            image (Surface): Image to cut frame from.
+            dimension (tuple[int, int]): size of frame. (width, height)
+
+        Returns:
+            Surface: Single frame cut from sheet.
+        """
         single: Surface = Surface(dimension).convert_alpha()
         single.blit(image, (0, 0), (0, 0, dimension[0], dimension[1]))
         single = pygame.transform.scale(single, (dimension[0] * self._SCALE,

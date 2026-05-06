@@ -65,6 +65,7 @@ class Entity(sprite.Sprite):
             clamp_speed (float, optional): clamp speed. Defaults to 5.0.
             friction (float, optional): rate of slowdown. Defaults to .75.
             HP (int | None, optional): Hit points. Defaults to None.
+            assets (dict[str, Surface] | None, optional): Entity assests. Defaults to None.
             img (Surface | None, optional): base Surface. Defaults to None.
         """
         super().__init__()
@@ -95,7 +96,11 @@ class Entity(sprite.Sprite):
         self.__image_init(image)
 
     def __image_init(self, img_in: Surface | None) -> None:
-        """FIXME"""
+        """Image and Rect initialization.
+
+        Args:
+            img_in (Surface | None): Image to set initially (important for rect).
+        """
         temp_img: Surface = Surface((16 * self._SCALE, 16 * self._SCALE))
         temp_img.fill((255, 255, 255))
         if img_in:
@@ -158,6 +163,10 @@ class Entity(sprite.Sprite):
         Entity loop. Run once every frame per entity.
 
         The base method will call move() and collide() for updating position.
+
+        Args:
+            delta (float): delta time.
+            move (Vector2 | None, optional): Directional movement vector. Defaults to None.
         """
         self._prev_position = Vector2(self._position.x, self._position.y)
         if move:
@@ -171,8 +180,13 @@ class Entity(sprite.Sprite):
             self._invincibility -= delta
 
     def render(self, time: float) -> list[tuple[Surface, Rect]]:
-        """
-        Returns the current image and rect of an entity.
+        """Returns the current image and rect of an entity.
+
+        Args:
+            time (float): Time elapsed since program start.
+
+        Returns:
+            list[tuple[Surface, Rect]]: Entity image and rect for surface blitting.
         """
         self.animate(time)
         try:
@@ -190,6 +204,7 @@ class Entity(sprite.Sprite):
         Entities move in accordance to direction
 
         Args:
+            delta (float): delta time.
             dir (Vector2 | None, optional): Direction of acceleration.
         """
         self._velocity += Vector2(dir.x * self.speed, dir.y * self.speed)
@@ -226,12 +241,17 @@ class Entity(sprite.Sprite):
         self.move_to(self.position + (self._velocity * delta))
 
     def move_to(self, new_pos: Vector2) -> None:
-        """FIXME"""
+        """Move position to the passed position and update rect.
+
+        Args:
+            new_pos (Vector2): New position.
+        """
         self._position = new_pos
         self.set_rect()
 
     def static_collide(self) -> None:
-        """FIXME"""
+        """Collision against a static (non-moving) hitbox.
+        """
         data: list[Rect] = self._world.entity_action(self, "s_col")
 
         if len(data) > 0:
@@ -241,8 +261,12 @@ class Entity(sprite.Sprite):
                 self.static_rect_collide(rect)
 
     def static_rect_collide(self, rect: Rect) -> None:
-        """FIXME"""
+        """
+        Compare entity rect with passed rect and perform static collision logic.
 
+        Args:
+            rect (Rect): Other rect to compare with.
+        """
         # above rect
         relative_x: int = 0
         relative_y: int = 0
@@ -273,13 +297,23 @@ class Entity(sprite.Sprite):
                 self._position.y = rect.top + rect.height + (self.rect.height / 2)
 
     def damage(self, dmg: int) -> None:
-        """Take damage"""
+        """
+        Take damage equivalent to dmg.
+
+        Args:
+            dmg (int): Damage this entity was dealt.
+        """
         if self._invincibility <= 0:
             self.HP -= dmg
             self._invincibility = self._INV_SEC
 
     def play_sound(self, sound_key: str) -> None:
-        """FIXME"""
+        """
+        Play a sound from this entities sound library.
+
+        Args:
+            sound_key (str): Key correlating to a sound.
+        """
         self._world.queue_sound(self._sounds[sound_key])
 
 # ---- Asset Creation ----
@@ -291,12 +325,17 @@ class Entity(sprite.Sprite):
                                type: str,
                                func: Callable[..., Any] | None = None,
                                *args: list[Any]) -> None:
-        """
-        Create assets from a sprite sheet.
-
-        Each individual sprite is as wide as width, and as long as height.
+        """Create assets from a sprite sheet and stores them into _assets.
 
         Requires that _assets been created first.
+
+        Args:
+            sheet (Surface): passed sheet to cut into assets.
+            dimension (tuple[int, int]): Dimension of each individual asset. (width, height)
+            group_size (int): Size of a frame group.
+            pattern (str): Pattern present in the sprite sheet.
+            type (str): Type of assets (Ex: movement)
+            func (Callable[..., Any] | None, optional): Optional sprite splitting function. Defaults to None.
         """
 
         def standard() -> None:
@@ -330,7 +369,17 @@ class Entity(sprite.Sprite):
     def _single_surface_from_sheet(sheet: Surface,
                                    pos: tuple[int, int] | list[int],
                                    dimension: tuple[int, int]) -> Surface:
-        """FIXME"""
+        """
+        Obtain a single frame from a sprite sheet.
+
+        Args:
+            sheet (Surface): Sheet to cut frame from.
+            pos (tuple[int, int] | list[int]): Top-left position of frame from sheet.
+            dimension (tuple[int, int]): size of frame. (width, height)
+
+        Returns:
+            Surface: Single frame cut from sheet.
+        """
         single: Surface = Surface(dimension).convert_alpha()
         single.blit(sheet, (0, 0), (pos[0], pos[1], dimension[0], dimension[1]))
         single = pygame.transform.scale(single, (dimension[0] * Entity._SCALE,
@@ -340,10 +389,10 @@ class Entity(sprite.Sprite):
 # ---- Animation and Sound ----
 
     def animate(self, time: float) -> None:
-        """
-        Animations rely on _assets and changing the current image.
+        """Animations rely on _assets and changing the current image.
 
-        > Every inherited entity should implement their own animate.
-        """
+        Every inherited entity should implement their own animate.
 
-# ---- overloads ----
+        Args:
+            time (float): time elapsed since game start.
+        """

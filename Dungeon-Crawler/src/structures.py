@@ -1,3 +1,15 @@
+"""
+Structures module.
+
+Contains Dungeon, Room, and Patterns.
+
+Dungeon creates entire dungeon layouts, utilizing Generation to create
+textures for all rooms contained.
+
+Rooms contain entities and items. Room types lead to different methods
+being utilized. Idealy, Room would be an ABC, while Puzzle rooms, Boss
+rooms, and Enemy rooms would be separate classes inheriting Room.
+"""
 import random
 from collections import deque
 from typing import Any, Self
@@ -56,6 +68,18 @@ class Room:
                  x: int, y: int,
                  rng: random.Random,
                  room_type: str = "empty") -> None:
+        """Single room object.
+
+        Each room has a type, position relative to starting room, and 
+        an rng pre-seeded for generating entities and items.
+
+        Args:
+            world (Any): World this room is contained in.
+            x (int): X position relative to start room.
+            y (int): Y position relative to start room.
+            rng (random.Random): Seeded Random class object.
+            room_type (str, optional): This room's type. Defaults to "empty".
+        """
         self._world: Any = world
         self._x: int = x
         self._y: int = y
@@ -195,8 +219,8 @@ class Room:
         Create a new enemy in this room.
 
         Args:
-            type (str): Enemy type name.
-            position (pygame.Vector2): Enemy position.
+            enemy_type (str): Enemy type name.
+            position (pygame.Vector2): Enemy position in room.
         """
 
         match enemy_type:
@@ -214,8 +238,8 @@ class Room:
         Create a new item in this room.
 
         Args:
-            type (str): Item type name.
-            position (pygame.Vector2): Item position.
+            item_type (str): Item type name.
+            position (pygame.Vector2): Item position in room.
         """
         match item_type:
             case 'heart':
@@ -224,7 +248,11 @@ class Room:
                 self._items.append(KeyFragment(self._world, position))
 
     def connect(self, other_room: Self) -> None:
-        """Creates a bidirectional connection."""
+        """Creates a bidirectional connection.
+
+        Args:
+            other_room (Self): Room to create connection with.
+        """
         if other_room not in self.connections:
             self.connections.append(other_room)
         if self not in other_room.connections:
@@ -233,12 +261,13 @@ class Room:
 # ==== overloads ====
 
     def __repr__(self) -> str:
+        """Room string representation."""
         return f"Room({self.x}, {self.y}, {self.room_type})"
 
 
 class Dungeon:
     """
-    Dungeon class to create a dungeon, requires Room class
+    Dungeon class to create a dungeon, requires Room class.
     """
 
     _SCALE: int = 5
@@ -257,6 +286,17 @@ class Dungeon:
                  seed: Any,
                  total_rooms: int = 12,
                  min_puzzle_rooms: int = 4) -> None:
+        """Dungeon object.
+
+        Contains the game seed, total amount of rooms contained/generated,
+        and minimum puzzle rooms created.
+
+        Args:
+            world (Any): World this dungeon belongs to.
+            seed (Any): Seed of the game (for generation)
+            total_rooms (int, optional): Amount of rooms to create in the dungeon. Defaults to 12.
+            min_puzzle_rooms (int, optional): Amount of puzzle rooms to contain. Defaults to 4.
+        """
         self._world: Any = world
         self._seed: Any = seed
         self._total_rooms: int = total_rooms
@@ -276,6 +316,8 @@ class Dungeon:
     def rooms(self) -> dict[tuple[int, int], Room]:
         """The rooms held within dungeon."""
         return self._rooms
+
+# ==== dungeon methods ====
 
     def generate(self) -> None:  # Call this function to generate dungeon
         """
@@ -383,7 +425,7 @@ class Dungeon:
             room (Room): the room we are checking
             orientation (str): the wall orientation we are checking (W, N, E, S)
         returns:
-            list[pygame.Rect]
+            list[pygame.Rect]: All rects of the wall corresponding to orientation.
         """
         wall_data = self._generation.room_walls.get((room.x, room.y, orientation))
         if wall_data is None:

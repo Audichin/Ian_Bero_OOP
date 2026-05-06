@@ -193,14 +193,16 @@ class Item(sprite.Sprite):
         Item game render.
 
         Returns:
-            tuple[Surface, Rect]: Render parameters.
+            tuple[Surface, Rect]: Render data.
         """
         self.image.set_colorkey((0, 0, 0))
         return (self.image, self.rect)
 
     def render_projectiles(self) -> list[tuple[Surface, Rect]]:
-        """
-        Item Projectile render.
+        """Item Projectile render.
+
+        Returns:
+            list[tuple[Surface, Rect]]: Render data.
         """
         return list[tuple[Surface, Rect]]()
 
@@ -214,17 +216,35 @@ class Item(sprite.Sprite):
             self._position = Vector2(-999, -999)
 
     def item_action_a(self, player_pos: Vector2, player_look: tuple[int, int]) -> None:
-        """Base method for items with actions. Does nothing."""
+        """Base method for items with actions. Base does nothing
+
+        Args:
+            player_pos (Vector2): Position of player in the world.
+            player_look (tuple[int, int]): Direction the player is facing in.
+        """
 
     def play_sound(self, sound_key: str) -> None:
-        """FIXME"""
+        """Play sound inside of this items sound library.
+
+        Args:
+            sound_key (str): key correlating to a sound.
+        """
         self._world.queue_sound(self._sounds[sound_key])
 
 # ==== get image from file ====
 
     def _single_from_sheet(self, image: Surface,
                            dimension: tuple[int, int]) -> Surface:
-        """FIXME"""
+        """
+        Obtain a single frame from a sprite sheet.
+
+        Args:
+            image (Surface): Image to cut frame from.
+            dimension (tuple[int, int]): size of frame. (width, height)
+
+        Returns:
+            Surface: Single frame cut from sheet.
+        """
         single: Surface = Surface(dimension).convert_alpha()
         single.blit(image, (0, 0), (0, 0, dimension[0], dimension[1]))
         single = pygame.transform.scale(single, (dimension[0] * self._SCALE,

@@ -16,8 +16,11 @@ from items.projectile import Projectile
 
 class Boss(Entity):
     """
-    Boss enemy:
-    * Acts like all the other enemies but more aggressively.
+    Boss enemy
+    
+    Acts as all other entities combined into a hybrid.
+    Changes between jelly and urchin movements as a pattern,
+    and shoots in four directions between transitions.
     """
 
 # ==== modes ====
@@ -386,8 +389,6 @@ class Boss(Entity):
         elif self._target_pos[0] > self._bounds['X'][1]:
             return True
         return False
-
-# ==== coral ====
 
 
 class BossShot(Projectile):

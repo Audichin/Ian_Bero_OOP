@@ -70,15 +70,17 @@ class Player(Entity):
         self._sounds['death'] = 1
 
     def quit_controller(self) -> None:
-        """FIXME"""
+        """Quit player controller joystick."""
         self._controller.quit()
 
 # ---- properties ----
 
     @property
     def look_dir(self) -> tuple[int, int]:
-        """
-        Direction player is looking at.
+        """Direction player is looking at.
+
+        Returns:
+            tuple[int, int]: x and y direction player is facing.
         """
         if self._curr_group == 'S':
             return (0, 1)
@@ -98,6 +100,11 @@ class Player(Entity):
 # ---- base methods ----
 
     def loop(self, delta: float, move: Vector2 | None = None) -> None:
+        """Player loop. Checks inputs for movement and actions.
+
+        Args:
+            delta (float): delta time.
+        """
         self._controller.handle_inputs()
 
         if self._controller.action_a and self._action_a_cooldown <= 0.0:
@@ -115,6 +122,14 @@ class Player(Entity):
         super().loop(delta, self.player_movement())
 
     def render(self, time: float) -> list[tuple[Surface, Rect]]:
+        """Player rendering.
+
+        Args:
+            time (float): time elapsed since grame start.
+
+        Returns:
+            list[tuple[Surface, Rect]]: Player rendering data.
+        """
         if self._invincibility > 0:
             self.image.set_alpha(int(abs(sin(time * 10) * 255)))
         else:
@@ -155,12 +170,12 @@ class Player(Entity):
         return dir
 
     def player_action_a(self) -> None:
-        """FIXME"""
+        """Call action_a in world and set cooldown."""
         self._action_a_cooldown = .3
         self._world.player_action("action_a")
 
     def player_action_b(self) -> None:
-        """FIXME"""
+        """Call action_b in world and set cooldown."""
         self._action_b_cooldown = .3
         self._world.player_action("action_b")
 
@@ -203,7 +218,10 @@ class Player(Entity):
 
 class PlayerController:
     """
-    FIXME
+    Player controller class. Handles external inputs from both keyboard and
+    controller.
+    
+    Currently mainly supports PS4 controllers.
     """
     _instance = None
 
@@ -226,7 +244,7 @@ class PlayerController:
                  "_action_b"]  # second action
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Self:
-        """Simple singleton implementation"""
+        """Singleton."""
         if not cls._instance:
             cls._instance = super().__new__(cls)  # *args assumed added.
         else:
@@ -234,7 +252,7 @@ class PlayerController:
         return cls._instance
 
     def __init__(self) -> None:
-        """FIXME"""
+        """Player controller. Handles inputs for accessibility."""
 
         # check for a controller
         self.__controller_init()
@@ -248,13 +266,13 @@ class PlayerController:
         self._action_b: bool = False
 
     def __controller_init(self) -> None:
-        """FIXME"""
+        """Check if a controller is connected. Set if true."""
         self._joystick: JoystickType | None = None
         if self.controller_status():
             self._joystick = Joystick(0)
 
     def quit(self) -> None:
-        """FIXME"""
+        """Quit the connected controller."""
         if self._joystick:
             self._joystick.quit()
 
@@ -353,6 +371,8 @@ class PlayerController:
             self._action_b = True
 
     def reset_values(self) -> None:
+        """Set all inputs to false.
+        """
         self._up_movement = False
         self._down_movement = False
         self._left_movement = False
@@ -364,6 +384,15 @@ class PlayerController:
 
     def __check_key(self, keys: key.ScancodeWrapper,
                     key_codes: list[int]) -> bool:
+        """Check a single keyboard input.
+
+        Args:
+            keys (key.ScancodeWrapper): Total keys.
+            key_codes (list[int]): key codes to check.
+
+        Returns:
+            bool: Input is pressed.
+        """
         for code in key_codes:
             if keys[code]:
                 return True
@@ -371,7 +400,9 @@ class PlayerController:
 
     @staticmethod
     def controller_status() -> bool:
-        """
-        Check a controller's connection status.
+        """Check a controller's connection status.
+
+        Returns:
+            bool: Controller currently connected.
         """
         return True if pygame.joystick.get_count() > 0 else False

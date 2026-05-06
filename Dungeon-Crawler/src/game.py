@@ -49,7 +49,7 @@ class Game:
                  , "_seed"]  # seed: any
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Self:
-        """Simple singleton implementation"""
+        """Singleton."""
         if not cls._instance:
             cls._instance = super().__new__(cls)  # *args assumed added.
         else:
@@ -209,8 +209,6 @@ class Game:
             * Item
             * etc.
         * etc.
-
-        Also calls sound handler.
         """
         self._screen.fill("black")
         items = self._world.render()
@@ -222,39 +220,6 @@ class Game:
             self.display_debug()
 
         pygame.display.flip()
-
-        self.sound_handler()
-
-    # --- sound module ---
-
-    def sound_handler(self) -> None:
-        """
-        Sound Handler method.
-
-        May not be needed, but if it is:
-        > Handles all object sounds in a queue
-
-        Sound includes:
-        * Music
-        * Sound effects
-
-        STEPS:
-            1. Retrieve sound data from WORLD
-                * includes both sounds and music
-            2. Play music.
-                * If the music changed from the last, fade them.
-
-        All of the above should be done at the _VOLUME constant.
-        """
-        # set volumes
-        music.set_volume(self._VOLUME)
-
-        world_music: str = self._world.music
-
-        if world_music != self._curr_music:  # Fade out music.
-            music.queue(world_music, loops=1)
-            if pygame.mixer.music.get_busy():
-                music.fadeout(100)
 
     # --- cleanup module ---
 
@@ -333,7 +298,7 @@ class Game:
     @staticmethod
     def main() -> None:
         """
-        Build the game here!
+        Run the game here!
         """
         seed: Any = random.randint(-10000, 10000)
         game: Game = Game(seed=seed)

@@ -39,13 +39,15 @@ class BubbleWeapon(Item):
                  position: Vector2 = Vector2(-999, -999),
                  state: int = Item.COLLECTED,
                  type: int = Item.MULTIUSE) -> None:
-        """
-        Bubble weapon object initialization.
+        """Bubble weapon object initialization.
 
         Since this weapon initializes into the player inventory as soon as the game
         runs, the followings variables are set:
         * state = COLLECTED: Already collected into the player inventory.
         * type = MULTIUSE: Can be used multiple times.
+
+        Args:
+            world (Any): World bubble weapon belongs to.
         """
         self._bubbles: list[Bubble] = list[Bubble]()
         super().__init__(world, position, state, type)
@@ -55,7 +57,11 @@ class BubbleWeapon(Item):
         return "bubble_weapon"
 
     def loop(self, delta: float) -> None:
-        """Loop over all bubble projectiles"""
+        """Loop over all bubble projectiles
+
+        Args:
+            delta (float): delta time.
+        """
         for indx, bubble in enumerate(self._bubbles):
             bubble.loop(delta)
             if bubble.move_speed == 0:
@@ -67,8 +73,10 @@ class BubbleWeapon(Item):
                     self.kill_bubble(indx)
 
     def render_projectiles(self) -> list[tuple[Surface, Rect]]:
-        """
-        Item Projectile render.
+        """Item Projectile render.
+
+        Returns:
+            list[tuple[Surface, Rect]]: Bubble render data.
         """
         to_render: list[tuple[Surface, Rect]] = list[tuple[Surface, Rect]]()
         for bubble in self._bubbles:
@@ -76,11 +84,22 @@ class BubbleWeapon(Item):
         return to_render
 
     def kill_bubble(self, index: int) -> None:
-        """FIXME"""
+        """Delete the bubble from memory corresponding to the index.
+
+        Args:
+            index (int): Index of bubble in _bubbles.
+        """
         self._bubbles.pop(index)
 
     def item_action_a(self, player_pos: Vector2, player_look: tuple[int, int]) -> None:
-        """Called when used by the player."""
+        """Called when used by the player.
+
+        Creates a new bubble, shoots it, and stores it.
+
+        Args:
+            player_pos (Vector2): Position of player.
+            player_look (tuple[int, int]): Direction player is facing.
+        """
         new_bubble: Bubble = Bubble(player_pos)
         new_bubble.push(Vector2(player_look[0], player_look[1]))
         self._bubbles.append(new_bubble)
@@ -95,7 +114,11 @@ class Bubble(Projectile):
     """
 
     def __init__(self, position: Vector2) -> None:
-        """Bubble init"""
+        """Bubble init
+
+        Args:
+            position (Vector2): Initial position of this bubble.
+        """
         bubble_path = Path(__file__).parent / \
             "../../assets/visual/items/bubble_weapon/Bubble_projectile.png"
         bubble_sheet = pygame.image.load(bubble_path)

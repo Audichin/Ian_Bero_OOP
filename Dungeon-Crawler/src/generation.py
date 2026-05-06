@@ -1,3 +1,6 @@
+"""
+Generation Module.
+"""
 import sys
 import random
 from pathlib import Path
@@ -30,6 +33,11 @@ class Generation:
     """
 
     def __init__(self, dungeon: Any = None):
+        """Generation object. Holds data of room walls.
+
+        Args:
+            dungeon (Any, optional): Dungeon this generation belongs to. Defaults to None.
+        """
         self.dungeon: Dungeon = dungeon
         seed_value = self.dungeon._seed if self.dungeon is not None else None
         self.rng = random.Random(seed_value)

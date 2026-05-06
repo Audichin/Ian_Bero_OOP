@@ -1,4 +1,7 @@
-"""FIXME"""
+"""Coral entity module.
+
+Contains both the coral entity and coral projectiles.
+"""
 from pathlib import Path
 from typing import Any
 from math import sin
@@ -12,9 +15,9 @@ from items.projectile import Projectile
 
 class Coral(Entity):
     """
-    Coral enemy:
-    * Sits in one spot while shooting at the player.
-    * If projectile hits player, player takes damage.
+    Coral enemy
+    
+    Stays in place and shoots at the player during its lifespan.
     """
 
     _SHOOT_INTERVAL: float = 2.0
@@ -44,6 +47,8 @@ class Coral(Entity):
                          image=self._assets["C0"], assets=self._assets)
 
     def _sound_init(self) -> None:
+        """Coral sound init.
+        """
         self._sounds['hurt'] = 6
         self._sounds['shoot'] = 2
         self._sounds['death'] = 1
@@ -60,6 +65,14 @@ class Coral(Entity):
 # ==== base methods ====
 
     def loop(self, delta: float, move: Vector2 | None = None) -> None:
+        """
+        Coral entity loop.
+
+        Handles loops of projectiles and damage they deal.
+
+        Args:
+            delta (float): delta time
+        """
         self.coral_attack(delta)
         for indx, shot in enumerate(self._shots):
             shot.loop(delta)
@@ -68,9 +81,20 @@ class Coral(Entity):
             elif self._world.entity_action(self, "player_col", shot):
                 self._world.entity_action(self, "player_dmg_1")
                 self._shots.pop(indx)
-        return super().loop(delta, move)
+        return super().loop(delta)
 
     def render(self, time: float) -> list[tuple[Surface, Rect]]:
+        """
+        Coral render loop.
+
+        Return render data for self and projectiles.
+
+        Args:
+            time (float): Time elapsed since program start.
+
+        Returns:
+            list[tuple[Surface, Rect]]: Render data
+        """
         if self._invincibility > 0:
             self.image.set_alpha(int(abs(sin(time * 10) * 255)))
         else:
@@ -83,13 +107,24 @@ class Coral(Entity):
         return to_render
 
     def animate(self, time: float) -> None:
+        """
+        Coral animation. Loops through three frames.
+
+        Args:
+            time (float): Time elapsed since program start.
+        """
         anim_step: int = int(time * 9 % 3)
         self.image = self._assets[f'C{anim_step}']
 
 # ==== coral methods ====
 
     def coral_attack(self, delta: float) -> None:
-        """Shoot at the player."""
+        """
+        Shoot at the player.
+
+        Args:
+            delta (float): delta time.
+        """
         self._shot_timer -= delta
 
         if self._shot_timer < 0:
@@ -116,6 +151,7 @@ class CoralShot(Projectile):
     def __init__(self, position: Vector2,
                  speed: float = 200,
                  friction: float = .5) -> None:
+        """Coral projectile. Small, slow, and stops."""
         shot_path: Path = Path(__file__).parent / \
             "../../assets/visual/sprites/coral/coral_shot.png"
         shot_sheet: Surface = pygame.image.load(shot_path)
