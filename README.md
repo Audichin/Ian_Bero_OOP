@@ -10,6 +10,12 @@ make play
 ```
 or run game.py in the src directory.
 
+### TO TEST THE PROJECT:
+Go to the root directory of the project and in your terminal enter:
+```
+make test-coverage
+```
+
 Ian and Heriberto OOP project
 
 | Name                | Value                                          |
@@ -21,8 +27,8 @@ Ian and Heriberto OOP project
 | **Mav Usernames**   | Imooney & bdominguez                           |
 | **GitHub Username** | Audichin & PerroBetto                          |
 | **Repository**      | https://github.com/Audichin/Ian_Bero_OOP.git   |
-
-## Assignments
+| **Judge avg score** | 72/100                                         |
+| **Self Score**      | 92/100                                         |
 
 ### Project
 
