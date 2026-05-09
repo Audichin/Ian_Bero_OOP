@@ -1,10 +1,9 @@
 """Testing module for all in game entities"""
 import os
-import sys
 
 from hypothesis import given
 import hypothesis.strategies as some
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import unittest
 
 import pygame
@@ -13,7 +12,7 @@ from pygame import Vector2
 from src.game import Game
 from src.items.projectile import Projectile
 from src.entities.entity_mod import Entity
-from src.entities.player import Player, PlayerController
+from src.entities.player import Player
 from src.entities.coral import Coral
 from src.entities.urchin import Urchin
 from src.entities.jelly import Jelly
@@ -25,7 +24,7 @@ os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 class WorldMockSettings:
 
     s_col = []
-    player_pos = Vector2(0, 0)
+    player_pos = Vector2()
     player_col = False
 
     @staticmethod
@@ -97,6 +96,75 @@ class TestPlayer(BaseEntityTest):
         self.assertNotEqual(pos_start, pos_end)
 
 
+class TestCoral(BaseEntityTest):
+
+    def test_coral_init(self):
+        """test init coral"""
+        coral: Coral = Coral(self._mock_world)
+
+        # check vals
+        assert coral.position == Vector2()
+        assert coral.speed == 0
+        assert coral.move_speed == 0
+        assert coral.HP == 2
+
+    @given(some.integers(1, 2))
+    def test_coral_damage(self, damage: int):
+        """Test boss damage"""
+        coral: Coral = Coral(self._mock_world)
+
+        # deal damage
+        pre_dmg: int = coral.HP
+        coral.damage(damage)
+        self.assertEqual(pre_dmg - damage, coral.HP)
+
+    def test_coral_loop(self):
+        """Test coral loop method"""
+        self.change_mock_world_vals(new_pos=Vector2(100, 100))
+        coral: Coral = Coral(self._mock_world)
+
+        for i in range(60 * 1):
+            coral.loop(self._delta_time)
+        assert not coral._shots  # nothing shot yet
+
+        for i in range(60 * 2):
+            coral.loop(self._delta_time)
+        assert len(coral._shots) > 0  # a shot!
+
+        # hit the player with shot
+        self.change_mock_world_vals(new_pos=Vector2(100, 100), new_col=True)
+        coral.loop(self._delta_time)
+        assert not coral._shots  # no shots
+
+        # run for 30 seconds
+        self.change_mock_world_vals(new_pos=Vector2(100, 100))
+        for i in range(60 * 30):
+            coral.loop(self._delta_time)
+        assert len(coral._shots) < 3  # should never have more than 2 shots
+
+    def test_coral_render(self):
+        """Test boss render method"""
+        coral: Coral = Coral(self._mock_world)
+
+        pseudo_time: float = 0
+
+        # test without damage
+        for i in range(60 * 10):
+            pseudo_time += self._delta_time
+            coral.render(pseudo_time)
+
+        # damage and render
+        coral.damage(1)
+        for i in range(60 * 10):
+            pseudo_time += self._delta_time
+            coral.render(pseudo_time)
+
+        # render projectile
+        coral._shot_timer = 0
+        coral.coral_attack(self._delta_time)
+        coral.render(pseudo_time)
+
+
 class TestBoss(BaseEntityTest):
 
     def setUp(self) -> None:
@@ -143,7 +211,6 @@ class TestBoss(BaseEntityTest):
         assert boss._mode == boss._JELLY
 
         # run for a minute
-
         self.change_mock_world_vals(new_pos=Vector2(300, 500), new_col=True)
         for i in range(60 * 30):
             boss.loop(self._delta_time)

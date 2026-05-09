@@ -134,7 +134,7 @@ class Coral(Entity):
             diff: Vector2 = Vector2(player.x - self._position.x, player.y - self._position.y)
             distance: float = diff.magnitude()
             if distance == 0:
-                distance = 0.00001
+                distance = 0.00001  # pragma nocover
             direction: Vector2 = diff / distance
 
             # create shot
