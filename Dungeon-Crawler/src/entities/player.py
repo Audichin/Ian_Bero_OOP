@@ -14,10 +14,7 @@ import pygame
 from pygame import Vector2, Surface, Rect, key
 from pygame.joystick import Joystick, JoystickType
 
-try:
-    from .entity_mod import Entity
-except ImportError:
-    from entities.entity_mod import Entity
+from .entity_mod import Entity
 
 
 class Player(Entity):

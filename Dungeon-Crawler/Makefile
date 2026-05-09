@@ -25,12 +25,12 @@ create-docs:
 	mkdir -p $(DOCS)
 	pdoc --output-dir $(DOCS)/code_docs $(SRC)*.py $(ENTITIES)*.py $(ITEMS)*.py
 
-test-coverage: create-docs
+test-coverage: ./docs
 	@echo "Running test-coverage..."
 	pytest -v --color=yes --cov --cov-report=term-missing --cov-report=html:$(DOCS)/html_cov $(TESTS)
 
 test:
-	pytest -v ${TESTS}
+	pytest -v -s ${TESTS}
 
 create-uml: ./uml
 ifeq ($(wildcard ~/plantuml.jar), )

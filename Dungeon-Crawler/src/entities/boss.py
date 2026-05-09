@@ -179,7 +179,7 @@ class Boss(Entity):
             case self._URCHIN:
                 return self.urchin_move(delta)
 
-        raise Exception("Didnt match a mode.")
+        raise Exception("Didnt match a mode.")  # pragma nocover
 
     def boss_shoot(self) -> None:
         """
@@ -351,7 +351,7 @@ class Boss(Entity):
             return True if self.position.y > self._target_pos[0] else False
         elif self._directions[0][1] < 0:
             return True if self.position.y < self._target_pos[0] else False
-        return False
+        return False  # pragma nocover
 
     def __check_x_target(self) -> bool:
         """
@@ -364,7 +364,7 @@ class Boss(Entity):
             return True if self.position.x > self._target_pos[0] else False
         elif self._directions[0][0] < 0:
             return True if self.position.x < self._target_pos[0] else False
-        return False
+        return False  # pragma nocover
 
     def __check_y_bounds(self) -> bool:
         """Check if the target is outside of urchin Y-axis bounds.
