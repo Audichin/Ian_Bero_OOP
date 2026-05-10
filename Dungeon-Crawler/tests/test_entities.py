@@ -3,7 +3,7 @@ import os
 
 from hypothesis import given
 import hypothesis.strategies as some
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, PropertyMock
 import unittest
 
 import pygame
@@ -12,7 +12,7 @@ from pygame import Vector2
 from src.game import Game
 from src.items.projectile import Projectile
 from src.entities.entity_mod import Entity
-from src.entities.player import Player
+from src.entities.player import Player, PlayerController
 from src.entities.coral import Coral
 from src.entities.urchin import Urchin
 from src.entities.jelly import Jelly
@@ -51,6 +51,7 @@ class BaseEntityTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         pygame.quit()
+        self.change_mock_world_vals()
         return super().tearDown()
 
     def change_mock_world_vals(self, new_scol: list[pygame.Rect] = [],
@@ -77,23 +78,194 @@ class TestEntity(BaseEntityTest):
         assert entity.speed == 100
         assert entity.move_speed == 0
 
+    def test_position_setter(self) -> None:
+        """test setting the position"""
+        entity: Entity = Entity(self._mock_world)
+        entity.position = Vector2(1234, 1234)
+
+        # check
+        assert entity.position == Vector2(1234, 1234)
+
+    def test_speed_setter(self) -> None:
+        """test setting the position"""
+        entity: Entity = Entity(self._mock_world)
+        entity.speed = 50
+
+        # check
+        assert entity.speed == 50
+
+    def test_entity_loop(self) -> None:
+        """test loop method"""
+        entity: Entity = Entity(self._mock_world)
+        pre_pos: Vector2 = entity.position
+
+        for i in range(60 * 1):
+            entity.loop(self._delta_time)
+
+        assert entity.position == pre_pos
+
+        # invincibility frame test
+        entity.damage(1)
+        for i in range(60 * 1):
+            entity.loop(self._delta_time)
+
+        # test with a hitbox to the right of entity
+        self.change_mock_world_vals(new_scol=[pygame.Rect(40, 40, 120, 120)])
+        entity.static_collide()
+
 
 class TestPlayer(BaseEntityTest):
+
+    @patch('src.entities.player.PlayerController')
+    def test_player_init(self, mock_controller) -> None:
+        """test init player"""
+        mock_controller.controller_status.return_value = False
+        player: Player = Player(self._mock_world)
+
+        # check values
+        assert player.position == Vector2()
+        assert player.HP == 10
+        assert player.speed == 100
+        assert player.move_speed == 0
+        assert player.look_dir == (1, 0)
+
+    @given(some.integers(1, 10))
+    def test_player_damage(self, damage: int):
+        """Test player damage"""
+        with patch("src.entities.player.PlayerController") as mock_controller:
+            mock_controller.controller_stats.return_value = False
+            player: Player = Player(self._mock_world)
+
+            # deal damage
+            pre_dmg: int = player.HP
+            player.damage(damage)
+            self.assertEqual(pre_dmg - damage, player.HP)
+
     @patch('src.entities.player.PlayerController')
     @patch.object(Player, "player_movement")
     def test_player_movement(self, mock_player, mock_controller) -> None:
         """Test player movement"""
         mock_controller.controller_status.return_value = False
-        mock_player.return_value = Vector2(1, 1)
+        mock_player.return_value = Vector2(1, 0)
 
         player: Player = Player(self._mock_world)
         pos_start: tuple[float, float] = (player.position.x, player.position.y)
 
+        pseudo_time: float = 0
+
         for i in range(60):  # simulate one second
+            pseudo_time += self._delta_time
             player.loop(self._delta_time)
+            player.render(pseudo_time)
 
         pos_end: tuple[float, float] = (player.position.x, player.position.y)
         self.assertNotEqual(pos_start, pos_end)
+
+        for i in range(60 * 10):  # ten seconds
+            pseudo_time += self._delta_time
+            player.loop(self._delta_time)
+            player.render(pseudo_time)
+
+    @patch.object(PlayerController, "controller_status")
+    @patch.object(PlayerController, "right_movement", new_callable=PropertyMock)
+    @patch.object(PlayerController, "left_movement", new_callable=PropertyMock)
+    @patch.object(PlayerController, "up_movement", new_callable=PropertyMock)
+    @patch.object(PlayerController, "down_movement", new_callable=PropertyMock)
+    def test_player_orient(self,
+                           mock_down, mock_up,
+                           mock_left, mock_right,
+                           mock_controller) -> None:
+        """Test player movement"""
+        mock_controller.return_value = False
+        mock_down.return_value = False
+        mock_up.return_value = False
+        mock_left.return_value = False
+        mock_right.return_value = False
+
+        player: Player = Player(self._mock_world)
+
+        mock_right.return_value = True
+        player.loop(self._delta_time)
+        assert player.look_dir == (1, 0)
+        mock_right.return_value = False
+
+        mock_left.return_value = True
+        player.loop(self._delta_time)
+        assert player.look_dir == (-1, 0)
+        mock_left.return_value = False
+
+        mock_up.return_value = True
+        player.loop(self._delta_time)
+        assert player.look_dir == (0, -1)
+        mock_up.return_value = False
+
+        mock_down.return_value = True
+        player.loop(self._delta_time)
+        assert player.look_dir == (0, 1)
+        mock_down.return_value = False
+
+
+class TestJelly(BaseEntityTest):
+
+    def test_jelly_init(self):
+        """test jelly init"""
+        jelly: Jelly = Jelly(self._mock_world)
+
+        # check vals
+        assert jelly.position == Vector2()
+        assert jelly.speed == 300
+        assert jelly.move_speed == 0
+        assert jelly.HP == 3
+
+    @given(some.integers(1, 3))
+    def test_jelly_damage(self, damage: int):
+        """Test jelly damage"""
+        jelly: Jelly = Jelly(self._mock_world)
+
+        # deal damage
+        pre_dmg: int = jelly.HP
+        jelly.damage(damage)
+        self.assertEqual(pre_dmg - damage, jelly.HP)
+
+    def test_jelly_loop(self):
+        """test jelly loop"""
+        jelly: Jelly = Jelly(self._mock_world)
+        self.change_mock_world_vals(new_pos=Vector2(1000, 1000))
+
+        for i in range(60 * 5):
+            jelly.loop(self._delta_time)
+
+        assert jelly.position == Vector2()  # no movement
+
+        # test with player nearby
+        self.change_mock_world_vals(new_pos=Vector2(100, 200))
+        for i in range(60 * 5):
+            jelly.loop(self._delta_time)
+
+        # test attacking player
+        self.change_mock_world_vals(new_col=True)
+        for i in range(60 * 5):
+            jelly.loop(self._delta_time)
+
+        # test static collision
+        self.change_mock_world_vals(new_scol=[pygame.Rect()])
+
+    def test_coral_render(self):
+        """Test jelly render method"""
+        jelly: Jelly = Jelly(self._mock_world)
+
+        pseudo_time: float = 0
+
+        # test without damage
+        for i in range(60 * 10):
+            pseudo_time += self._delta_time
+            jelly.render(pseudo_time)
+
+        # damage and render
+        jelly.damage(1)
+        for i in range(60 * 10):
+            pseudo_time += self._delta_time
+            jelly.render(pseudo_time)
 
 
 class TestCoral(BaseEntityTest):
@@ -110,7 +282,7 @@ class TestCoral(BaseEntityTest):
 
     @given(some.integers(1, 2))
     def test_coral_damage(self, damage: int):
-        """Test boss damage"""
+        """Test coral damage"""
         coral: Coral = Coral(self._mock_world)
 
         # deal damage
@@ -143,7 +315,7 @@ class TestCoral(BaseEntityTest):
         assert len(coral._shots) < 3  # should never have more than 2 shots
 
     def test_coral_render(self):
-        """Test boss render method"""
+        """Test coral render method"""
         coral: Coral = Coral(self._mock_world)
 
         pseudo_time: float = 0
@@ -163,6 +335,75 @@ class TestCoral(BaseEntityTest):
         coral._shot_timer = 0
         coral.coral_attack(self._delta_time)
         coral.render(pseudo_time)
+
+
+class TestUrchin(BaseEntityTest):
+
+    def setUp(self) -> None:
+        self._ROOM_BOUNDS: dict[str, tuple[int, int]] = {
+            'X': (284, 1160),
+            'Y': (205, 685)
+        }
+        return super().setUp()
+
+    def test_urchin_init(self):
+        """Test urchin init"""
+        urchin: Urchin = Urchin(self._mock_world, self._ROOM_BOUNDS)
+
+        # check values
+        assert urchin.position == Vector2()
+        assert urchin.speed == 50
+        assert urchin.move_speed == 0
+        assert urchin.HP == 3
+
+    @given(some.integers(1, 15))
+    def test_urchin_damage(self, damage: int):
+        """Test urchin damage"""
+        urchin: Urchin = Urchin(self._mock_world, self._ROOM_BOUNDS)
+
+        # deal damage
+        pre_dmg: int = urchin.HP
+        urchin.damage(damage)
+        self.assertEqual(pre_dmg - damage, urchin.HP)
+
+    def test_urchin_loop(self):
+        """Test urchin loop method"""
+        urchin: Urchin = Urchin(self._mock_world, self._ROOM_BOUNDS)
+
+        for i in range(60 * 10):
+            urchin.loop(self._delta_time)
+
+        # run for a minute
+        self.change_mock_world_vals(new_pos=Vector2(300, 500), new_col=True)
+        for i in range(60 * 30):
+            urchin.loop(self._delta_time)
+
+        self.change_mock_world_vals(new_pos=Vector2(1400, 800), new_col=True)
+        for i in range(60 * 30):
+            urchin.loop(self._delta_time)
+
+        # check theoretical run into wall
+
+        self.change_mock_world_vals(new_scol=[pygame.Rect()])
+        for i in range(60 * 10):  # run for 10 seconds
+            urchin.loop(self._delta_time)
+
+    def test_urchin_render(self):
+        """Test urchin render method"""
+        urchin: Urchin = Urchin(self._mock_world, self._ROOM_BOUNDS)
+
+        pseudo_time: float = 0
+
+        # test without damage
+        for i in range(60 * 10):
+            pseudo_time += self._delta_time
+            urchin.render(pseudo_time)
+
+        # damage and render
+        urchin.damage(1)
+        for i in range(60 * 10):
+            pseudo_time += self._delta_time
+            urchin.render(pseudo_time)
 
 
 class TestBoss(BaseEntityTest):

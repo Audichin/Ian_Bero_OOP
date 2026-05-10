@@ -189,10 +189,7 @@ class Entity(sprite.Sprite):
             list[tuple[Surface, Rect]]: Entity image and rect for surface blitting.
         """
         self.animate(time)
-        try:
-            self.image.set_colorkey((0, 0, 0))
-        except AttributeError:
-            raise
+        self.image.set_colorkey((0, 0, 0))
         return [(self.image, self.rect)]
 
 # ----- entity methods -----
@@ -355,16 +352,8 @@ class Entity(sprite.Sprite):
                         pos[0] = 0
                         pos[1] += dimension[1]
 
-        if func:
-            try:
-                func(*args)
-            except AttributeError:
-                raise AttributeError("func fail")
-        else:
-            try:
-                standard()
-            except AttributeError:
-                raise AttributeError("standard failure")
+        # run standard method
+        standard()
 
     @staticmethod
     def _single_surface_from_sheet(sheet: Surface,

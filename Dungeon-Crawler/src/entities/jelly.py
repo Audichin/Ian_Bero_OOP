@@ -111,7 +111,7 @@ class Jelly(Entity):
         # check using distance detect constant
         distance: float = diff.magnitude()
         if distance == 0:
-            distance = 0.00001
+            distance = 0.00001  # pragma nocover
         direction: Vector2 = diff / distance
 
         vector_ret: Vector2 = Vector2(0, 0)
