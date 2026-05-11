@@ -1,23 +1,51 @@
 from hypothesis import given
 import hypothesis.strategies as some
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 import unittest
 
 from src.sound import SoundManager
 
 
 class TestSound(unittest.TestCase):
-    @given(some.text())
-    def test_play_sound(self, sound_name):
-        with patch('src.sound.print') as mock_print:
-            SoundManager.play_sound(sound_name)  # type:ignore
-            mock_print.assert_called_with(f"Playing sound: {sound_name}")
+    @given(song_number=some.integers(min_value=0, max_value=12))
+    def test_play_sound(self, song_number):
+        """
+        tests sounds to ensure al sounds can be played
 
-    def test_play_sound_with_empty_name(self):
-        with patch('src.sound.print') as mock_print:
-            SoundManager.play_sound("")  # type:ignore
-            mock_print.assert_called_with("Playing sound: ")
+        Args:
+            song_number (_type_): a bunch of song numbers to test
 
+        Returns:
+            _type_: none
+        """
+        channels = {}
 
-if __name__ == '__main__':
-    unittest.main()
+        def get_channel(channel_number):
+            """
+            gets channel
+
+            Args:
+                channel_number (_type_): the channel number (between 1-12)
+
+            Returns:
+                dict: channels
+            """
+            if channel_number not in channels:
+                channels[channel_number] = MagicMock()
+            return channels[channel_number]
+
+        with patch('src.sound.pygame.mixer') as mock_mixer:
+            mock_mixer.Sound.side_effect = lambda file_path: MagicMock(name=file_path)
+            mock_mixer.Channel.side_effect = get_channel
+            mock_mixer.get_busy.return_value = True
+
+            SM = SoundManager()
+            SM.play_audio(song_number)
+
+            if song_number <= 8:
+                channels[song_number].play.assert_called_with(SM.sounds[song_number])
+            else:
+                channels[song_number].play.assert_called_with(
+                    SM.sounds[song_number], -1, fade_ms=1000
+                )
+            self.assertEqual(SM.is_busy(), True)
