@@ -18,6 +18,10 @@ check-style:
 	flake8 --count --show-source --statistics ./Dungeon-Crawler
 
 
+.PHONY: test-coverage
+test-coverage:
+	$(COVERAGE) --cov=Dungeon-Crawler Dungeon-Crawler/tests
+
 # discover and run all tests
 .PHONY: run-test
 run-test:

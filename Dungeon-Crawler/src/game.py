@@ -43,7 +43,6 @@ class Game:
                  , "_screen"  # Screen: Manage display
                  , "_framerate"  # Clock: Manage framerate
                  , "_running"  # boolean: game status
-                 , "_curr_music"  # str: playing currently
                  , "_world"  # World: Object
                  , "_seed"]  # seed: any
 
@@ -114,7 +113,6 @@ class Game:
         pygame.mixer.init()
         self._running = True
         self._world: World = World(self._seed)
-        self._curr_music: str = str()
 
     # --- event handler ---
 
@@ -262,7 +260,7 @@ class Game:
 
     # --- run game module ---
 
-    def run_game(self) -> None:
+    def run_game(self) -> None:  # pragma nocover
         """
         Run Game method.
         > Starts and continues to run the game in a while loop.
@@ -291,6 +289,13 @@ class Game:
             self.on_loop()
             self.on_render()
         self.cleanup()
+
+    # --- class methods ---
+
+    @classmethod
+    def reset_game(cls) -> None:
+        """reset the game"""
+        cls._instance = None
 
     # --- static methods ---
 

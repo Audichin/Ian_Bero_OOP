@@ -395,6 +395,11 @@ class PlayerController:
                 return True
         return False
 
+    @classmethod
+    def reset_controller(cls):
+        """Clears singleton to allow for creation of a new controller."""
+        cls._instance = None
+
     @staticmethod
     def controller_status() -> bool:
         """Check a controller's connection status.

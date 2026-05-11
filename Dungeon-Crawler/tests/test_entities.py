@@ -161,6 +161,8 @@ class TestPlayer(BaseEntityTest):
         pos_end: tuple[float, float] = (player.position.x, player.position.y)
         self.assertNotEqual(pos_start, pos_end)
 
+        player.damage(1)  # damage for setting alpha
+
         for i in range(60 * 10):  # ten seconds
             pseudo_time += self._delta_time
             player.loop(self._delta_time)
@@ -203,6 +205,56 @@ class TestPlayer(BaseEntityTest):
         player.loop(self._delta_time)
         assert player.look_dir == (0, 1)
         mock_down.return_value = False
+
+        # testing player switching orientations with render
+        for i in range(60):
+            mock_right.return_value = True
+            player.loop(self._delta_time)
+            player.render(self._delta_time)
+        mock_right.return_value = False
+        for i in range(60):
+            mock_left.return_value = True
+            player.loop(self._delta_time)
+            player.render(self._delta_time)
+        mock_left.return_value = False
+
+        player._controller.reset_controller()
+
+    @patch.object(PlayerController, "controller_status")
+    @patch.object(PlayerController, "action_a", new_callable=PropertyMock)
+    @patch.object(PlayerController, "action_b", new_callable=PropertyMock)
+    def test_player_action(self, mock_b, mock_a, mock_controller) -> None:
+        """test player actions"""
+        mock_controller.return_value = False
+        mock_a.return_value = False
+        mock_b.return_value = False
+
+        player: Player = Player(self._mock_world)
+        pseudo_time: float = 0
+
+        # do action a
+        mock_a.return_value = True
+        pseudo_time += self._delta_time
+        player.loop(self._delta_time)
+        player.render(pseudo_time)
+        mock_a.return_value = False
+        for i in range(60 * 3):  # three seconds
+            pseudo_time += self._delta_time
+            player.loop(self._delta_time)
+            player.render(pseudo_time)
+
+        # do action b
+        mock_b.return_value = True
+        pseudo_time += self._delta_time
+        player.loop(self._delta_time)
+        player.render(pseudo_time)
+        mock_b.return_value = False
+        for i in range(60 * 3):  # three seonds
+            pseudo_time += self._delta_time
+            player.loop(self._delta_time)
+            player.render(pseudo_time)
+
+        player._controller.reset_controller()
 
 
 class TestJelly(BaseEntityTest):
