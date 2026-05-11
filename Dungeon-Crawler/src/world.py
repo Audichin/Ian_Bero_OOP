@@ -175,6 +175,13 @@ class World:
 
         # Stop game if player health is zero
         if self._player.HP <= 0:
+            if self._curr_room.room_type == "boss":
+                self._curr_room.enemies[0].HP = 15
+                self._curr_room = self._prev_room
+                self._player.position = pygame.Vector2(self.SCREEN_CENTER[0], self.SCREEN_CENTER[1])
+                self._player.HP = 8
+                self._sound_manager.play_audio(5)
+                return
             self._player.position = pygame.Vector2(-999, -999)
             return
 
@@ -426,6 +433,7 @@ class World:
             'W': (1200, 445)  # position to tp player if they go through W door
         }
 
+        self._prev_room = self._curr_room
         next_room: tuple[int, int] = (0, 0)
         match cardinal:
             case 'S':  # going through south door

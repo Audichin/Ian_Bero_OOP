@@ -29,7 +29,7 @@ class Urchin(Entity):
                  bounds: dict[str, tuple[int, int]],
                  position: Vector2 = Vector2(),
                  speed: float = 50,
-                 clamp_speed: float = 500,
+                 clamp_speed: float = 400,
                  friction: float = 25,
                  HP: int = 3) -> None:
         """Urchins are enemies that move in a single direction at a time."""

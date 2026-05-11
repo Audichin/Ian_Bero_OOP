@@ -1,8 +1,7 @@
 # Ian_Betto_OOP
 ![Tests](https://github.com/Audichin/Ian_Bero_OOP/actions/workflows/ci-test.yml/badge.svg)
 
-> ![WARNING]
-> Make sure you have the latest version of pygame-ce installed.
+### <ins>If you intend to play the game, it is recommended you run the program natively on your machine with python and pygame-ce installed.</ins>
 
 ### TO RUN THE GAME:
 Go to the root directory of the project and in your terminal enter:
@@ -61,5 +60,3 @@ These errors are a result of ALSA being unable to find sound hardware in the con
 > If you have Xming installed on your windows machine, running the game in the docker should work. The display provided is created by xhost. Ensure before running the program that Xming is running.
 
 For unit-testing, program-testing, github actions, and ensuring the project adheres to pep8 best practices, utilize the docker. For play-testing, run the game natively on your machine.
-
-### <ins>If you intend to play the game, it is recommended you run the program natively on your machine with pygame version 2.6.1 installed.</ins>

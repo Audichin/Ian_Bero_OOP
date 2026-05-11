@@ -255,6 +255,8 @@ class Boss(Entity):
         if self._move_timer <= 0 and not len(self._directions):
             player: Vector2 = self._world.entity_action(self, "player_pos")
             diff: Vector2 = Vector2(player.x - self._position.x, player.y - self._position.y)
+            diff.x = 0.00001 if diff.x == 0 else diff.x
+            diff.y = 0.00001 if diff.y == 0 else diff.y
             abs_diff: tuple[float, float] = (abs(diff.x), abs(diff.y))
 
             # Set diff and targets

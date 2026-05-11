@@ -7,7 +7,7 @@ GAME = ./Dungeon-Crawler/src/game.py
 
 .PHONY: play
 play:
-	python3 $(GAME)
+	python $(GAME)
 
 .PHONY: all
 all: check-style check-type run-test clean

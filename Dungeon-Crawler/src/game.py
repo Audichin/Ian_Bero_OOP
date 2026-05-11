@@ -20,12 +20,8 @@ RULES:
 """
 import random
 import sys
-from typing import Any
-
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
+from typing import Self, Any
+import random
 
 import pygame
 import pygame.mixer_music as music
@@ -127,15 +123,8 @@ class Game:
         """
         pygame.init()
         self._screen: pygame.Surface = pygame.display.set_mode(
-            self._resolution, pygame.NOFRAME)
-        try:
-            pygame.mixer.init()
-            pygame.mixer.set_num_channels(16)
-            self._audio_enabled = True
-        except pygame.error as exc:
-            print(f"Audio disabled: {exc}")
-            self._audio_enabled = False
-        
+            self._resolution, pygame.FULLSCREEN)
+        pygame.mixer.init()
         self._running = True
         self._world: World = World(self._seed)
         self._curr_music: str = str()
@@ -363,7 +352,7 @@ class Game:
         """
         Build the game here!
         """
-        seed: Any = 2983
+        seed: Any = random.randint(-10000, 10000)
         game: Game = Game(seed=seed)
         game.run_game()
         Dungeon

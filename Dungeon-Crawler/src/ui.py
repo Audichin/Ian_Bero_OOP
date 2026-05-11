@@ -123,6 +123,7 @@ class UI:
         for indx, heart in enumerate(self._hearts):
             rel_hp: int = hp - (indx*2)
             if rel_hp > 2:
+                heart[0] = self._assets['hearts_2']
                 continue
             elif rel_hp < 0:
                 heart[0] = self._assets['hearts_0']
