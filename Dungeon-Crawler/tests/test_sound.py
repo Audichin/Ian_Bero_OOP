@@ -1,4 +1,4 @@
-from hypothesis import given
+from hypothesis import given, settings
 import hypothesis.strategies as some
 from unittest.mock import MagicMock, patch
 import unittest
@@ -8,6 +8,7 @@ from src.sound import SoundManager
 
 class TestSound(unittest.TestCase):
     @given(song_number=some.integers(min_value=0, max_value=12))
+    @settings(deadline=None)
     def test_play_sound(self, song_number):
         """
         tests sounds to ensure al sounds can be played

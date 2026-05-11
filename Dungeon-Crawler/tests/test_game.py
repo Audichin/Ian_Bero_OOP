@@ -1,9 +1,9 @@
 """Testing module for game."""
 import os
 
-from hypothesis import given
-import hypothesis.strategies as some
-from unittest.mock import Mock, patch, PropertyMock
+# from hypothesis import given
+# import hypothesis.strategies as some
+from unittest.mock import patch
 import unittest
 
 from src.game import Game

@@ -84,8 +84,8 @@ class TestStructures(unittest.TestCase):
         dungeon._rooms = {(room.x, room.y): room for room in rooms}
 
         with patch.object(Room, "create_enemy") as mock_create_enemy, \
-             patch.object(Room, "init_puzzle_patterns") as mock_init_puzzles, \
-             patch.object(Room, "init_enemies") as mock_init_enemies:
+                patch.object(Room, "init_puzzle_patterns") as mock_init_puzzles, \
+                patch.object(Room, "init_enemies") as mock_init_enemies:
             dungeon._assign_room_types()
 
         boss_room = rooms[3]

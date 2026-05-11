@@ -65,6 +65,9 @@
                         <li>
                                 <a class="function" href="#SoundManager.load_audio">load_audio</a>
                         </li>
+                        <li>
+                                <a class="function" href="#SoundManager.is_busy">is_busy</a>
+                        </li>
                 </ul>
 
             </li>
@@ -318,6 +321,15 @@ sound    </h1>
 </span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>        <span class="k">except</span> <span class="n">pygame</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
 </span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error loading sound &#39;</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>
+</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">        For pytest mainly, checks if any sound is being playded</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">        Returns:</span>
+</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="sd">            bool: true or false if a sound is being played, should return true</span>
+</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>        <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mixer</span><span class="o">.</span><span class="n">get_busy</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -551,6 +563,15 @@ sound    </h1>
 </span><span id="SoundManager-226"><a href="#SoundManager-226"><span class="linenos">226</span></a>        <span class="k">except</span> <span class="n">pygame</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
 </span><span id="SoundManager-227"><a href="#SoundManager-227"><span class="linenos">227</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error loading sound &#39;</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="SoundManager-228"><a href="#SoundManager-228"><span class="linenos">228</span></a>            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="SoundManager-229"><a href="#SoundManager-229"><span class="linenos">229</span></a>
+</span><span id="SoundManager-230"><a href="#SoundManager-230"><span class="linenos">230</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="SoundManager-231"><a href="#SoundManager-231"><span class="linenos">231</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SoundManager-232"><a href="#SoundManager-232"><span class="linenos">232</span></a><span class="sd">        For pytest mainly, checks if any sound is being playded</span>
+</span><span id="SoundManager-233"><a href="#SoundManager-233"><span class="linenos">233</span></a>
+</span><span id="SoundManager-234"><a href="#SoundManager-234"><span class="linenos">234</span></a><span class="sd">        Returns:</span>
+</span><span id="SoundManager-235"><a href="#SoundManager-235"><span class="linenos">235</span></a><span class="sd">            bool: true or false if a sound is being played, should return true</span>
+</span><span id="SoundManager-236"><a href="#SoundManager-236"><span class="linenos">236</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SoundManager-237"><a href="#SoundManager-237"><span class="linenos">237</span></a>        <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mixer</span><span class="o">.</span><span class="n">get_busy</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -942,6 +963,36 @@ with the music location or throw an error</p>
 
 <p>Returns:
     pygame.mixer.Sound: the created mixer audio</p>
+</div>
+
+
+                            </div>
+                            <div id="SoundManager.is_busy" class="classattr">
+                                        <input id="SoundManager.is_busy-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">is_busy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+                <label class="view-source-button" for="SoundManager.is_busy-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#SoundManager.is_busy"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SoundManager.is_busy-230"><a href="#SoundManager.is_busy-230"><span class="linenos">230</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="SoundManager.is_busy-231"><a href="#SoundManager.is_busy-231"><span class="linenos">231</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SoundManager.is_busy-232"><a href="#SoundManager.is_busy-232"><span class="linenos">232</span></a><span class="sd">        For pytest mainly, checks if any sound is being playded</span>
+</span><span id="SoundManager.is_busy-233"><a href="#SoundManager.is_busy-233"><span class="linenos">233</span></a>
+</span><span id="SoundManager.is_busy-234"><a href="#SoundManager.is_busy-234"><span class="linenos">234</span></a><span class="sd">        Returns:</span>
+</span><span id="SoundManager.is_busy-235"><a href="#SoundManager.is_busy-235"><span class="linenos">235</span></a><span class="sd">            bool: true or false if a sound is being played, should return true</span>
+</span><span id="SoundManager.is_busy-236"><a href="#SoundManager.is_busy-236"><span class="linenos">236</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SoundManager.is_busy-237"><a href="#SoundManager.is_busy-237"><span class="linenos">237</span></a>        <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mixer</span><span class="o">.</span><span class="n">get_busy</span><span class="p">()</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>For pytest mainly, checks if any sound is being playded</p>
+
+<p>Returns:
+    bool: true or false if a sound is being played, should return true</p>
 </div>
 
 

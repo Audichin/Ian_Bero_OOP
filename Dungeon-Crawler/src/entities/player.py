@@ -14,7 +14,7 @@ import pygame
 from pygame import Vector2, Surface, Rect, key
 from pygame.joystick import Joystick, JoystickType
 
-from .entity_mod import Entity
+from entities.entity_mod import Entity
 
 
 class Player(Entity):
@@ -396,7 +396,7 @@ class PlayerController:
         return False
 
     @classmethod
-    def reset_controller(cls):
+    def reset_controller(cls) -> None:
         """Clears singleton to allow for creation of a new controller."""
         cls._instance = None
 

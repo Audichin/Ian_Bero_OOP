@@ -19,8 +19,8 @@ class TestGeneration(unittest.TestCase):
             _type_: dungeon class setup
         """
         with patch("src.structures.Room.create_enemy"), \
-             patch("src.structures.Room.init_enemies"), \
-             patch("src.structures.Room.init_puzzle_patterns"):
+                patch("src.structures.Room.init_enemies"), \
+                patch("src.structures.Room.init_puzzle_patterns"):
             return Dungeon(MagicMock(), seed)
 
     @given(seed=some.integers(min_value=1, max_value=100))
