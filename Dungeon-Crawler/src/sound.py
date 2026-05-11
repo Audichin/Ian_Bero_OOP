@@ -227,3 +227,12 @@ class SoundManager:
         except pygame.error as e:
             print(f"Error loading sound '{file_path}': {e}")
             sys.exit(1)
+    
+    def is_busy(self) -> bool:
+        """
+        For pytest mainly, checks if any sound is being playded
+
+        Returns:
+            bool: true or false if a sound is being played, should return true
+        """
+        return pygame.mixer.get_busy()

@@ -181,11 +181,14 @@ class Generation:
             rel_path (str | Path): The relative path to the wall texture.
         """
         sel_img_path = rel_path if isinstance(rel_path, Path) else self.whole_filepath(rel_path)
+        stem_parts = sel_img_path.stem.split("_")
+        wall_type = "Boss" if "Boss" in stem_parts else stem_parts[-1]
         self.room_walls[(x, y, orientation)] = {
             "x": x,
             "y": y,
             "ori": orientation,
             "hasdoor": hasdoor,
             "isopen": isopen,
+            "wall_type": wall_type,
             "sel_img": sel_img_path,
             }
