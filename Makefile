@@ -6,7 +6,7 @@ COVERAGE = python -m pytest
 GAME = ./Dungeon-Crawler/src/game.py
 
 .PHONY: all
-all: check-style check-type run-test clean
+all: check-style check-type test-coverage clean
 	@echo "All checks passed"
 
 .PHONY: check-type

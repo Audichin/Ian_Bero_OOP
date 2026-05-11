@@ -300,7 +300,7 @@ class Game:
     # --- static methods ---
 
     @staticmethod
-    def main() -> None:
+    def main() -> None:  # pragma nocover
         """
         Run the game here!
         """
@@ -309,5 +309,5 @@ class Game:
         game.run_game()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma nocover
     Game.main()

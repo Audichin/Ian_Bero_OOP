@@ -1,11 +1,10 @@
 """Testing module for game."""
 import os
 
-# from hypothesis import given
-# import hypothesis.strategies as some
 from unittest.mock import patch
 import unittest
 
+import pygame
 from src.game import Game
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
@@ -44,7 +43,8 @@ class TestGame(unittest.TestCase):
 
     @patch('src.game.pygame')
     @patch('src.game.World')
-    def test_game_run(self, mock_world, mock_pygame) -> None:
+    @patch('src.game.sys')
+    def test_game_run(self, mock_sys, mock_world, mock_pygame) -> None:
         """test running the game"""
         game: Game = Game(self._seed)
 
@@ -54,6 +54,42 @@ class TestGame(unittest.TestCase):
             game.event_handler()
             game.on_loop()
             game.on_render()
+        game.cleanup()
+
+        game.reset_game()
+
+    @patch('src.game.pygame')
+    @patch('src.game.World')
+    def test_game_events(self, mock_world, mock_pygame) -> None:
+        """test event handling in the game"""
+        event_get: list[pygame.Event] = [pygame.Event(pygame.QUIT)]
+        mock_pygame.event.get.return_value = event_get
+
+        game: Game = Game(self._seed)
+        game._game_init()
+
+        game.event_handler()
+
+        event_get = [
+            pygame.Event(pygame.KEYDOWN, {"key": pygame.K_ESCAPE})]
+        mock_pygame.event.get.return_value = event_get
+
+        game.event_handler()
+
+        game.reset_game()
+
+    @patch('src.game.pygame')
+    @patch('src.game.World')
+    def test_debug(self, mock_world, mock_pygame) -> None:
+        """test opening debug and closing debug"""
+        event_get: list[pygame.Event] = [
+            pygame.Event(pygame.KEYDOWN, {"key": pygame.K_F1})]
+        mock_pygame.event.get.return_value = event_get
+
+        game: Game = Game(self._seed)
+        game._game_init()
+        game.event_handler()
+        game.on_render()
         game.event_handler()
 
         game.reset_game()

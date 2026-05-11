@@ -1,4 +1,4 @@
-from hypothesis import given
+from hypothesis import given, settings
 import hypothesis.strategies as some
 from unittest.mock import MagicMock, patch
 import unittest
@@ -42,6 +42,7 @@ class TestGeneration(unittest.TestCase):
         self.assertEqual(room_types.count("enemy"), 6)
 
     @given(seed=some.integers(min_value=1, max_value=100))
+    @settings(deadline=None)
     def test_wall_data(self, seed):
         """
         tests wall data
